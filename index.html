@@ -105,28 +105,54 @@ function placeWinnings(place){return Number(place)===1?15:-5}
 function computeSummary(year){
  const season=DATA.seasons[year], summary=season.summary||{};
  if(summary.state==="preseason") return {state:"preseason", current:{}, wins:{}, weekly:{}, points_for:summary.points_for||{}, points_against:summary.points_against||{}};
+
+ // Current cards / current winners use current full-season standings.
  const current=Object.fromEntries(DATA.managers.map(m=>[m.key,0]));
  const wins=Object.fromEntries(DATA.managers.map(m=>[m.key,0]));
- const weekly={};
- let maxWeek=0;
  season.leagues.forEach(l=>{
-   (l.totals||[]).forEach(r=>{ if(r && r.manager!=null && r.place!=null){ current[r.manager]=(current[r.manager]||0)+placeWinnings(r.place); if(Number(r.place)===1) wins[r.manager]=(wins[r.manager]||0)+1; } });
-   (l.weeks||[]).forEach(w=>{
-     const valid=(w.rows||[]).filter(r=>r && r.manager!=null && r.place!=null && r.pf!=null);
-     if(!valid.length) return;
-     const wk=Number(w.week); if(!weekly[wk]) weekly[wk]=Object.fromEntries(DATA.managers.map(m=>[m.key,0]));
-     maxWeek=Math.max(maxWeek,wk);
-     valid.forEach(r=>{ weekly[wk][r.manager]=(weekly[wk][r.manager]||0)+placeWinnings(r.place); });
+   (l.totals||[]).forEach(r=>{
+     if(r && r.manager!=null && r.place!=null){
+       current[r.manager]=(current[r.manager]||0)+placeWinnings(r.place);
+       if(Number(r.place)===1) wins[r.manager]=(wins[r.manager]||0)+1;
+     }
    });
  });
- const cumulative={};
- let running=Object.fromEntries(DATA.managers.map(m=>[m.key,0]));
- for(let w=1; w<=maxWeek; w++){
-   const thisWeek=weekly[w] || Object.fromEntries(DATA.managers.map(m=>[m.key,0]));
-   running=Object.fromEntries(DATA.managers.map(m=>[m.key,(running[m.key]||0)+(thisWeek[m.key]||0)]));
-   cumulative[w]={...running};
- }
- return {state:summary.state||"active_or_complete", current, wins, weekly:cumulative, points_for:summary.points_for||{}, points_against:summary.points_against||{}};
+
+ // Weekly line = "if the season ended after this week".
+ // $5 is a season entry, so each week is a fresh snapshot, NOT added to prior weeks.
+ const weekNums=[...new Set(season.leagues.flatMap(l=>(l.weeks||[]).map(w=>Number(w.week))))].filter(Number.isFinite).sort((a,b)=>a-b);
+ const weekly={};
+ const cumulativeByLeague={};
+
+ weekNums.forEach(wk=>{
+   const snapshot=Object.fromEntries(DATA.managers.map(m=>[m.key,0]));
+
+   season.leagues.forEach(l=>{
+     if(!cumulativeByLeague[l.league_id]) cumulativeByLeague[l.league_id]=Object.fromEntries(DATA.managers.map(m=>[m.key,0]));
+     const wkRow=(l.weeks||[]).find(w=>Number(w.week)===wk);
+     if(wkRow){
+       (wkRow.rows||[]).forEach(r=>{
+         if(r && r.manager!=null && r.pf!=null){
+           cumulativeByLeague[l.league_id][r.manager]=(cumulativeByLeague[l.league_id][r.manager]||0)+Number(r.pf);
+         }
+       });
+     }
+
+     const totals=cumulativeByLeague[l.league_id];
+     const active=DATA.managers.map(m=>({manager:m.key,pf:Number(totals[m.key]||0)}));
+     if(!active.some(r=>r.pf>0)) return;
+
+     const high=Math.max(...active.map(r=>r.pf));
+     // Existing app behavior: all tied leaders are treated as first.
+     active.forEach(r=>{
+       snapshot[r.manager]=(snapshot[r.manager]||0)+(r.pf===high?15:-5);
+     });
+   });
+
+   weekly[wk]=snapshot;
+ });
+
+ return {state:summary.state||"active_or_complete", current, wins, weekly, points_for:summary.points_for||{}, points_against:summary.points_against||{}};
 }
 function initSelectors(){
   const opts=DATA.managers.map(m=>`<option value="${m.key}">${m.label}</option>`).join("");
@@ -157,11 +183,38 @@ function renderLine(s){
 function renderPFPA(s){
  const values=[...Object.values(s.points_for),...Object.values(s.points_against)].map(Number).filter(Number.isFinite);
  const low=Math.min(...values),high=Math.max(...values);
- const spread=Math.max(1,high-low);
- const pad=spread*0.25;
- const yMin=Math.max(0,low-pad),yMax=high+pad,range=Math.max(1,yMax-yMin);
- const h=v=>Math.max(3,120*(Number(v)-yMin)/range);
- $("#pfpa-chart").innerHTML=`<div style="display:grid;grid-template-columns:42px 1fr;gap:6px;align-items:end"><div style="height:130px;display:flex;flex-direction:column;justify-content:space-between;text-align:right;font-size:8px;color:#777;padding:2px 0"><span>${num(yMax)}</span><span>${num((yMin+yMax)/2)}</span><span>${num(yMin)}</span></div><div class="bar-chart" style="height:175px;padding-left:0">${DATA.managers.map(m=>{let pf=s.points_for[m.key]||0,pa=s.points_against[m.key]||0;return `<div class="bar-col"><div style="display:flex;gap:6px;align-items:flex-end;justify-content:center;height:130px;width:100%"><div title="PF" style="width:40%;max-width:44px;height:${h(pf)}px;border-radius:5px 5px 2px 2px;background:${COLORS[m.key]}"></div><div title="PA" style="width:40%;max-width:44px;height:${h(pa)}px;border-radius:5px 5px 2px 2px;background:${COLORS[m.key]};opacity:.28;border:1px solid ${COLORS[m.key]}"></div></div><div class="bar-label">${m.label}</div><div style="font-size:8px;color:#777">${num(pf)} / ${num(pa)}</div></div>`}).join("")}</div></div><div class="hint">Solid = PF · Light = PA · Auto-scaled to emphasize differences</div>`;
+ const spread=Math.max(1,high-low),extra=spread*0.25;
+ const yMin=Math.max(0,low-extra),yMax=high+extra,range=Math.max(1,yMax-yMin);
+
+ const W=620,H=255;
+ const plot={l:62,r:12,t:18,b:76};
+ const iw=W-plot.l-plot.r, ih=H-plot.t-plot.b;
+ const y=v=>plot.t+(yMax-Number(v))/range*ih;
+ const centers=DATA.managers.map((m,i)=>plot.l+(i+.5)*(iw/DATA.managers.length));
+ const barW=30,gap=5;
+
+ let svg=`<svg viewBox="0 0 ${W} ${H}" aria-label="Total points for and against">`;
+ [yMax,(yMin+yMax)/2,yMin].forEach(v=>{
+   const yy=y(v);
+   svg+=`<line x1="${plot.l}" y1="${yy}" x2="${W-plot.r}" y2="${yy}" stroke="#e5e5e1" stroke-width="1"/>`;
+   svg+=`<text x="${plot.l-8}" y="${yy+4}" text-anchor="end" font-size="10" fill="#777">${num(v)}</text>`;
+ });
+
+ DATA.managers.forEach((m,i)=>{
+   const pf=Number(s.points_for[m.key]||0), pa=Number(s.points_against[m.key]||0), cx=centers[i];
+   const base=y(yMin), pfY=y(pf), paY=y(pa);
+   const pfX=cx-barW-gap/2, paX=cx+gap/2;
+   svg+=`<rect x="${pfX}" y="${pfY}" width="${barW}" height="${Math.max(2,base-pfY)}" rx="5" fill="${COLORS[m.key]}"/>`;
+   svg+=`<rect x="${paX}" y="${paY}" width="${barW}" height="${Math.max(2,base-paY)}" rx="5" fill="${COLORS[m.key]}" opacity=".28" stroke="${COLORS[m.key]}"/>`;
+
+   // Short display labels only for chart fit; exact totals remain below each group.
+   const short=m.key==="TheChavenator"?"TheChavenator":m.key==="bingbongtinydong"?"Bingbong":m.label;
+   svg+=`<text x="${cx}" y="${H-48}" text-anchor="middle" font-size="10" font-weight="800" fill="#6f716d">${short}</text>`;
+   svg+=`<text x="${cx}" y="${H-31}" text-anchor="middle" font-size="9" fill="#777">${num(pf)} /</text>`;
+   svg+=`<text x="${cx}" y="${H-18}" text-anchor="middle" font-size="9" fill="#777">${num(pa)}</text>`;
+ });
+ svg+=`</svg><div class="hint">Solid = PF · Light = PA · Auto-scaled to emphasize differences</div>`;
+ $("#pfpa-chart").innerHTML=svg;
 }
 function initials(m){if(m==="TheChavenator")return "TC";if(m==="bingbongtinydong")return "BB";if(m==="jpagonis")return "JP";return "NA"}
 function rowBar(rows,selected){
