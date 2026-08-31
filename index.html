@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>4MANS</title>
+<style>
+:root{
+  --bg:#f5f4ef;--card:#fff;--ink:#171717;--muted:#6f716d;--line:#d9d8d2;
+  --green:#1f9d55;--red:#d84a4a;--blue:#2d6cdf;--orange:#ec8a2f;--purple:#7b55c7;
+  --shadow:0 7px 22px rgba(0,0,0,.065);
+}
+*{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif}
+button,select{font:inherit;color:inherit}.app{max-width:680px;margin:0 auto;min-height:100vh;padding:calc(18px + env(safe-area-inset-top)) 16px calc(28px + env(safe-area-inset-bottom))}
+.screen{display:none}.screen.active{display:block}
+.brand{text-align:center;font-size:34px;line-height:1;font-weight:950;letter-spacing:.02em;margin:8px 0}
+.tag{text-align:center;color:var(--muted);font-weight:650;margin:14px 0 28px}
+.hero{padding-top:12vh}.yearbox,.menu-btn{width:100%;border:1px solid var(--line);background:var(--card);border-radius:16px;box-shadow:var(--shadow);min-height:62px;font-weight:850}
+.yearbox{padding:0 18px;font-size:18px}.menu{display:grid;gap:14px;margin-top:38px}.menu-btn{font-size:18px}
+.top{display:grid;grid-template-columns:48px 1fr 48px;align-items:center;margin-bottom:12px}.back{width:44px;height:44px;border:1px solid var(--line);background:var(--card);border-radius:13px;font-size:22px}.top .brand{font-size:28px;margin:0}
+.section-title{text-align:center;font-size:11px;font-weight:900;letter-spacing:.14em;color:var(--muted);margin:4px 0 16px}
+.manager-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px}.manager-card{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:13px;box-shadow:var(--shadow)}.manager-card .name{font-size:12px;font-weight:850}.manager-card .money{font-size:25px;font-weight:950;margin-top:5px}.money.pos{color:var(--green)}.money.neg{color:var(--red)}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:14px;margin-top:14px}.panel-title{font-size:11px;text-align:center;font-weight:900;letter-spacing:.10em;color:var(--muted);margin-bottom:12px}
+.waiting{padding:30px 10px;text-align:center;color:var(--muted);font-weight:800}
+.bar-chart{display:flex;align-items:flex-end;gap:12px;height:175px;padding:12px 6px 0}.bar-col{flex:1;min-width:0;text-align:center;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center}.bar{width:100%;border-radius:8px 8px 3px 3px;min-height:2px;background:#333}.bar-value{font-weight:900;font-size:12px;margin-bottom:5px}.bar-label{font-size:9px;font-weight:800;margin-top:6px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.legend{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 12px;font-size:10px;color:var(--muted);font-weight:800}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px}
+svg{width:100%;height:auto;display:block}
+.sticky-manager{position:sticky;top:0;z-index:20;background:rgba(245,244,239,.96);backdrop-filter:blur(12px);padding:6px 0 10px}.selector{width:100%;height:46px;border:1px solid var(--line);border-radius:13px;background:var(--card);padding:0 12px;font-weight:850}
+.league-card{border:1px solid var(--line);background:var(--card);border-radius:15px;margin:11px 0;box-shadow:var(--shadow);overflow:visible}.league-head{padding:12px 13px 7px;background:var(--card);border-radius:15px 15px 0 0}.league-card.expanded .league-head{position:sticky;top:62px;z-index:15;border-bottom:1px solid var(--line);box-shadow:0 5px 12px rgba(0,0,0,.06)}.league-name-row{display:flex;justify-content:space-between;gap:10px;align-items:center}.league-name{font-size:14px;font-weight:950}.expand{border:0;background:transparent;font-size:20px}.score-row{padding:6px 13px 13px}.score-meta{display:flex;justify-content:flex-end;font-size:11px;font-weight:900;color:var(--muted);margin-bottom:6px}.score-track{height:30px;border-radius:16px;border:1px solid #d9e5dc;background:linear-gradient(90deg,#fff 0%,#e9f8ee 50%,#8ad7a7 100%);position:relative;margin:0 15px}.score-range{display:flex;justify-content:space-between;font-size:9px;font-weight:850;color:var(--muted);margin:5px 15px 0}.marker{position:absolute;top:50%;width:30px;height:30px;border-radius:50%;transform:translate(-50%,-50%);background:#fff;border:2px solid #c9ccc8;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:950;cursor:pointer}.marker.selected.win{background:var(--green);color:white;border-color:var(--green)}.marker.selected.lose{background:var(--red);color:white;border-color:var(--red)}
+.popup{position:absolute;z-index:40;min-width:170px;background:#222;color:#fff;padding:9px 10px;border-radius:10px;font-size:11px;box-shadow:0 8px 20px rgba(0,0,0,.25);transform:translate(-50%,-115%)}.popup strong{display:block;font-size:12px;margin:1px 0 4px;color:#fff}.popup .label{display:block;font-size:9px;letter-spacing:.06em;font-weight:900;color:#fff;opacity:.82;text-transform:uppercase}
+.weeks{display:none;width:92%;margin:0 auto 12px;border:1px solid #e3e2dd;border-radius:12px;background:#fafaf8;overflow:hidden}.league-card.expanded .weeks{display:block}.week{border-bottom:1px solid #e5e4df}.week:last-child{border-bottom:0}.week-title{font-size:10px;font-weight:900;letter-spacing:.08em;color:var(--muted);padding:9px 11px 2px}
+.toggle{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:13px;overflow:hidden;background:var(--card);max-width:340px;margin:0 auto 14px}.toggle button{border:0;background:transparent;min-height:46px;font-size:12px;font-weight:950;color:var(--muted)}.toggle button.active{background:#e9eee9;color:var(--ink)}
+.filters{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:11px}.field label{display:block;font-size:9px;font-weight:900;letter-spacing:.08em;color:var(--muted);margin:0 0 4px 2px}.field select{width:100%;height:43px;border:1px solid var(--line);border-radius:11px;background:var(--card);padding:0 10px;font-weight:800}.filters.one{grid-template-columns:minmax(0,210px)}
+.table-shell{border:1px solid var(--line);border-radius:14px;background:var(--card);overflow:hidden;box-shadow:var(--shadow)}.table-scroll{overflow:auto;-webkit-overflow-scrolling:touch;max-height:66vh}table{border-collapse:separate;border-spacing:0;width:max-content;min-width:100%;font-size:11px}th,td{padding:10px 8px;border-bottom:1px solid var(--line);white-space:nowrap;text-align:right}th{position:sticky;top:0;z-index:3;background:#efefec;font-size:9px;letter-spacing:.03em;color:var(--muted)}th button{border:0;background:transparent;font:inherit;color:inherit;font-weight:900}th:first-child,td:first-child{position:sticky;left:0;z-index:2;background:var(--card);text-align:left;box-shadow:1px 0 0 var(--line)}th:first-child{z-index:5;background:#efefec}td:first-child{font-weight:850}.hint{text-align:center;font-size:9px;color:var(--muted);margin-top:7px}.hidden{display:none!important}
+@media(max-width:380px){.app{padding-left:12px;padding-right:12px}.brand{font-size:31px}.manager-card .money{font-size:22px}.weeks{width:94%}}
+</style>
+</head>
+<body>
+<main class="app">
+<section id="year-screen" class="screen active hero">
+  <div class="brand">4MANS</div>
+  <div class="tag">4 Man best ball leagues for my mans</div>
+  <select id="year-select" class="yearbox" aria-label="Select league year"><option>2025</option><option selected>2026</option></select>
+  <button class="menu-btn" style="margin-top:14px" id="enter-year">ENTER</button>
+</section>
+
+<section id="menu-screen" class="screen">
+  <div class="top"><button class="back" data-go="year-screen">←</button><div class="brand">4MANS</div><div></div></div>
+  <div class="menu">
+    <button class="menu-btn" data-go="standings-screen">Total Standings</button>
+    <button class="menu-btn" data-go="leagues-screen">Leagues</button>
+    <button class="menu-btn" data-go="analysis-screen">Analysis</button>
+  </div>
+</section>
+
+<section id="standings-screen" class="screen">
+  <div class="top"><button class="back" data-go="menu-screen">←</button><div class="brand">4MANS</div><div></div></div>
+  <div class="section-title">TOTAL STANDINGS</div>
+  <div id="stand-cards" class="manager-cards"></div>
+  <div class="panel"><div class="panel-title">LEAGUES CURRENTLY WINNING</div><div id="wins-chart"></div></div>
+  <div class="panel"><div class="panel-title">WINNINGS BY WEEK</div><div id="line-chart"></div></div>
+  <div class="panel"><div class="panel-title">TOTAL POINTS FOR / AGAINST</div><div id="pfpa-chart"></div></div>
+</section>
+
+<section id="leagues-screen" class="screen">
+  <div class="top"><button class="back" data-go="menu-screen">←</button><div class="brand">4MANS</div><div></div></div>
+  <div class="sticky-manager"><select id="league-manager" class="selector"></select></div>
+  <div id="league-list"></div>
+</section>
+
+<section id="analysis-screen" class="screen">
+  <div class="top"><button class="back" data-go="menu-screen">←</button><div class="brand">4MANS</div><div></div></div>
+  <div class="section-title">ANALYSIS</div>
+  <div class="toggle"><button id="stats-tab" class="active">STATS</button><button id="own-tab">OWNERSHIP %</button></div>
+  <div id="stats-view">
+    <div class="filters">
+      <div class="field"><label>MANAGER</label><select id="stats-manager"></select></div>
+      <div class="field"><label>SIDE</label><select id="stats-side"><option>Offense</option><option>Defense</option></select></div>
+    </div>
+    <div class="table-shell"><div class="table-scroll"><table id="stats-table"><thead></thead><tbody></tbody></table></div></div>
+    <div class="hint">Tap a column heading to sort · FPTS = average actual 4MANS league-scored season points where rostered</div>
+  </div>
+  <div id="own-view" class="hidden">
+    <div class="filters one"><div class="field"><label>POSITION</label><select id="own-position"><option>All</option></select></div></div>
+    <div class="table-shell"><div class="table-scroll"><table id="own-table"><thead></thead><tbody></tbody></table></div></div>
+    <div class="hint">Tap a column heading to sort · Player column stays pinned</div>
+  </div>
+</section>
+</main>
+
+<script>
+const COLORS={nactasty:"#2d6cdf",jpagonis:"#ec8a2f",TheChavenator:"#1f9d55",bingbongtinydong:"#7b55c7"};
+let DATA=null, YEAR="2026";
+let statSort={key:"fpts",dir:-1},ownSort={key:"Nactasty",dir:-1};
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+function show(id){$$(".screen").forEach(x=>x.classList.remove("active"));$("#"+id).classList.add("active");window.scrollTo(0,0);if(id==="standings-screen")renderStandings();if(id==="leagues-screen")renderLeagues();if(id==="analysis-screen")renderAnalysis()}
+function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
+function managerLabel(k){return (DATA.managers.find(x=>x.key===k)||{}).label||k}
+const intFmt=new Intl.NumberFormat("en-US",{maximumFractionDigits:0});
+const decFmt=new Intl.NumberFormat("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+function num(v){return intFmt.format(Number(v||0))}
+function num2(v){return decFmt.format(Number(v||0))}
+function money(v){const n=Math.round(Number(v||0));return `${n>=0?"+":"-"}$${intFmt.format(Math.abs(n))}`}
+function placeWinnings(place){return Number(place)===1?15:-5}
+function computeSummary(year){
+ const season=DATA.seasons[year], summary=season.summary||{};
+ if(summary.state==="preseason") return {state:"preseason", current:{}, wins:{}, weekly:{}, points_for:summary.points_for||{}, points_against:summary.points_against||{}};
+ const current=Object.fromEntries(DATA.managers.map(m=>[m.key,0]));
+ const wins=Object.fromEntries(DATA.managers.map(m=>[m.key,0]));
+ const weekly={};
+ let maxWeek=0;
+ season.leagues.forEach(l=>{
+   (l.totals||[]).forEach(r=>{ if(r && r.manager!=null && r.place!=null){ current[r.manager]=(current[r.manager]||0)+placeWinnings(r.place); if(Number(r.place)===1) wins[r.manager]=(wins[r.manager]||0)+1; } });
+   (l.weeks||[]).forEach(w=>{
+     const valid=(w.rows||[]).filter(r=>r && r.manager!=null && r.place!=null && r.pf!=null);
+     if(!valid.length) return;
+     const wk=Number(w.week); if(!weekly[wk]) weekly[wk]=Object.fromEntries(DATA.managers.map(m=>[m.key,0]));
+     maxWeek=Math.max(maxWeek,wk);
+     valid.forEach(r=>{ weekly[wk][r.manager]=(weekly[wk][r.manager]||0)+placeWinnings(r.place); });
+   });
+ });
+ const cumulative={};
+ let running=Object.fromEntries(DATA.managers.map(m=>[m.key,0]));
+ for(let w=1; w<=maxWeek; w++){
+   const thisWeek=weekly[w] || Object.fromEntries(DATA.managers.map(m=>[m.key,0]));
+   running=Object.fromEntries(DATA.managers.map(m=>[m.key,(running[m.key]||0)+(thisWeek[m.key]||0)]));
+   cumulative[w]={...running};
+ }
+ return {state:summary.state||"active_or_complete", current, wins, weekly:cumulative, points_for:summary.points_for||{}, points_against:summary.points_against||{}};
+}
+function initSelectors(){
+  const opts=DATA.managers.map(m=>`<option value="${m.key}">${m.label}</option>`).join("");
+  $("#league-manager").innerHTML=opts;
+  $("#stats-manager").innerHTML=`<option value="All">All</option>`+opts;
+}
+function renderStandings(){
+ const s=computeSummary(YEAR),pre=s.state==="preseason";
+ $("#stand-cards").innerHTML=DATA.managers.map(m=>{const v=s.current[m.key]||0;return `<div class="manager-card"><div class="name">${m.label}</div><div class="money ${pre?"":(v>=0?"pos":"neg")}">${pre?"—":money(v)}</div></div>`}).join("");
+ if(pre){$("#wins-chart").innerHTML=$("#line-chart").innerHTML=$("#pfpa-chart").innerHTML=`<div class="waiting">Waiting for season to start</div>`;return}
+ const maxWins=Math.max(1,...Object.values(s.wins));
+ $("#wins-chart").innerHTML=`<div class="bar-chart">${DATA.managers.map(m=>{let v=s.wins[m.key]||0;return `<div class="bar-col"><div class="bar-value">${v}</div><div class="bar" style="height:${Math.max(3,120*v/maxWins)}px;background:${COLORS[m.key]}"></div><div class="bar-label">${m.label}</div></div>`}).join("")}</div>`;
+ renderLine(s);
+ renderPFPA(s);
+}
+function renderLine(s){
+ const weeks=Object.keys(s.weekly).map(Number).sort((a,b)=>a-b); if(!weeks.length){$("#line-chart").innerHTML=`<div class="waiting">Waiting for season to start</div>`;return}
+ const vals=[];weeks.forEach(w=>DATA.managers.forEach(m=>vals.push(s.weekly[w][m.key]||0)));let min=Math.min(...vals),max=Math.max(...vals);if(min===max){min-=5;max+=5}
+ const W=620,H=255,pad={l:46,r:15,t:15,b:34},iw=W-pad.l-pad.r,ih=H-pad.t-pad.b;
+ const x=w=>pad.l+(weeks.indexOf(w)/(Math.max(1,weeks.length-1)))*iw, y=v=>pad.t+(max-v)/(max-min)*ih;
+ let svg=`<svg viewBox="0 0 ${W} ${H}" aria-label="Winnings by week">`;
+ for(let i=0;i<=4;i++){let yy=pad.t+i*ih/4;let vv=max-i*(max-min)/4;svg+=`<line x1="${pad.l}" y1="${yy}" x2="${W-pad.r}" y2="${yy}" stroke="#ddd"/><text x="${pad.l-8}" y="${yy+4}" text-anchor="end" font-size="9" fill="#777">${money(vv)}</text>`}
+ weeks.forEach((w,i)=>{if(i%Math.ceil(weeks.length/7)===0||i===weeks.length-1)svg+=`<text x="${x(w)}" y="${H-10}" text-anchor="middle" font-size="9" fill="#777">W${w}</text>`});
+ DATA.managers.forEach(m=>{let pts=weeks.map(w=>[x(w),y(s.weekly[w][m.key]||0)]);svg+=`<polyline fill="none" stroke="${COLORS[m.key]}" stroke-width="3" points="${pts.map(p=>p.join(",")).join(" ")}"/>`;pts.forEach(p=>svg+=`<circle cx="${p[0]}" cy="${p[1]}" r="2.4" fill="${COLORS[m.key]}"/>`)});
+ svg+="</svg><div class='legend'>"+DATA.managers.map(m=>`<span><i class="dot" style="background:${COLORS[m.key]}"></i>${m.label}</span>`).join("")+"</div>";
+ $("#line-chart").innerHTML=svg;
+}
+function renderPFPA(s){
+ const values=[...Object.values(s.points_for),...Object.values(s.points_against)].map(Number).filter(Number.isFinite);
+ const low=Math.min(...values),high=Math.max(...values);
+ const spread=Math.max(1,high-low);
+ const pad=spread*0.25;
+ const yMin=Math.max(0,low-pad),yMax=high+pad,range=Math.max(1,yMax-yMin);
+ const h=v=>Math.max(3,120*(Number(v)-yMin)/range);
+ $("#pfpa-chart").innerHTML=`<div style="display:grid;grid-template-columns:42px 1fr;gap:6px;align-items:end"><div style="height:130px;display:flex;flex-direction:column;justify-content:space-between;text-align:right;font-size:8px;color:#777;padding:2px 0"><span>${num(yMax)}</span><span>${num((yMin+yMax)/2)}</span><span>${num(yMin)}</span></div><div class="bar-chart" style="height:175px;padding-left:0">${DATA.managers.map(m=>{let pf=s.points_for[m.key]||0,pa=s.points_against[m.key]||0;return `<div class="bar-col"><div style="display:flex;gap:6px;align-items:flex-end;justify-content:center;height:130px;width:100%"><div title="PF" style="width:40%;max-width:44px;height:${h(pf)}px;border-radius:5px 5px 2px 2px;background:${COLORS[m.key]}"></div><div title="PA" style="width:40%;max-width:44px;height:${h(pa)}px;border-radius:5px 5px 2px 2px;background:${COLORS[m.key]};opacity:.28;border:1px solid ${COLORS[m.key]}"></div></div><div class="bar-label">${m.label}</div><div style="font-size:8px;color:#777">${num(pf)} / ${num(pa)}</div></div>`}).join("")}</div></div><div class="hint">Solid = PF · Light = PA · Auto-scaled to emphasize differences</div>`;
+}
+function initials(m){if(m==="TheChavenator")return "TC";if(m==="bingbongtinydong")return "BB";if(m==="jpagonis")return "JP";return "NA"}
+function rowBar(rows,selected){
+ const valid=rows.filter(r=>r.pf!=null);if(!valid.length)return `<div class="waiting" style="padding:14px">Waiting for season to start</div>`;
+ const vals=valid.map(r=>Number(r.pf)),lo=Math.min(...vals),hi=Math.max(...vals),range=hi-lo||1;
+ const sel=valid.find(r=>r.manager===selected); const place=sel?.place?`${sel.place}/4`:"—";
+ return `<div class="score-row"><div class="score-meta">${place}</div><div class="score-track">${valid.map(r=>{let pct=(Number(r.pf)-lo)/range;let left=`calc(${(pct*100).toFixed(3)}% + ${(15-30*pct).toFixed(2)}px)`;let cls=r.manager===selected?("selected "+(r.place===1?"win":"lose")):"";return `<button class="marker ${cls}" style="left:${left}" data-manager="${esc(r.manager)}" data-pf="${r.pf}" data-pa="${r.pa??""}" data-place="${r.place||""}">${initials(r.manager)}</button>`}).join("")}</div><div class="score-range"><span>${num(lo)}</span><span>${num(hi)}</span></div></div>`;
+}
+function renderLeagues(){
+ const selected=$("#league-manager").value||DATA.managers[0].key;
+ const leagues=[...DATA.seasons[YEAR].leagues].sort((a,b)=>String(a.name||"").localeCompare(String(b.name||"")));
+ $("#league-list").innerHTML=leagues.map((l,i)=>`<article class="league-card" data-league="${esc(l.league_id)}"><div class="league-head"><div class="league-name-row"><div class="league-name">${esc(l.name)}</div><button class="expand" aria-label="Expand">⌄</button></div>${rowBar(l.totals,selected)}</div><div class="weeks">${l.weeks.length?l.weeks.map(w=>`<div class="week"><div class="week-title">WEEK ${w.week}</div>${rowBar(w.rows,selected)}</div>`).join(""):`<div class="waiting">Waiting for season to start</div>`}</div></article>`).join("");
+ $$(".league-card .expand").forEach(b=>b.onclick=()=>{let card=b.closest(".league-card");card.classList.toggle("expanded");b.textContent=card.classList.contains("expanded")?"⌃":"⌄"});
+ $$(".marker").forEach(b=>b.onclick=e=>{e.stopPropagation();$$(".popup").forEach(p=>p.remove());let p=document.createElement("div");p.className="popup";p.innerHTML=`<span class="label">Manager</span><strong>${esc(managerLabel(b.dataset.manager))}</strong>Points For: ${num2(b.dataset.pf)}<br>Points Against: ${b.dataset.pa?num2(b.dataset.pa):"—"}<br>Place: ${b.dataset.place||"—"}/4`;b.parentElement.appendChild(p);p.style.left=b.style.left;p.onclick=()=>p.remove()});
+}
+function renderAnalysis(){renderStats();renderOwnership()}
+function sortRows(rows,key,dir){return [...rows].sort((a,b)=>{let av=a[key],bv=b[key];if(typeof av==="number"&&typeof bv==="number")return (av-bv)*dir;return String(av??"").localeCompare(String(bv??""))*dir})}
+function tableHead(cols,state,fn){return `<tr>${cols.map(c=>`<th><button data-key="${c[0]}">${c[1]}${state.key===c[0]?(state.dir<0?" ▼":" ▲"):""}</button></th>`).join("")}</tr>`}
+function fmtStatVal(key,val){
+ if(val==null||val==="") return "—";
+ if(["player","team","position"].includes(key)) return esc(val);
+ const n=Number(val);
+ if(key==="fpts") return n.toLocaleString("en-US",{minimumFractionDigits:1,maximumFractionDigits:1});
+ return Number.isInteger(n)?intFmt.format(n):n.toLocaleString("en-US",{minimumFractionDigits:1,maximumFractionDigits:1});
+}
+function renderStats(){
+ const season=DATA.seasons[YEAR], mgr=$("#stats-manager").value||"All", side=$("#stats-side").value.toLowerCase();
+ if(season.summary.state==="preseason"){$("#stats-table thead").innerHTML="";$("#stats-table tbody").innerHTML=`<tr><td style="padding:28px">Waiting for season to start</td></tr>`;return}
+ let rows=season.stats.filter(r=>r.side===side&&(mgr==="All"||Number(r.ownership[mgr]||0)>0)).map(r=>({...r,fpts:mgr==="All"?r.fpts_all:r.fpts_by_manager[mgr]}));
+ let cols=side==="offense"?[["player","PLAYER"],["team","TEAM"],["position","POS"],["fpts","FPTS"],["rush_yd","RUSH YDS"],["rush_td","RUSH TD"],["rec","REC"],["rec_yd","REC YDS"],["rec_td","REC TD"],["pass_yd","PASS YDS"],["pass_td","PASS TD"],["pass_int","INT"]]:[["player","PLAYER"],["team","TEAM"],["position","POS"],["fpts","FPTS"],["tackles","TACK"],["solo","SOLO"],["ast","AST"],["sacks","SACK"],["tfl","TFL"],["qbh","QB HIT"],["ints","INT"],["pd","PD"],["ff","FF"],["fr","FR"],["def_td","TD"]];
+ rows=sortRows(rows,statSort.key,statSort.dir);
+ $("#stats-table thead").innerHTML=tableHead(cols,statSort);
+ $("#stats-table tbody").innerHTML=rows.map(r=>`<tr>${cols.map(c=>`<td>${fmtStatVal(c[0],r[c[0]])}</td>`).join("")}</tr>`).join("");
+ $$("#stats-table th button").forEach(b=>b.onclick=()=>{let k=b.dataset.key;statSort=statSort.key===k?{key:k,dir:-statSort.dir}:{key:k,dir:-1};renderStats()});
+}
+function renderOwnership(){
+ let rows=DATA.seasons[YEAR].ownership;
+ const pos=$("#own-position").value||"All"; if(pos!=="All")rows=rows.filter(r=>r.position===pos);
+ rows=rows.map(r=>({...r,Nactasty:r.ownership.nactasty,JPagonis:r.ownership.jpagonis,TheChavenator:r.ownership.TheChavenator,Bingbongtinydong:r.ownership.bingbongtinydong}));
+ const cols=[["player","PLAYER"],["position","POS"],["team","TEAM"],["Nactasty","NACTASTY"],["JPagonis","JP"],["TheChavenator","CHAV"],["Bingbongtinydong","BING"]];
+ rows=sortRows(rows,ownSort.key,ownSort.dir);
+ $("#own-table thead").innerHTML=tableHead(cols,ownSort);
+ $("#own-table tbody").innerHTML=rows.map(r=>`<tr>${cols.map(c=>`<td>${["Nactasty","JPagonis","TheChavenator","Bingbongtinydong"].includes(c[0])?Number(r[c[0]]||0).toFixed(1)+"%":esc(r[c[0]])}</td>`).join("")}</tr>`).join("");
+ $$("#own-table th button").forEach(b=>b.onclick=()=>{let k=b.dataset.key;ownSort=ownSort.key===k?{key:k,dir:-ownSort.dir}:{key:k,dir:-1};renderOwnership()});
+}
+async function boot(){
+ try{
+  DATA=await (await fetch("4mans_app_data.json",{cache:"no-store"})).json();
+  initSelectors();
+  const positions=[...new Set(Object.values(DATA.seasons).flatMap(s=>s.ownership.map(r=>r.position)).filter(Boolean))].sort();
+  $("#own-position").innerHTML=`<option>All</option>`+positions.map(p=>`<option>${esc(p)}</option>`).join("");
+  $("#enter-year").onclick=()=>{YEAR=$("#year-select").value;show("menu-screen")};
+  $$("[data-go]").forEach(b=>b.onclick=()=>show(b.dataset.go));
+  $("#league-manager").onchange=renderLeagues;$("#stats-manager").onchange=renderStats;$("#stats-side").onchange=()=>{statSort={key:"fpts",dir:-1};renderStats()};$("#own-position").onchange=renderOwnership;
+  $("#stats-tab").onclick=()=>{$("#stats-tab").classList.add("active");$("#own-tab").classList.remove("active");$("#stats-view").classList.remove("hidden");$("#own-view").classList.add("hidden")};
+  $("#own-tab").onclick=()=>{$("#own-tab").classList.add("active");$("#stats-tab").classList.remove("active");$("#own-view").classList.remove("hidden");$("#stats-view").classList.add("hidden");renderOwnership()};
+ }catch(err){
+  document.body.innerHTML=`<div style="font-family:system-ui;padding:24px"><h2>4MANS data load error</h2><p>${esc(err.message)}</p><p>Run this through a local web server or GitHub Pages so the JSON file can be loaded.</p></div>`;
+ }
+}
+boot();
+</script>
+</body>
+</html>
