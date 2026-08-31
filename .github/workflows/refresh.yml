@@ -1,0 +1,42 @@
+name: Refresh 4MANS Data
+
+on:
+  schedule:
+    - cron: "17 */3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: 4mans-data-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Refresh Sleeper data
+        run: python update_4mans.py
+
+      - name: Commit refreshed JSON
+        run: |
+          if git diff --quiet -- 4mans_app_data.json; then
+            echo "No data changes to commit."
+            exit 0
+          fi
+
+          git config user.name "4MANS Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add 4mans_app_data.json
+          git commit -m "Auto-refresh 4MANS data"
+          git push
