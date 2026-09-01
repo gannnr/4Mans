@@ -217,6 +217,54 @@ function renderPFPA(s){
  $("#pfpa-chart").innerHTML=svg;
 }
 function initials(m){if(m==="TheChavenator")return "TC";if(m==="bingbongtinydong")return "BB";if(m==="jpagonis")return "JP";return "NA"}
+function weeklyRows(weeks){
+ const ordered=[...(weeks||[])].sort((a,b)=>Number(a.week)-Number(b.week));
+ const prev={};
+
+ return ordered.map(w=>{
+   const rows=(w.rows||[]).map(r=>{
+     const key=r.manager;
+     const prior=prev[key]||{pf:0,pa:0};
+     const currentPf=Number(r.pf||0);
+     const currentPa=Number(r.pa||0);
+
+     const weeklyPf=currentPf-Number(prior.pf||0);
+     const weeklyPa=currentPa-Number(prior.pa||0);
+
+     prev[key]={pf:currentPf,pa:currentPa};
+
+     return {
+       ...r,
+       pf:weeklyPf,
+       pa:weeklyPa
+     };
+   });
+
+   // Recalculate place using only this week's isolated score.
+   const ranked=[...rows]
+     .filter(r=>r && r.manager!=null && r.pf!=null)
+     .sort((a,b)=>Number(b.pf)-Number(a.pf));
+
+   const placeByManager={};
+   let lastScore=null;
+   let lastPlace=0;
+
+   ranked.forEach((r,i)=>{
+     const score=Number(r.pf||0);
+     if(lastScore===null || score!==lastScore) lastPlace=i+1;
+     placeByManager[r.manager]=lastPlace;
+     lastScore=score;
+   });
+
+   return {
+     ...w,
+     rows:rows.map(r=>({
+       ...r,
+       place:placeByManager[r.manager]||r.place
+     }))
+   };
+ });
+}
 function rowBar(rows,selected){
  const valid=rows.filter(r=>r.pf!=null);if(!valid.length)return `<div class="waiting" style="padding:14px">Waiting for season to start</div>`;
  const vals=valid.map(r=>Number(r.pf)),lo=Math.min(...vals),hi=Math.max(...vals),range=hi-lo||1;
@@ -226,7 +274,10 @@ function rowBar(rows,selected){
 function renderLeagues(){
  const selected=$("#league-manager").value||DATA.managers[0].key;
  const leagues=[...DATA.seasons[YEAR].leagues].sort((a,b)=>String(a.name||"").localeCompare(String(b.name||"")));
- $("#league-list").innerHTML=leagues.map((l,i)=>`<article class="league-card" data-league="${esc(l.league_id)}"><div class="league-head"><div class="league-name-row"><div class="league-name">${esc(l.name)}</div><button class="expand" aria-label="Expand">⌄</button></div>${rowBar(l.totals,selected)}</div><div class="weeks">${l.weeks.length?l.weeks.map(w=>`<div class="week"><div class="week-title">WEEK ${w.week}</div>${rowBar(w.rows,selected)}</div>`).join(""):`<div class="waiting">Waiting for season to start</div>`}</div></article>`).join("");
+ $("#league-list").innerHTML=leagues.map((l,i)=>{
+   const isolatedWeeks=weeklyRows(l.weeks||[]);
+   return `<article class="league-card" data-league="${esc(l.league_id)}"><div class="league-head"><div class="league-name-row"><div class="league-name">${esc(l.name)}</div><button class="expand" aria-label="Expand">⌄</button></div>${rowBar(l.totals,selected)}</div><div class="weeks">${isolatedWeeks.length?isolatedWeeks.map(w=>`<div class="week"><div class="week-title">WEEK ${w.week}</div>${rowBar(w.rows,selected)}</div>`).join(""):`<div class="waiting">Waiting for season to start</div>`}</div></article>`;
+ }).join("");
  $$(".league-card .expand").forEach(b=>b.onclick=()=>{let card=b.closest(".league-card");card.classList.toggle("expanded");b.textContent=card.classList.contains("expanded")?"⌃":"⌄"});
  $$(".marker").forEach(b=>b.onclick=e=>{e.stopPropagation();$$(".popup").forEach(p=>p.remove());let p=document.createElement("div");p.className="popup";p.innerHTML=`<span class="label">Manager</span><strong>${esc(managerLabel(b.dataset.manager))}</strong>Points For: ${num2(b.dataset.pf)}<br>Points Against: ${b.dataset.pa?num2(b.dataset.pa):"—"}<br>Place: ${b.dataset.place||"—"}/4`;b.parentElement.appendChild(p);p.style.left=b.style.left;p.onclick=()=>p.remove()});
 }
