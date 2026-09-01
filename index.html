@@ -119,28 +119,23 @@ function computeSummary(year){
  });
 
  // Weekly line = "if the season ended after this week".
- // $5 is a season entry, so each week is a fresh snapshot, NOT added to prior weeks.
+ // Week rows are already cumulative season-to-date snapshots.
+ // Use each week's snapshot directly; do NOT add cumulative snapshots together.
  const weekNums=[...new Set(season.leagues.flatMap(l=>(l.weeks||[]).map(w=>Number(w.week))))].filter(Number.isFinite).sort((a,b)=>a-b);
  const weekly={};
- const cumulativeByLeague={};
 
  weekNums.forEach(wk=>{
    const snapshot=Object.fromEntries(DATA.managers.map(m=>[m.key,0]));
 
    season.leagues.forEach(l=>{
-     if(!cumulativeByLeague[l.league_id]) cumulativeByLeague[l.league_id]=Object.fromEntries(DATA.managers.map(m=>[m.key,0]));
      const wkRow=(l.weeks||[]).find(w=>Number(w.week)===wk);
-     if(wkRow){
-       (wkRow.rows||[]).forEach(r=>{
-         if(r && r.manager!=null && r.pf!=null){
-           cumulativeByLeague[l.league_id][r.manager]=(cumulativeByLeague[l.league_id][r.manager]||0)+Number(r.pf);
-         }
-       });
-     }
+     if(!wkRow) return;
 
-     const totals=cumulativeByLeague[l.league_id];
-     const active=DATA.managers.map(m=>({manager:m.key,pf:Number(totals[m.key]||0)}));
-     if(!active.some(r=>r.pf>0)) return;
+     const active=(wkRow.rows||[])
+       .filter(r=>r && r.manager!=null && r.pf!=null)
+       .map(r=>({manager:r.manager,pf:Number(r.pf||0)}));
+
+     if(!active.length || !active.some(r=>r.pf>0)) return;
 
      const high=Math.max(...active.map(r=>r.pf));
      // Existing app behavior: all tied leaders are treated as first.
@@ -217,30 +212,29 @@ function renderPFPA(s){
  $("#pfpa-chart").innerHTML=svg;
 }
 function initials(m){if(m==="TheChavenator")return "TC";if(m==="bingbongtinydong")return "BB";if(m==="jpagonis")return "JP";return "NA"}
-function weeklyRows(weeks){
- const ordered=[...(weeks||[])].sort((a,b)=>Number(a.week)-Number(b.week));
+function isolatedWeeklyRows(weeks){
+ // Calculate in chronological order, then return results in the ORIGINAL display order.
+ const original=[...(weeks||[])];
+ const chronological=[...original].sort((a,b)=>Number(a.week)-Number(b.week));
  const prev={};
+ const convertedByWeek=new Map();
 
- return ordered.map(w=>{
+ chronological.forEach(w=>{
    const rows=(w.rows||[]).map(r=>{
      const key=r.manager;
      const prior=prev[key]||{pf:0,pa:0};
-     const currentPf=Number(r.pf||0);
-     const currentPa=Number(r.pa||0);
+     const curPf=Number(r.pf||0);
+     const curPa=Number(r.pa||0);
 
-     const weeklyPf=currentPf-Number(prior.pf||0);
-     const weeklyPa=currentPa-Number(prior.pa||0);
+     const weeklyPf=curPf-Number(prior.pf||0);
+     const weeklyPa=curPa-Number(prior.pa||0);
 
-     prev[key]={pf:currentPf,pa:currentPa};
+     prev[key]={pf:curPf,pa:curPa};
 
-     return {
-       ...r,
-       pf:weeklyPf,
-       pa:weeklyPa
-     };
+     return {...r,pf:weeklyPf,pa:weeklyPa};
    });
 
-   // Recalculate place using only this week's isolated score.
+   // Re-rank the four managers using only this week's isolated PF.
    const ranked=[...rows]
      .filter(r=>r && r.manager!=null && r.pf!=null)
      .sort((a,b)=>Number(b.pf)-Number(a.pf));
@@ -256,14 +250,13 @@ function weeklyRows(weeks){
      lastScore=score;
    });
 
-   return {
+   convertedByWeek.set(Number(w.week),{
      ...w,
-     rows:rows.map(r=>({
-       ...r,
-       place:placeByManager[r.manager]||r.place
-     }))
-   };
+     rows:rows.map(r=>({...r,place:placeByManager[r.manager]||r.place}))
+   });
  });
+
+ return original.map(w=>convertedByWeek.get(Number(w.week))||w);
 }
 function rowBar(rows,selected){
  const valid=rows.filter(r=>r.pf!=null);if(!valid.length)return `<div class="waiting" style="padding:14px">Waiting for season to start</div>`;
@@ -275,8 +268,8 @@ function renderLeagues(){
  const selected=$("#league-manager").value||DATA.managers[0].key;
  const leagues=[...DATA.seasons[YEAR].leagues].sort((a,b)=>String(a.name||"").localeCompare(String(b.name||"")));
  $("#league-list").innerHTML=leagues.map((l,i)=>{
-   const isolatedWeeks=weeklyRows(l.weeks||[]);
-   return `<article class="league-card" data-league="${esc(l.league_id)}"><div class="league-head"><div class="league-name-row"><div class="league-name">${esc(l.name)}</div><button class="expand" aria-label="Expand">⌄</button></div>${rowBar(l.totals,selected)}</div><div class="weeks">${isolatedWeeks.length?isolatedWeeks.map(w=>`<div class="week"><div class="week-title">WEEK ${w.week}</div>${rowBar(w.rows,selected)}</div>`).join(""):`<div class="waiting">Waiting for season to start</div>`}</div></article>`;
+   const displayWeeks=isolatedWeeklyRows(l.weeks||[]);
+   return `<article class="league-card" data-league="${esc(l.league_id)}"><div class="league-head"><div class="league-name-row"><div class="league-name">${esc(l.name)}</div><button class="expand" aria-label="Expand">⌄</button></div>${rowBar(l.totals,selected)}</div><div class="weeks">${displayWeeks.length?displayWeeks.map(w=>`<div class="week"><div class="week-title">WEEK ${w.week}</div>${rowBar(w.rows,selected)}</div>`).join(""):`<div class="waiting">Waiting for season to start</div>`}</div></article>`;
  }).join("");
  $$(".league-card .expand").forEach(b=>b.onclick=()=>{let card=b.closest(".league-card");card.classList.toggle("expanded");b.textContent=card.classList.contains("expanded")?"⌃":"⌄"});
  $$(".marker").forEach(b=>b.onclick=e=>{e.stopPropagation();$$(".popup").forEach(p=>p.remove());let p=document.createElement("div");p.className="popup";p.innerHTML=`<span class="label">Manager</span><strong>${esc(managerLabel(b.dataset.manager))}</strong>Points For: ${num2(b.dataset.pf)}<br>Points Against: ${b.dataset.pa?num2(b.dataset.pa):"—"}<br>Place: ${b.dataset.place||"—"}/4`;b.parentElement.appendChild(p);p.style.left=b.style.left;p.onclick=()=>p.remove()});
