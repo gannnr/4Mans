@@ -615,6 +615,13 @@ function wireChartExpansion(){
       btn.textContent=opening?"×":"↗";
       document.body.classList.toggle("no-scroll",opening);
       if(opening) panel.scrollTop=0;
+
+      // The wins chart is initially rendered before the panel becomes fullscreen.
+      // Re-render it AFTER fullscreen toggles so the manager selection,
+      // yellow border, and winning-league list are built immediately.
+      if(panel.dataset.chart==="wins"){
+        renderWinsChart(computeSummary(YEAR));
+      }
     };
     panel.onclick=toggle;
     btn.onclick=toggle;
