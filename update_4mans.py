@@ -188,7 +188,10 @@ def normalize_player(player_id, pdata):
     }
 
 def headshot_path(season, player_id):
-    return f"assets/players/{season}/{player_id}.jpg"
+    # One shared player-photo cache for every season. The annual image workflow
+    # refreshes these same files in place, so historical seasons use the latest
+    # cached headshot without duplicating images by year.
+    return f"assets/players/{player_id}.jpg"
 
 def fallback_headshot_path():
     return "assets/players/na.svg"
@@ -256,16 +259,14 @@ def add_places(rows):
 
 def fetch_stats_feed(season):
     """
-    Sleeper stats endpoints are not part of the main public docs and have changed shape
-    historically. Try known forms. Returning {} is safe: the app still refreshes leagues,
-    standings and ownership.
+    Fetch season player stats. Sleeper's stats API is separate from the main documented
+    league API, so keep multiple compatible URL shapes as fallbacks.
     """
-    urls = []
-    for base in STATS_BASES:
-        urls.extend([
-            f"{base}/stats/nfl/regular/{season}",
-            f"{base}/stats/nfl/{season}?season_type=regular",
-        ])
+    urls = [
+        f"https://api.sleeper.app/v1/stats/nfl/regular/{season}",
+        f"https://api.sleeper.com/stats/nfl/{season}?season_type=regular",
+        f"https://api.sleeper.com/stats/nfl/regular/{season}",
+    ]
 
     for url in urls:
         try:
@@ -277,6 +278,59 @@ def fetch_stats_feed(season):
             print(f"Stats feed fallback failed: {url} :: {e}")
     print(f"WARNING: no stats feed available for {season}")
     return {}
+
+def fetch_week_stats_feed(season, week):
+    """Fetch one NFL week's raw player stats from Sleeper's stats endpoint."""
+    urls = [
+        # Current Sleeper v1 stats shape used by community clients.
+        f"https://api.sleeper.app/v1/stats/nfl/regular/{season}/{week}",
+        # Older/alternate Sleeper stats host shape.
+        f"https://api.sleeper.com/stats/nfl/{season}/{week}?season_type=regular",
+        f"https://api.sleeper.com/stats/nfl/regular/{season}/{week}",
+    ]
+    for url in urls:
+        try:
+            data = get_json(url, tries=2, timeout=60)
+            if data:
+                print(f"Weekly stats feed OK: {season} W{week} :: {url}")
+                return data
+        except Exception as e:
+            print(f"Weekly stats fallback failed: {url} :: {e}")
+    return {}
+
+WEEK_STAT_KEYS = (
+    # Context / availability
+    "opp", "opponent", "home", "away", "game_id", "gp", "gs", "team",
+    # Passing
+    "pass_cmp", "pass_att", "pass_yd", "pass_yds", "pass_td", "pass_int", "pass_sack",
+    # Rushing
+    "rush_att", "rush_yd", "rush_yds", "rush_td",
+    # Receiving
+    "rec", "rec_tgt", "targets", "rec_yd", "rec_yds", "rec_td",
+    # Ball security / misc offense
+    "fum", "fum_lost", "two_pt", "pass_2pt", "rush_2pt", "rec_2pt",
+    # Kicking
+    "fgm", "fga", "fgmiss", "xpm", "xpa", "xpmiss", "fgm_long",
+    "fgm_0_19", "fgm_20_29", "fgm_30_39", "fgm_40_49", "fgm_50p",
+    "fgmiss_0_19", "fgmiss_20_29", "fgmiss_30_39", "fgmiss_40_49", "fgmiss_50p",
+    # IDP / team defense
+    "idp_tkl", "idp_tkl_solo", "idp_tkl_ast", "idp_sack", "idp_tkl_loss",
+    "idp_qb_hit", "idp_int", "idp_pass_def", "idp_ff", "idp_fum_rec", "idp_def_td",
+    "sack", "int", "fum_rec", "def_td", "pts_allow", "pa", "yds_allow",
+    "pass_yd_allow", "rush_yd_allow", "def_st_td", "def_kr_td", "def_pr_td",
+    "blk_kick", "safety",
+)
+
+def compact_week_stats(stats):
+    if not isinstance(stats, dict):
+        return {}
+    out = {}
+    for key in WEEK_STAT_KEYS:
+        if key in stats and stats[key] is not None:
+            val = stats[key]
+            if isinstance(val, (int, float, str, bool)):
+                out[key] = val
+    return out
 
 def stats_by_player(raw):
     """
@@ -365,7 +419,7 @@ def build():
     player_map = get_json(f"{API}/players/nfl", timeout=120)
 
     app = {
-        "version": 6,
+        "version": 8,
         "generated_at": now_iso(),
         "managers": [{"key": m["key"], "label": m["label"]} for m in MANAGERS],
         "assets": {
@@ -534,8 +588,19 @@ def build():
                     "ownership": own,
                 })
 
-        # Raw player stats.
+        # Raw season player stats plus compact week-by-week box-score stats for roster detail screens.
         raw_stats = stats_by_player(fetch_stats_feed(season))
+        active_weeks = sorted({int(w.get("week") or 0) for l in app_leagues for w in (l.get("weeks") or []) if int(w.get("week") or 0) > 0})
+        weekly_stats = {}
+        for wk in active_weeks:
+            raw_week = stats_by_player(fetch_week_stats_feed(season, wk))
+            filtered = {}
+            for pid in all_ids:
+                compact = compact_week_stats(raw_week.get(pid) or {})
+                if compact:
+                    filtered[pid] = compact
+            weekly_stats[str(wk)] = filtered
+
         stats_rows = []
         for pid in all_ids:
             meta = normalize_player(pid, player_map.get(pid) or {})
@@ -617,6 +682,7 @@ def build():
             "leagues": app_leagues,
             "ownership": ownership_rows,
             "stats": stats_rows,
+            "weekly_stats": weekly_stats,
             "player_directory": player_directory,
             "poll_history": poll_history,
         }
@@ -635,6 +701,7 @@ def build():
             "ownership=", len(data["ownership"]),
             "stats=", len(data["stats"]),
             "players=", len(data.get("player_directory") or {}),
+            "weekly_stats_weeks=", len(data.get("weekly_stats") or {}),
             "state=", data["summary"]["state"],
         )
 

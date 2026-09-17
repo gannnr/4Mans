@@ -336,7 +336,7 @@ function renderLeagues(){
    return `<article class="league-card" data-league="${esc(l.league_id)}"><div class="league-head"><div class="league-name-row"><div class="league-name">${esc(l.name)}</div><button class="expand" aria-label="Expand">⌄</button></div>${rowBar(l.totals,selected)}</div><div class="weeks">${displayWeeks.length?displayWeeks.map(w=>`<div class="week" data-league="${esc(l.league_id)}" data-week="${w.week}" role="button" tabindex="0" aria-label="Open Week ${w.week} roster"><div class="week-title">WEEK ${w.week}</div>${rowBar(w.rows,selected)}<div class="week-view-link">VIEW FULL ROSTER →</div></div>`).join(""):`<div class="waiting">Waiting for season to start</div>`}</div></article>`;
  }).join("");
  $$(".league-card .expand").forEach(b=>b.onclick=()=>{let card=b.closest(".league-card");card.classList.toggle("expanded");b.textContent=card.classList.contains("expanded")?"⌃":"⌄"});
- $$(".marker").forEach(b=>b.onclick=e=>{e.stopPropagation();$$(".popup").forEach(p=>p.remove());let p=document.createElement("div");p.className="popup";p.innerHTML=`<span class="label">Manager</span><strong>${esc(managerLabel(b.dataset.manager))}</strong>Points For: ${num2(b.dataset.pf)}<br>Points Against: ${b.dataset.pa?num2(b.dataset.pa):"—"}<br>Place: ${b.dataset.place||"—"}/4`;b.parentElement.appendChild(p);p.style.left=b.style.left;p.onclick=()=>p.remove()});
+ $$(".league-head .marker").forEach(b=>b.onclick=e=>{e.stopPropagation();$$(".popup").forEach(p=>p.remove());let p=document.createElement("div");p.className="popup";p.innerHTML=`<span class="label">Manager</span><strong>${esc(managerLabel(b.dataset.manager))}</strong>Points For: ${num2(b.dataset.pf)}<br>Points Against: ${b.dataset.pa?num2(b.dataset.pa):"—"}<br>Place: ${b.dataset.place||"—"}/4`;b.parentElement.appendChild(p);p.style.left=b.style.left;p.onclick=()=>p.remove()});
  $$(".week[data-league]").forEach(w=>{
    const open=()=>openWeekDetail(w.dataset.league,Number(w.dataset.week));
    w.onclick=open;
@@ -346,9 +346,9 @@ function renderLeagues(){
 
 let WEEK_DETAIL={leagueId:null,week:null,manager:null};
 function seasonData(){return DATA.seasons[YEAR]||{}}
-function playerMeta(pid){return (seasonData().player_directory||{})[String(pid)]||{player_id:String(pid),player:String(pid),team:"",position:"",headshot:"assets/players/na.svg",headshot_fallback:"assets/players/na.svg"}}
+function playerMeta(pid){return (seasonData().player_directory||{})[String(pid)]||{player_id:String(pid),player:String(pid),team:"",position:"",headshot:`assets/players/${String(pid)}.jpg`,headshot_fallback:"assets/players/na.svg"}}
 function weekStats(week,pid){return (((seasonData().weekly_stats||{})[String(week)]||{})[String(pid)]||{})}
-function imageHtml(meta,cls){const src=meta.headshot||`assets/players/${YEAR}/${meta.player_id}.jpg`;const fallback=meta.headshot_fallback||DATA.assets?.player_headshot_fallback||"assets/players/na.svg";return `<img src="${esc(src)}" alt="${esc(meta.player)}" onerror="this.onerror=null;this.src='${esc(fallback)}'">`}
+function imageHtml(meta,cls){const src=meta.headshot||`assets/players/${meta.player_id}.jpg`;const fallback=meta.headshot_fallback||DATA.assets?.player_headshot_fallback||"assets/players/na.svg";return `<img src="${esc(src)}" alt="${esc(meta.player)}" onerror="this.onerror=null;this.src='${esc(fallback)}'">`}
 function opponentText(stats){const opp=stats.opp||stats.opponent||"";if(!opp)return "Opponent —";if(stats.home===true||stats.home===1||stats.home==="1")return `vs ${opp}`;if(stats.away===true||stats.away===1||stats.away==="1")return `@ ${opp}`;return `vs/@ ${opp}`}
 function openWeekDetail(leagueId,week){
  const season=seasonData(),league=(season.leagues||[]).find(l=>String(l.league_id)===String(leagueId));if(!league)return;
@@ -374,8 +374,8 @@ const STAT_SCHEMAS={
  RB:[{title:"RUSHING",items:[["rush_att","RUSH ATT"],["rush_yd","RUSH YDS"],["rush_td","RUSH TD"]]},{title:"RECEIVING",items:[["rec_tgt","TARGETS"],["rec","REC"],["rec_yd","REC YDS"],["rec_td","REC TD"]]}],
  WR:[{title:"RECEIVING",items:[["rec_tgt","TARGETS"],["rec","REC"],["rec_yd","REC YDS"],["rec_td","REC TD"]]},{title:"RUSHING",items:[["rush_att","RUSH ATT"],["rush_yd","RUSH YDS"],["rush_td","RUSH TD"]]}],
  TE:[{title:"RECEIVING",items:[["rec_tgt","TARGETS"],["rec","REC"],["rec_yd","REC YDS"],["rec_td","REC TD"]]},{title:"RUSHING",items:[["rush_att","RUSH ATT"],["rush_yd","RUSH YDS"],["rush_td","RUSH TD"]]}],
- K:[{title:"KICKING",items:[["fgm","FG MADE"],["fga","FG ATT"],["xpm","XP MADE"],["xpa","XP ATT"],["fgm_40_49","FG 40-49"],["fgm_50p","FG 50+"]]}],
- DEF:[{title:"DEFENSE",items:[["sack","SACKS"],["int","INT"],["fum_rec","FUM REC"],["def_td","DEF TD"],["pts_allow","PTS ALLOWED"],["safety","SAFETY"]]}],
+ K:[{title:"KICKING",items:[["fgm","FG MADE"],["fga","FG ATT"],["xpm","XP MADE"],["xpa","XP ATT"],["fgm_40_49","FG 40-49"],["fgm_50p","FG 50+"],["fgm_long","LONG FG"]]}],
+ DEF:[{title:"DEFENSE",items:[["sack","SACKS"],["int","INT"],["fum_rec","FUM REC"],["def_td","DEF TD"],["pts_allow","PTS ALLOWED"],["yds_allow","YDS ALLOWED"],["blk_kick","BLOCKED KICK"],["safety","SAFETY"]]}],
  IDP:[{title:"DEFENSE",items:[["idp_tkl","TACKLES"],["idp_tkl_solo","SOLO"],["idp_tkl_ast","ASSISTS"],["idp_sack","SACKS"],["idp_tkl_loss","TFL"],["idp_qb_hit","QB HITS"],["idp_int","INT"],["idp_pass_def","PASS DEF"],["idp_ff","FF"],["idp_fum_rec","FR"],["idp_def_td","DEF TD"]]}]
 };
 function statVal(stats,key){if(stats[key]!=null)return stats[key];const aliases={pass_yd:"pass_yds",rush_yd:"rush_yds",rec_yd:"rec_yds",rec_tgt:"targets"};return aliases[key]&&stats[aliases[key]]!=null?stats[aliases[key]]:null}

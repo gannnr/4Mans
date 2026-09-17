@@ -1,15 +1,17 @@
 #!/usr/bin/env python3
 """
-Download and freeze Sleeper player headshots for the current season.
+Download and refresh one shared Sleeper player-headshot cache for all seasons.
 
 Usage examples:
   python refresh_player_images.py
   python refresh_player_images.py --season 2026
   python refresh_player_images.py --season 2026 --limit 50
+  python refresh_player_images.py --season 2026 --refresh-existing
 
 This script is designed for GitHub Actions and uses only the Python standard library.
 It reads player IDs from 4mans_app_data.json when available so it only downloads the
-players relevant to 4MANS.
+players relevant to 4MANS. Images are stored once at assets/players/<player_id>.jpg
+and reused by every historical season.
 """
 
 import argparse
@@ -66,7 +68,7 @@ def fetch_bytes(url, timeout=45):
 
 def ensure_fallback(out_dir: Path):
     out_dir.mkdir(parents=True, exist_ok=True)
-    na = out_dir.parent / "na.svg"
+    na = out_dir / "na.svg"
     if not na.exists() or na.read_text(encoding="utf-8") != FALLBACK_SVG:
         na.write_text(FALLBACK_SVG, encoding="utf-8")
     return na
@@ -77,14 +79,18 @@ def load_target_player_ids(season: str, app_path="4mans_app_data.json"):
     if path.exists():
         try:
             app = json.loads(path.read_text(encoding="utf-8"))
-            s = ((app.get("seasons") or {}).get(str(season)) or {})
-            pdir = s.get("player_directory") or {}
-            if pdir:
-                return sorted(pdir.keys(), key=lambda x: (not str(x).isdigit(), str(x)))
-            ownership = s.get("ownership") or []
-            ids = sorted({str(r.get("player_id")) for r in ownership if r.get("player_id")})
+            seasons = app.get("seasons") or {}
+            # Shared cache: include every player referenced by every season so historical
+            # roster screens can use the same current headshot files.
+            ids = set()
+            for s in seasons.values():
+                pdir = (s or {}).get("player_directory") or {}
+                ids.update(str(pid) for pid in pdir.keys())
+                for r in ((s or {}).get("ownership") or []):
+                    if r.get("player_id"):
+                        ids.add(str(r.get("player_id")))
             if ids:
-                return ids
+                return sorted(ids, key=lambda x: (not str(x).isdigit(), str(x)))
         except Exception:
             pass
     # Fallback: use all active players from Sleeper (much larger).
@@ -112,10 +118,15 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--season", default=str(datetime.now(timezone.utc).year))
     parser.add_argument("--limit", type=int, default=0)
+    parser.add_argument(
+        "--refresh-existing",
+        action="store_true",
+        help="Re-download existing cached headshots instead of skipping them.",
+    )
     args = parser.parse_args()
 
     season = str(args.season)
-    out_dir = Path("assets") / "players" / season
+    out_dir = Path("assets") / "players"
     ensure_fallback(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
@@ -133,7 +144,8 @@ def main():
 
     manifest = {
         "generated_at": now_iso(),
-        "season": season,
+        "source_season": season,
+        "storage": "shared",
         "headshot_fallback": "assets/players/na.svg",
         "players": {},
     }
@@ -143,9 +155,9 @@ def main():
     skipped = 0
     for i, pid in enumerate(player_ids, 1):
         out_file = out_dir / f"{pid}.jpg"
-        if out_file.exists() and out_file.stat().st_size > 128:
+        if (not args.refresh_existing) and out_file.exists() and out_file.stat().st_size > 128:
             manifest["players"][pid] = {
-                "path": f"assets/players/{season}/{pid}.jpg",
+                "path": f"assets/players/{pid}.jpg",
                 "status": "cached",
                 "source": (prior_manifest.get("players") or {}).get(pid, {}).get("source", ""),
             }
@@ -155,8 +167,8 @@ def main():
         source = download_headshot(pid, out_file)
         if source:
             manifest["players"][pid] = {
-                "path": f"assets/players/{season}/{pid}.jpg",
-                "status": "downloaded",
+                "path": f"assets/players/{pid}.jpg",
+                "status": "refreshed" if args.refresh_existing else "downloaded",
                 "source": source,
             }
             ok += 1
@@ -176,7 +188,9 @@ def main():
     manifest_path.write_text(json.dumps(manifest, separators=(",", ":"), ensure_ascii=False), encoding="utf-8")
 
     print("\nHeadshot refresh complete")
-    print("season:", season)
+    print("source season:", season)
+    print("shared cache:", out_dir)
+    print("refresh existing:", args.refresh_existing)
     print("target players:", len(player_ids))
     print("downloaded:", ok)
     print("already cached:", skipped)
