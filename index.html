@@ -92,7 +92,7 @@ svg{width:100%;height:auto;display:block}
 .chart-panel.fullscreen[data-chart="wins"] .wins-detail{display:block}
 .chart-panel.fullscreen[data-chart="wins"] .bar-chart{height:45vh;max-height:390px}
 .chart-panel.fullscreen[data-chart="wins"] .bar-col{cursor:pointer}
-.chart-panel.fullscreen[data-chart="wins"] .bar.selected-win-bar .bar-fill{
+.chart-panel.fullscreen[data-chart="wins"] .bar-col.selected-win-bar .bar-fill{
   outline:4px solid #e3b92f;outline-offset:0;box-shadow:0 0 0 3px rgba(227,185,47,.15)
 }
 .bar-fill{width:100%;height:100%;border-radius:8px 8px 3px 3px}
@@ -278,22 +278,53 @@ function winningLeaguesFor(manager){
 }
 function renderWinsChart(s){
  const panel=document.querySelector('.chart-panel[data-chart="wins"]');
- const full=!!panel?.classList.contains("fullscreen");
- if(!WIN_DETAIL_MANAGER||!DATA.managers.some(m=>m.key===WIN_DETAIL_MANAGER)) WIN_DETAIL_MANAGER=DATA.managers[0]?.key||null;
+ if(!WIN_DETAIL_MANAGER||!DATA.managers.some(m=>m.key===WIN_DETAIL_MANAGER)){
+   WIN_DETAIL_MANAGER=DATA.managers[0]?.key||null;
+ }
+
  const maxWins=Math.max(1,...Object.values(s.wins||{}));
+
+ // Always mark the selected manager in the generated DOM.
+ // Compact mode simply hides the drilldown via CSS.
  const bars=DATA.managers.map(m=>{
    const v=s.wins[m.key]||0;
-   const sel=full&&m.key===WIN_DETAIL_MANAGER?" selected-win-bar":"";
-   return `<div class="bar-col${sel}" data-win-manager="${esc(m.key)}"><div class="bar-value">${v}</div><div class="bar" style="height:${Math.max(3,120*v/maxWins)}px;background:transparent"><div class="bar-fill" style="background:${COLORS[m.key]}"></div></div><div class="bar-label">${esc(m.label)}</div></div>`;
+   const sel=m.key===WIN_DETAIL_MANAGER?" selected-win-bar":"";
+   return `<div class="bar-col${sel}" data-win-manager="${esc(m.key)}">
+     <div class="bar-value">${v}</div>
+     <div class="bar" style="height:${Math.max(3,120*v/maxWins)}px;background:transparent">
+       <div class="bar-fill" style="background:${COLORS[m.key]}"></div>
+     </div>
+     <div class="bar-label">${esc(m.label)}</div>
+   </div>`;
  }).join("");
+
  let detail="";
- if(full&&WIN_DETAIL_MANAGER){
+ if(WIN_DETAIL_MANAGER){
    const m=DATA.managers.find(x=>x.key===WIN_DETAIL_MANAGER)||{key:WIN_DETAIL_MANAGER,label:WIN_DETAIL_MANAGER};
    const leagues=winningLeaguesFor(m.key);
-   detail=`<div class="wins-detail"><div class="wins-detail-head"><div class="win-manager-avatar">${managerImageHtml(m.key,m.label)}</div><div><div class="wins-detail-name">${esc(m.label)}</div><div class="wins-detail-count">${leagues.length} LEAGUES CURRENTLY WINNING</div></div></div>${leagues.length?leagues.map(x=>`<div class="win-league-row">${leagueImageHtml(x.league,"win-league-logo")}<div><div class="win-league-name">${esc(x.league.name)}</div><div class="win-league-meta">CURRENTLY 1ST</div></div><div class="win-league-pts">${Math.round(x.pf)}<small>PTS</small></div></div>`).join(""):`<div class="waiting">No leagues currently in 1st.</div>`}</div>`;
+   detail=`<div class="wins-detail">
+     <div class="wins-detail-head">
+       <div class="win-manager-avatar">${managerImageHtml(m.key,m.label)}</div>
+       <div>
+         <div class="wins-detail-name">${esc(m.label)}</div>
+         <div class="wins-detail-count">${leagues.length} LEAGUES CURRENTLY WINNING</div>
+       </div>
+     </div>
+     ${leagues.length?leagues.map(x=>`<div class="win-league-row">
+       ${leagueImageHtml(x.league,"win-league-logo")}
+       <div>
+         <div class="win-league-name">${esc(x.league.name)}</div>
+         <div class="win-league-meta">CURRENTLY 1ST</div>
+       </div>
+       <div class="win-league-pts">${Math.round(x.pf)}<small>PTS</small></div>
+     </div>`).join(""):`<div class="waiting">No leagues currently in 1st.</div>`}
+   </div>`;
  }
+
  $("#wins-chart").innerHTML=`<div class="bar-chart">${bars}</div>${detail}`;
+
  $$('#wins-chart [data-win-manager]').forEach(el=>el.onclick=e=>{
+   // In compact mode, let the parent chart open fullscreen.
    if(!panel?.classList.contains("fullscreen")) return;
    e.stopPropagation();
    WIN_DETAIL_MANAGER=el.dataset.winManager;
@@ -623,7 +654,10 @@ function wireChartExpansion(){
         renderWinsChart(computeSummary(YEAR));
       }
     };
-    panel.onclick=toggle;
+    panel.onclick=e=>{
+      // Tapping the compact chart opens it. Once fullscreen, only the X closes it.
+      if(!panel.classList.contains("fullscreen")) toggle(e);
+    };
     btn.onclick=toggle;
   });
   document.addEventListener("keydown",e=>{
