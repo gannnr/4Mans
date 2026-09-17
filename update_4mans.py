@@ -56,6 +56,30 @@ DEFENSE_POS = {
 def now_iso():
     return datetime.now(timezone.utc).isoformat()
 
+def load_previous_app(path="4mans_app_data.json"):
+    """Load the last generated file so poll history survives each rebuild."""
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        return data if isinstance(data, dict) else {}
+    except Exception:
+        return {}
+
+def current_winnings_snapshot(app_leagues):
+    """Same +$15 / -$5 standings logic used by the browser."""
+    current = {m["key"]: 0 for m in MANAGERS}
+    wins = {m["key"]: 0 for m in MANAGERS}
+    for league in app_leagues:
+        for row in league.get("totals") or []:
+            mgr = row.get("manager")
+            place = row.get("place")
+            if mgr is None or place is None:
+                continue
+            current[mgr] = current.get(mgr, 0) + (15 if int(place) == 1 else -5)
+            if int(place) == 1:
+                wins[mgr] = wins.get(mgr, 0) + 1
+    return current, wins
+
 def get_json(url, tries=3, timeout=45):
     last = None
     for attempt in range(tries):
@@ -162,6 +186,12 @@ def normalize_player(player_id, pdata):
         "fantasy_positions": fantasy_positions,
         "side": side,
     }
+
+def headshot_path(season, player_id):
+    return f"assets/players/{season}/{player_id}.jpg"
+
+def fallback_headshot_path():
+    return "assets/players/na.svg"
 
 def get_matchup_week(league_id, week):
     rows = get_json(f"{API}/league/{league_id}/matchups/{week}")
@@ -323,6 +353,7 @@ def app_stat_row(meta, stats, ownership, fpts_all, fpts_by_manager):
 
 def build():
     print("4MANS refresh started", now_iso())
+    previous_app = load_previous_app()
 
     user = get_json(f"{API}/user/{urllib.parse.quote(USERNAME)}")
     user_id = str(user["user_id"])
@@ -334,9 +365,13 @@ def build():
     player_map = get_json(f"{API}/players/nfl", timeout=120)
 
     app = {
-        "version": 4,
+        "version": 6,
         "generated_at": now_iso(),
         "managers": [{"key": m["key"], "label": m["label"]} for m in MANAGERS],
+        "assets": {
+            "player_headshots_root": "assets/players",
+            "player_headshot_fallback": fallback_headshot_path(),
+        },
         "seasons": {},
     }
 
@@ -418,7 +453,26 @@ def build():
                         old = player_league_points[pid][mgr].get(lid, 0.0)
                         player_league_points[pid][mgr][lid] = old + safe_num(pts)
 
-                # Weekly displayed PF is cumulative-through-week in the Leagues page.
+                # Weekly detail rows hold the actual weekly roster snapshot, while display_rows
+                # remain cumulative-through-week for the current Leagues screen behavior.
+                add_places(rows)
+                detail_rows = []
+                for row in rows:
+                    starter_set = set(row.get("starters") or [])
+                    players = [str(pid) for pid in (row.get("players") or [])]
+                    starters = [str(pid) for pid in (row.get("starters") or [])]
+                    bench = [pid for pid in players if pid not in starter_set]
+                    detail_rows.append({
+                        "manager": row["manager"],
+                        "pf": round(safe_num(row.get("pf")), 2),
+                        "pa": round(safe_num(row.get("pa")), 2) if row.get("pa") is not None else None,
+                        "place": row.get("place"),
+                        "players": players,
+                        "starters": starters,
+                        "bench": bench,
+                        "players_points": {str(k): round(safe_num(v), 2) for k, v in (row.get("players_points") or {}).items()},
+                    })
+
                 display_rows = []
                 for m in MANAGERS:
                     key = m["key"]
@@ -429,7 +483,7 @@ def build():
                             "pa": round(cumulative_pa[key], 2),
                         })
                 add_places(display_rows)
-                weeks.append({"week": week, "rows": display_rows})
+                weeks.append({"week": week, "rows": display_rows, "rosters": detail_rows})
 
             # Current / season totals. Prefer accumulated matchup data when available.
             totals = []
@@ -476,6 +530,7 @@ def build():
                     "player": meta["player"],
                     "position": meta["position"],
                     "team": meta["team"],
+                    "side": meta["side"],
                     "ownership": own,
                 })
 
@@ -507,11 +562,52 @@ def build():
                 by_mgr,
             ))
 
+        player_directory = {}
+        for pid in all_ids:
+            meta = normalize_player(pid, player_map.get(pid) or {})
+            player_directory[pid] = {
+                "player_id": pid,
+                "player": meta["player"],
+                "team": meta["team"],
+                "position": meta["position"],
+                "fantasy_positions": meta["fantasy_positions"],
+                "side": meta["side"],
+                "headshot": headshot_path(season, pid),
+                "headshot_fallback": fallback_headshot_path(),
+            }
+
+        previous_history = (
+            ((previous_app.get("seasons") or {}).get(season) or {}).get("poll_history")
+            or []
+        )
+        poll_history = [h for h in previous_history if isinstance(h, dict)]
+
+        # Save every automated refresh as a standings snapshot for the current season.
+        # This gives the front end a true intra-week timeline instead of one point/week.
+        if season == str(CURRENT_YEAR) and any_scored_week:
+            current_winnings, winning_leagues = current_winnings_snapshot(app_leagues)
+            latest_week = max(
+                [int(w.get("week") or 0) for l in app_leagues for w in (l.get("weeks") or [])]
+                or [0]
+            )
+            snapshot = {
+                "timestamp": now_iso(),
+                "week": latest_week,
+                "winnings": current_winnings,
+                "winning_leagues": winning_leagues,
+            }
+
+            # Avoid exact duplicate timestamps if a workflow is accidentally retried.
+            if not poll_history or poll_history[-1].get("timestamp") != snapshot["timestamp"]:
+                poll_history.append(snapshot)
+
+            # Plenty for an NFL season at 5-minute game-window polling while keeping JSON sane.
+            poll_history = poll_history[-12000:]
+
         app["seasons"][season] = {
             "summary": {
                 "state": "active_or_complete" if any_scored_week else "preseason",
-                # Kept for backwards compatibility with index.html.
-                # Current index recalculates winnings from league totals.
+                # Kept for backwards compatibility with older index.html versions.
                 "current_winnings": {m["key"]: 0 for m in MANAGERS},
                 "winning_leagues": {m["key"]: 0 for m in MANAGERS},
                 "weekly_winnings": {},
@@ -521,6 +617,8 @@ def build():
             "leagues": app_leagues,
             "ownership": ownership_rows,
             "stats": stats_rows,
+            "player_directory": player_directory,
+            "poll_history": poll_history,
         }
 
     tmp = "4mans_app_data.json.tmp"
@@ -536,6 +634,7 @@ def build():
             "leagues=", len(data["leagues"]),
             "ownership=", len(data["ownership"]),
             "stats=", len(data["stats"]),
+            "players=", len(data.get("player_directory") or {}),
             "state=", data["summary"]["state"],
         )
 
