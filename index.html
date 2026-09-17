@@ -103,6 +103,130 @@ svg{width:100%;height:auto;display:block}
 .win-league-meta{font-size:9px;font-weight:900;color:var(--muted);letter-spacing:.06em;margin-top:3px}
 .win-league-pts{text-align:right;font-size:16px;font-weight:950;white-space:nowrap}.win-league-pts small{display:block;font-size:8px;color:var(--muted);letter-spacing:.08em;margin-top:2px}
 
+
+/* ===== Total Standings v11 redesign ===== */
+.year-go:disabled{opacity:.42;box-shadow:none;cursor:default}
+
+#standings-screen .section-title{margin-bottom:13px}
+#standings-screen .manager-cards{gap:9px}
+#standings-screen .manager-card{
+  position:relative;overflow:hidden;border-radius:17px;padding:11px 11px 10px;
+  min-height:132px
+}
+#standings-screen .manager-card .stand-accent{
+  position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--mgr-color)
+}
+.stand-manager-top{display:flex;align-items:center;gap:8px;min-width:0}
+.stand-avatar{
+  width:36px;height:36px;border-radius:50%;overflow:hidden;flex:0 0 36px;
+  border:1px solid var(--line);background:#f2f2ef
+}
+.stand-avatar img{width:100%;height:100%;object-fit:cover;display:block}
+.stand-manager-copy{min-width:0}
+#standings-screen .manager-card .name{
+  font-size:12px;font-weight:950;white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+}
+.stand-rank{font-size:8px;font-weight:900;letter-spacing:.08em;color:var(--muted);margin-top:2px}
+#standings-screen .manager-card .money{font-size:27px;font-weight:950;margin-top:10px;line-height:1}
+.stand-mini{
+  display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:9px;padding-top:8px;
+  border-top:1px solid #ecebe6
+}
+.stand-mini-label{font-size:7px;font-weight:900;letter-spacing:.07em;color:#888a86}
+.stand-mini-value{font-size:11px;font-weight:950;margin-top:2px}
+
+#standings-screen .panel{border-radius:17px;padding:12px;margin-top:11px}
+#standings-screen .panel-title{text-align:left;margin:2px 40px 8px 2px}
+#standings-screen .expand-chart{
+  right:8px;top:7px;width:34px;height:34px;border-radius:10px;background:#f5f4ef;padding:0
+}
+#standings-screen .bar-chart{height:160px;padding-top:8px}
+#standings-screen .chart-panel.fullscreen{
+  padding:calc(18px + env(safe-area-inset-top)) 16px calc(24px + env(safe-area-inset-bottom))
+}
+#standings-screen .chart-panel.fullscreen .panel-title{
+  text-align:center;font-size:16px;letter-spacing:.12em;margin:12px 52px 18px
+}
+#standings-screen .chart-panel.fullscreen .expand-chart{
+  position:fixed;right:18px;top:calc(12px + env(safe-area-inset-top));
+  width:44px;height:44px;background:#fff
+}
+
+/* Compact Winnings Race */
+.race-compact{display:grid;gap:8px;margin-top:4px}
+.race-summary-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:3px}
+.race-summary-item{background:#f6f6f3;border-radius:10px;padding:7px 7px}
+.race-summary-label{font-size:7px;font-weight:900;letter-spacing:.07em;color:#888a86}
+.race-summary-value{font-size:11px;font-weight:950;margin-top:2px;white-space:nowrap}
+.race-row{display:grid;grid-template-columns:30px minmax(0,1fr) 55px;align-items:center;gap:7px}
+.race-name{font-size:9px;font-weight:950}
+.race-track{height:7px;border-radius:999px;background:#ecece8;overflow:hidden}
+.race-fill{height:100%;border-radius:999px;background:var(--mgr-color);width:var(--race-width)}
+.race-value{text-align:right;font-size:11px;font-weight:950}
+.race-tap-note{text-align:center;font-size:8px;font-weight:800;color:var(--muted);margin-top:3px}
+
+/* Expanded Winnings Race */
+.winnings-full{display:none}
+.chart-panel.fullscreen[data-chart="line"] .winnings-compact{display:none}
+.chart-panel.fullscreen[data-chart="line"] .winnings-full{display:block}
+.winnings-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:0 0 12px}
+.winnings-summary-card{background:#fff;border:1px solid var(--line);border-radius:13px;padding:9px 7px;min-width:0}
+.winnings-summary-name{font-size:8px;font-weight:950;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.winnings-summary-value{font-size:16px;font-weight:950;margin-top:3px;white-space:nowrap}
+.winnings-summary-rank{font-size:7px;font-weight:900;letter-spacing:.07em;color:#8a8b87;margin-top:2px}
+.winnings-chart-card{background:#fff;border:1px solid var(--line);border-radius:17px;padding:12px;box-shadow:var(--shadow)}
+.winnings-chart-kicker{font-size:10px;font-weight:950;letter-spacing:.10em;color:var(--muted);margin-bottom:8px}
+.winnings-chart-card svg{height:auto;max-height:none!important}
+.winnings-legend{display:grid;grid-template-columns:1fr 1fr;gap:7px 10px;margin-top:7px}
+.winnings-legend span{font-size:9px;font-weight:900;color:var(--muted)}
+.week-snapshot{margin-top:12px;background:#fff;border:1px solid var(--line);border-radius:17px;overflow:hidden}
+.week-snapshot-head{padding:10px 12px;font-size:9px;font-weight:950;letter-spacing:.10em;color:var(--muted);border-bottom:1px solid #e6e5e0}
+.week-snapshot-row{
+  display:grid;grid-template-columns:44px repeat(4,minmax(0,1fr));gap:4px;
+  padding:9px 10px;border-bottom:1px solid #ecebe6;font-size:9px;align-items:center
+}
+.week-snapshot-row:last-child{border-bottom:0}
+.week-snapshot-row .wk{font-weight:950;color:var(--muted)}
+.week-snapshot-row .val{text-align:center;font-weight:900}
+
+/* Points Battle */
+.points-compact,.points-full-visual{display:grid;gap:10px}
+.points-row{display:grid;grid-template-columns:30px minmax(0,1fr) 58px;align-items:center;gap:7px}
+.points-name{font-size:9px;font-weight:950}
+.points-track{position:relative;height:14px;border-radius:999px;background:#ecece8}
+.points-range{position:absolute;top:6px;height:2px;left:var(--left);right:var(--right);background:var(--mgr-color)}
+.points-dot{
+  position:absolute;top:50%;width:13px;height:13px;border-radius:50%;
+  transform:translate(-50%,-50%);border:2px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.08)
+}
+.points-diff{text-align:right;font-size:11px;font-weight:950}
+.points-diff.pos{color:var(--green)}.points-diff.neg{color:var(--red)}
+.points-legend{display:flex;justify-content:center;gap:14px;font-size:8px;font-weight:900;color:var(--muted);margin-top:2px}
+.points-legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px;vertical-align:-1px}
+.points-table{display:none;margin-top:13px;background:#fff;border:1px solid var(--line);border-radius:17px;overflow:hidden}
+.chart-panel.fullscreen[data-chart="pfpa"] .points-table{display:block}
+.chart-panel.fullscreen[data-chart="pfpa"] .points-full-shell{
+  background:#fff;border:1px solid var(--line);border-radius:17px;padding:14px;box-shadow:var(--shadow)
+}
+.points-table-head,.points-table-row{
+  display:grid;grid-template-columns:minmax(0,1fr) 65px 65px 65px;gap:4px;align-items:center
+}
+.points-table-head{padding:10px 11px;border-bottom:1px solid #e6e5e0;font-size:7px;font-weight:950;color:#888a86;letter-spacing:.07em}
+.points-table-row{padding:10px 11px;border-bottom:1px solid #ecebe6}
+.points-table-row:last-child{border-bottom:0}
+.points-table-name{font-size:10px;font-weight:950;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.points-table-num{text-align:right;font-size:10px;font-weight:900}
+.points-rank-pill{display:inline-flex;border-radius:999px;background:#f2f2ef;padding:2px 5px;font-size:7px;font-weight:950;margin-left:3px}
+.points-note{text-align:center;font-size:8px;font-weight:800;color:var(--muted);margin-top:9px}
+
+@media(max-width:390px){
+  #standings-screen .manager-card{padding:10px 9px 9px}
+  .stand-avatar{width:32px;height:32px;flex-basis:32px}
+  #standings-screen .manager-card .money{font-size:25px}
+  .stand-mini-label{font-size:6.5px}
+  .winnings-summary-value{font-size:14px}
+}
+
 </style>
 </head>
 <body>
@@ -110,8 +234,8 @@ svg{width:100%;height:auto;display:block}
 <section id="year-screen" class="screen active hero">
   <div class="brand">4MANS</div>
   <div class="tag">4 Man best ball leagues for my mans</div>
-  <select id="year-select" class="yearbox" aria-label="Select league year"><option>2025</option><option selected>2026</option></select>
-  <button class="menu-btn" style="margin-top:14px" id="enter-year">ENTER</button>
+  <select id="year-select" class="yearbox" aria-label="Select league year"><option value="" selected disabled>SELECT YEAR</option></select>
+  <button class="menu-btn year-go" style="margin-top:14px" id="enter-year" disabled>GO</button>
 </section>
 
 <section id="menu-screen" class="screen">
@@ -128,8 +252,8 @@ svg{width:100%;height:auto;display:block}
   <div class="section-title">TOTAL STANDINGS</div>
   <div id="stand-cards" class="manager-cards"></div>
   <div class="panel chart-panel" data-chart="wins"><button class="expand-chart" aria-label="Expand chart">↗</button><div class="panel-title">LEAGUES CURRENTLY WINNING</div><div id="wins-chart"></div></div>
-  <div class="panel chart-panel" data-chart="line"><button class="expand-chart" aria-label="Expand chart">↗</button><div class="panel-title">WINNINGS BY WEEK</div><div id="line-chart"></div></div>
-  <div class="panel chart-panel" data-chart="pfpa"><button class="expand-chart" aria-label="Expand chart">↗</button><div class="panel-title">TOTAL POINTS FOR / AGAINST</div><div id="pfpa-chart"></div></div>
+  <div class="panel chart-panel" data-chart="line"><button class="expand-chart" aria-label="Expand chart">↗</button><div class="panel-title">WINNINGS RACE</div><div id="line-chart"></div></div>
+  <div class="panel chart-panel" data-chart="pfpa"><button class="expand-chart" aria-label="Expand chart">↗</button><div class="panel-title">POINTS BATTLE</div><div id="pfpa-chart"></div></div>
 </section>
 
 <section id="leagues-screen" class="screen">
@@ -206,6 +330,8 @@ const decFmt=new Intl.NumberFormat("en-US",{minimumFractionDigits:2,maximumFract
 function num(v){return intFmt.format(Number(v||0))}
 function num2(v){return decFmt.format(Number(v||0))}
 function money(v){const n=Math.round(Number(v||0));return `${n>=0?"+":"-"}$${intFmt.format(Math.abs(n))}`}
+function signedNum(v){const n=Math.round(Number(v||0));return `${n>=0?"+":"-"}${intFmt.format(Math.abs(n))}`}
+function ordinal(n){n=Number(n||0);if(n===1)return "1ST";if(n===2)return "2ND";if(n===3)return "3RD";return `${n}TH`}
 function placeWinnings(place){return Number(place)===1?15:-5}
 function computeSummary(year){
  const season=DATA.seasons[year], summary=season.summary||{};
@@ -254,6 +380,17 @@ function computeSummary(year){
 
  return {state:summary.state||"active_or_complete", current, wins, weekly, history:season.poll_history||[], points_for:summary.points_for||{}, points_against:summary.points_against||{}};
 }
+
+function initYearSelector(){
+  const years=Object.keys(DATA.seasons||{}).sort((a,b)=>Number(b)-Number(a));
+  const sel=$("#year-select");
+  sel.innerHTML=`<option value="" selected disabled>SELECT YEAR</option>`+
+    years.map(y=>`<option value="${esc(y)}">${esc(y)}</option>`).join("");
+  sel.value="";
+  $("#enter-year").disabled=true;
+  sel.onchange=()=>{$("#enter-year").disabled=!sel.value};
+}
+
 function initSelectors(){
   const opts=DATA.managers.map(m=>`<option value="${m.key}">${m.label}</option>`).join("");
   $("#league-manager").innerHTML=opts;
@@ -262,8 +399,35 @@ function initSelectors(){
 }
 function renderStandings(){
  const s=computeSummary(YEAR),pre=s.state==="preseason";
- $("#stand-cards").innerHTML=DATA.managers.map(m=>{const v=s.current[m.key]||0;return `<div class="manager-card"><div class="name">${m.label}</div><div class="money ${pre?"":(v>=0?"pos":"neg")}">${pre?"—":money(v)}</div></div>`}).join("");
- if(pre){$("#wins-chart").innerHTML=$("#line-chart").innerHTML=$("#pfpa-chart").innerHTML=`<div class="waiting">Waiting for season to start</div>`;return}
+ const ranked=[...DATA.managers].sort((a,b)=>(Number(s.current[b.key]||0)-Number(s.current[a.key]||0)));
+ const rankMap=Object.fromEntries(ranked.map((m,i)=>[m.key,i+1]));
+ const pf=s.points_for||{},pa=s.points_against||{};
+
+ $("#stand-cards").innerHTML=DATA.managers.map(m=>{
+   const v=Number(s.current[m.key]||0);
+   const wins=Number(s.wins[m.key]||0);
+   const diff=Number(pf[m.key]||0)-Number(pa[m.key]||0);
+   return `<div class="manager-card" style="--mgr-color:${COLORS[m.key]||"#777"}">
+     <div class="stand-accent"></div>
+     <div class="stand-manager-top">
+       <div class="stand-avatar">${managerImageHtml(m.key,m.label)}</div>
+       <div class="stand-manager-copy">
+         <div class="name">${esc(m.label)}</div>
+         <div class="stand-rank">${pre?"—":ordinal(rankMap[m.key])+" OVERALL"}</div>
+       </div>
+     </div>
+     <div class="money ${pre?"":(v>=0?"pos":"neg")}">${pre?"—":money(v)}</div>
+     <div class="stand-mini">
+       <div><div class="stand-mini-label">LEAGUES 1ST</div><div class="stand-mini-value">${pre?"—":wins}</div></div>
+       <div><div class="stand-mini-label">POINT DIFF</div><div class="stand-mini-value">${pre?"—":signedNum(diff)}</div></div>
+     </div>
+   </div>`;
+ }).join("");
+
+ if(pre){
+   $("#wins-chart").innerHTML=$("#line-chart").innerHTML=$("#pfpa-chart").innerHTML=`<div class="waiting">Waiting for season to start</div>`;
+   return;
+ }
  renderWinsChart(s);
  renderLine(s);
  renderPFPA(s);
@@ -333,84 +497,143 @@ function renderWinsChart(s){
 }
 
 function renderLine(s){
-  const weeklyWeeks=Object.keys(s.weekly).map(Number).sort((a,b)=>a-b);
-  const history=[...(s.history||[])].filter(h=>h&&h.winnings&&h.timestamp).sort((a,b)=>String(a.timestamp).localeCompare(String(b.timestamp)));
+ const panel=document.querySelector('.chart-panel[data-chart="line"]');
+ const full=!!panel?.classList.contains("fullscreen");
+ const ranked=[...DATA.managers].sort((a,b)=>Number(s.current[b.key]||0)-Number(s.current[a.key]||0));
+ const vals=ranked.map(m=>Number(s.current[m.key]||0));
+ const min=Math.min(...vals),max=Math.max(...vals),span=Math.max(1,max-min);
 
-  let points=[];
-  const firstPollWeek=history.length?Number(history[0].week||999):999;
-  weeklyWeeks.filter(w=>w<firstPollWeek).forEach(w=>points.push({label:`W${w}`,week:w,kind:"week",values:s.weekly[w]}));
-  history.forEach(h=>points.push({
-    label:new Date(h.timestamp).toLocaleString([], {month:"short",day:"numeric",hour:"numeric",minute:"2-digit"}),
-    week:Number(h.week||0),kind:"poll",timestamp:h.timestamp,values:h.winnings
-  }));
-  if(!points.length) weeklyWeeks.forEach(w=>points.push({label:`W${w}`,week:w,kind:"week",values:s.weekly[w]}));
-  if(!points.length){$("#line-chart").innerHTML=`<div class="waiting">Waiting for season to start</div>`;return}
+ const top3=ranked.slice(0,3).map((m,i)=>`<div class="race-summary-item">
+   <div class="race-summary-label">${ordinal(i+1)}</div>
+   <div class="race-summary-value">${esc(initials(m.key))} ${money(s.current[m.key]||0)}</div>
+ </div>`).join("");
 
-  const vals=[];points.forEach(p=>DATA.managers.forEach(m=>vals.push(Number(p.values?.[m.key]||0))));
-  let min=Math.min(...vals),max=Math.max(...vals);if(min===max){min-=5;max+=5}
-  const W=620,H=270,pad={l:50,r:15,t:15,b:46},iw=W-pad.l-pad.r,ih=H-pad.t-pad.b;
-  const x=i=>pad.l+(i/(Math.max(1,points.length-1)))*iw, y=v=>pad.t+(max-v)/(max-min)*ih;
-  let svg=`<svg viewBox="0 0 ${W} ${H}" aria-label="Winnings timeline">`;
-  for(let i=0;i<=4;i++){let yy=pad.t+i*ih/4;let vv=max-i*(max-min)/4;svg+=`<line x1="${pad.l}" y1="${yy}" x2="${W-pad.r}" y2="${yy}" stroke="#ddd"/><text x="${pad.l-8}" y="${yy+4}" text-anchor="end" font-size="9" fill="#777">${money(vv)}</text>`}
+ const compactRows=ranked.map(m=>{
+   const v=Number(s.current[m.key]||0);
+   const width=22+78*((v-min)/span);
+   return `<div class="race-row">
+     <div class="race-name">${esc(initials(m.key))}</div>
+     <div class="race-track"><div class="race-fill" style="--mgr-color:${COLORS[m.key]};--race-width:${width.toFixed(1)}%"></div></div>
+     <div class="race-value">${money(v)}</div>
+   </div>`;
+ }).join("");
 
-  const labelEvery=Math.max(1,Math.ceil(points.length/6));
-  points.forEach((p,i)=>{
-    if(i===0||i===points.length-1||i%labelEvery===0){
-      const label=p.kind==="week"?p.label:(i===points.length-1?"NOW":`W${p.week}`);
-      svg+=`<text x="${x(i)}" y="${H-18}" text-anchor="middle" font-size="9" fill="#777">${esc(label)}</text>`;
-    }
-  });
+ let fullHtml="";
+ const weeks=Object.keys(s.weekly||{}).map(Number).filter(Number.isFinite).sort((a,b)=>a-b);
+ if(weeks.length){
+   const allVals=[];
+   weeks.forEach(w=>DATA.managers.forEach(m=>allVals.push(Number(s.weekly[w]?.[m.key]||0))));
+   let yMin=Math.min(...allVals),yMax=Math.max(...allVals);
+   if(yMin===yMax){yMin-=5;yMax+=5}
+   const padAmt=Math.max(10,(yMax-yMin)*.12);yMin-=padAmt;yMax+=padAmt;
 
-  DATA.managers.forEach(m=>{
-    const pts=points.map((p,i)=>[x(i),y(Number(p.values?.[m.key]||0))]);
-    svg+=`<polyline fill="none" stroke="${COLORS[m.key]}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" points="${pts.map(p=>p.join(",")).join(" ")}"/>`;
-    if(points.length<=80) pts.forEach((p,i)=>svg+=`<circle cx="${p[0]}" cy="${p[1]}" r="${i===pts.length-1?3.2:2}" fill="${COLORS[m.key]}"/>`);
-  });
-  svg+="</svg><div class='legend'>"+DATA.managers.map(m=>`<span><i class="dot" style="background:${COLORS[m.key]}"></i>${m.label}</span>`).join("")+"</div>";
-  if(history.length){
-    const last=new Date(history[history.length-1].timestamp);
-    svg+=`<div class="hint">Every saved live poll · latest ${esc(last.toLocaleString([], {month:"short",day:"numeric",hour:"numeric",minute:"2-digit"}))}</div>`;
-  }else{
-    svg+=`<div class="hint">Weekly history · live poll history begins after the new refresh workflow is deployed</div>`;
-  }
-  $("#line-chart").innerHTML=svg;
+   const W=620,H=300,pad={l:52,r:24,t:18,b:42},iw=W-pad.l-pad.r,ih=H-pad.t-pad.b;
+   const x=i=>pad.l+(i/Math.max(1,weeks.length-1))*iw;
+   const y=v=>pad.t+(yMax-v)/(yMax-yMin)*ih;
+   let svg=`<svg viewBox="0 0 ${W} ${H}" aria-label="Winnings standings by week">`;
+
+   for(let i=0;i<=4;i++){
+     const yy=pad.t+i*ih/4,vv=yMax-i*(yMax-yMin)/4;
+     svg+=`<line x1="${pad.l}" y1="${yy}" x2="${W-pad.r}" y2="${yy}" stroke="#e2e2dd"/>`;
+     svg+=`<text x="${pad.l-7}" y="${yy+4}" text-anchor="end" font-size="9" fill="#777">${money(vv)}</text>`;
+   }
+
+   weeks.forEach((wk,i)=>{
+     const label=i===weeks.length-1?"NOW":`W${wk}`;
+     svg+=`<text x="${x(i)}" y="${H-16}" text-anchor="middle" font-size="9" fill="#777">${label}</text>`;
+   });
+
+   DATA.managers.forEach(m=>{
+     const pts=weeks.map((wk,i)=>[x(i),y(Number(s.weekly[wk]?.[m.key]||0))]);
+     if(pts.length===1){
+       svg+=`<circle cx="${pts[0][0]}" cy="${pts[0][1]}" r="5" fill="${COLORS[m.key]}"/>`;
+     }else{
+       svg+=`<polyline fill="none" stroke="${COLORS[m.key]}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" points="${pts.map(p=>p.join(",")).join(" ")}"/>`;
+       pts.forEach((p,i)=>svg+=`<circle cx="${p[0]}" cy="${p[1]}" r="${i===pts.length-1?5:3.5}" fill="${COLORS[m.key]}"/>`);
+     }
+   });
+   svg+="</svg>";
+
+   const summaryCards=ranked.map((m,i)=>`<div class="winnings-summary-card">
+     <div class="winnings-summary-name">${esc(m.label)}</div>
+     <div class="winnings-summary-value" style="color:${COLORS[m.key]}">${money(s.current[m.key]||0)}</div>
+     <div class="winnings-summary-rank">${ordinal(i+1)}</div>
+   </div>`).join("");
+
+   const tableHead=DATA.managers.map(m=>`<div class="val">${esc(initials(m.key))}</div>`).join("");
+   const tableRows=weeks.map((wk,i)=>`<div class="week-snapshot-row">
+     <div class="wk">${i===weeks.length-1?"NOW":`W${wk}`}</div>
+     ${DATA.managers.map(m=>`<div class="val ${Number(s.weekly[wk]?.[m.key]||0)>=0?"pos":"neg"}">${money(s.weekly[wk]?.[m.key]||0)}</div>`).join("")}
+   </div>`).join("");
+
+   fullHtml=`<div class="winnings-full">
+     <div class="winnings-summary">${summaryCards}</div>
+     <div class="winnings-chart-card">
+       <div class="winnings-chart-kicker">STANDINGS BY WEEK</div>
+       ${svg}
+       <div class="winnings-legend">${DATA.managers.map(m=>`<span><i class="dot" style="background:${COLORS[m.key]}"></i>${esc(m.label)}</span>`).join("")}</div>
+       <div class="hint">One standings snapshot per available week</div>
+     </div>
+     <div class="week-snapshot">
+       <div class="week-snapshot-head">WEEKLY SNAPSHOT</div>
+       <div class="week-snapshot-row"><div class="wk"></div>${tableHead}</div>
+       ${tableRows}
+     </div>
+   </div>`;
+ }else{
+   fullHtml=`<div class="winnings-full"><div class="waiting">Weekly standings are not available yet.</div></div>`;
+ }
+
+ $("#line-chart").innerHTML=`<div class="winnings-compact">
+   <div class="race-summary-strip">${top3}</div>
+   <div class="race-compact">${compactRows}</div>
+   <div class="race-tap-note">Tap to view standings by week</div>
+ </div>${fullHtml}`;
 }
+
 function renderPFPA(s){
- const values=[...Object.values(s.points_for),...Object.values(s.points_against)].map(Number).filter(Number.isFinite);
- const low=Math.min(...values),high=Math.max(...values);
- const spread=Math.max(1,high-low),extra=spread*0.25;
- const yMin=Math.max(0,low-extra),yMax=high+extra,range=Math.max(1,yMax-yMin);
+ const rows=DATA.managers.map(m=>{
+   const pf=Number(s.points_for?.[m.key]||0),pa=Number(s.points_against?.[m.key]||0);
+   return {m,pf,pa,diff:pf-pa};
+ }).sort((a,b)=>b.diff-a.diff);
 
- const W=620,H=255;
- const plot={l:62,r:12,t:18,b:76};
- const iw=W-plot.l-plot.r, ih=H-plot.t-plot.b;
- const y=v=>plot.t+(yMax-Number(v))/range*ih;
- const centers=DATA.managers.map((m,i)=>plot.l+(i+.5)*(iw/DATA.managers.length));
- const barW=30,gap=5;
+ const all=rows.flatMap(r=>[r.pf,r.pa]);
+ let lo=Math.min(...all),hi=Math.max(...all);
+ if(!Number.isFinite(lo)||!Number.isFinite(hi)){lo=0;hi=1}
+ const span=Math.max(1,hi-lo);
+ const pos=v=>8+84*((Number(v)-lo)/span);
 
- let svg=`<svg viewBox="0 0 ${W} ${H}" aria-label="Total points for and against">`;
- [yMax,(yMin+yMax)/2,yMin].forEach(v=>{
-   const yy=y(v);
-   svg+=`<line x1="${plot.l}" y1="${yy}" x2="${W-plot.r}" y2="${yy}" stroke="#e5e5e1" stroke-width="1"/>`;
-   svg+=`<text x="${plot.l-8}" y="${yy+4}" text-anchor="end" font-size="10" fill="#777">${num(v)}</text>`;
- });
+ const visual=rows.map(r=>{
+   const p1=pos(r.pf),p2=pos(r.pa),left=Math.min(p1,p2),right=100-Math.max(p1,p2);
+   return `<div class="points-row">
+     <div class="points-name">${esc(initials(r.m.key))}</div>
+     <div class="points-track" style="--mgr-color:${COLORS[r.m.key]};--left:${left.toFixed(1)}%;--right:${right.toFixed(1)}%">
+       <div class="points-range"></div>
+       <div class="points-dot" style="left:${p1.toFixed(1)}%;background:${COLORS[r.m.key]}"></div>
+       <div class="points-dot" style="left:${p2.toFixed(1)}%;background:${COLORS[r.m.key]};opacity:.30"></div>
+     </div>
+     <div class="points-diff ${r.diff>=0?"pos":"neg"}">${signedNum(r.diff)}</div>
+   </div>`;
+ }).join("");
 
- DATA.managers.forEach((m,i)=>{
-   const pf=Number(s.points_for[m.key]||0), pa=Number(s.points_against[m.key]||0), cx=centers[i];
-   const base=y(yMin), pfY=y(pf), paY=y(pa);
-   const pfX=cx-barW-gap/2, paX=cx+gap/2;
-   svg+=`<rect x="${pfX}" y="${pfY}" width="${barW}" height="${Math.max(2,base-pfY)}" rx="5" fill="${COLORS[m.key]}"/>`;
-   svg+=`<rect x="${paX}" y="${paY}" width="${barW}" height="${Math.max(2,base-paY)}" rx="5" fill="${COLORS[m.key]}" opacity=".28" stroke="${COLORS[m.key]}"/>`;
+ const table=rows.map((r,i)=>`<div class="points-table-row">
+   <div class="points-table-name">${esc(r.m.label)} <span class="points-rank-pill">${ordinal(i+1)}</span></div>
+   <div class="points-table-num">${num(r.pf)}</div>
+   <div class="points-table-num">${num(r.pa)}</div>
+   <div class="points-table-num ${r.diff>=0?"pos":"neg"}">${signedNum(r.diff)}</div>
+ </div>`).join("");
 
-   // Short display labels only for chart fit; exact totals remain below each group.
-   const short=m.key==="TheChavenator"?"TheChavenator":m.key==="bingbongtinydong"?"Bingbong":m.label;
-   svg+=`<text x="${cx}" y="${H-48}" text-anchor="middle" font-size="10" font-weight="800" fill="#6f716d">${short}</text>`;
-   svg+=`<text x="${cx}" y="${H-31}" text-anchor="middle" font-size="9" fill="#777">${num(pf)} /</text>`;
-   svg+=`<text x="${cx}" y="${H-18}" text-anchor="middle" font-size="9" fill="#777">${num(pa)}</text>`;
- });
- svg+=`</svg><div class="hint">Solid = PF · Light = PA · Auto-scaled to emphasize differences</div>`;
- $("#pfpa-chart").innerHTML=svg;
+ $("#pfpa-chart").innerHTML=`<div class="points-full-shell">
+   <div class="points-full-visual">${visual}</div>
+   <div class="points-legend"><span><i style="background:#555"></i>Solid = PF</span><span><i style="background:#cfcfc9"></i>Light = PA</span></div>
+ </div>
+ <div class="points-table">
+   <div class="points-table-head"><div>MANAGER</div><div style="text-align:right">PF</div><div style="text-align:right">PA</div><div style="text-align:right">DIFF</div></div>
+   ${table}
+ </div>
+ <div class="points-note">PF = Points For · PA = Points Against · Differential = PF − PA</div>`;
 }
+
 function initials(m){if(m==="TheChavenator")return "TC";if(m==="bingbongtinydong")return "BB";if(m==="jpagonis")return "JP";return "NA"}
 function isolatedWeeklyRows(weeks){
  // Calculate in chronological order, then return results in the ORIGINAL display order.
@@ -647,12 +870,12 @@ function wireChartExpansion(){
       document.body.classList.toggle("no-scroll",opening);
       if(opening) panel.scrollTop=0;
 
-      // The wins chart is initially rendered before the panel becomes fullscreen.
-      // Re-render it AFTER fullscreen toggles so the manager selection,
-      // yellow border, and winning-league list are built immediately.
-      if(panel.dataset.chart==="wins"){
-        renderWinsChart(computeSummary(YEAR));
-      }
+      // Re-render after the fullscreen state changes so each chart can
+      // switch between its compact and expanded presentation.
+      const s=computeSummary(YEAR);
+      if(panel.dataset.chart==="wins") renderWinsChart(s);
+      else if(panel.dataset.chart==="line") renderLine(s);
+      else if(panel.dataset.chart==="pfpa") renderPFPA(s);
     };
     panel.onclick=e=>{
       // Tapping the compact chart opens it. Once fullscreen, only the X closes it.
@@ -663,7 +886,13 @@ function wireChartExpansion(){
   document.addEventListener("keydown",e=>{
     if(e.key==="Escape"){
       const p=$(".chart-panel.fullscreen");
-      if(p){p.classList.remove("fullscreen");p.querySelector(".expand-chart").textContent="↗";document.body.classList.remove("no-scroll")}
+      if(p){
+        p.classList.remove("fullscreen");p.querySelector(".expand-chart").textContent="↗";document.body.classList.remove("no-scroll");
+        const s=computeSummary(YEAR);
+        if(p.dataset.chart==="wins")renderWinsChart(s);
+        else if(p.dataset.chart==="line")renderLine(s);
+        else if(p.dataset.chart==="pfpa")renderPFPA(s);
+      }
     }
   });
 }
@@ -672,6 +901,12 @@ async function refreshDataSilently(){
     const fresh=await (await fetch(`4mans_app_data.json?t=${Date.now()}`,{cache:"no-store"})).json();
     if(!DATA||fresh.generated_at!==DATA.generated_at){
       DATA=fresh;
+      const yearSelection=$("#year-select")?.value||"";
+      initYearSelector();
+      if(yearSelection&&DATA.seasons?.[yearSelection]){
+        $("#year-select").value=yearSelection;
+        $("#enter-year").disabled=false;
+      }
       populateTeamFilters();
       updatePositionFilter("stats");
       updatePositionFilter("own");
@@ -685,11 +920,19 @@ async function refreshDataSilently(){
 async function boot(){
  try{
    DATA=await (await fetch("4mans_app_data.json",{cache:"no-store"})).json();
+   initYearSelector();
    initSelectors();
    populateTeamFilters();
    updatePositionFilter("stats");
    updatePositionFilter("own");
-   $("#enter-year").onclick=()=>{YEAR=$("#year-select").value;show("menu-screen");updatePositionFilter("stats");updatePositionFilter("own")};
+   $("#enter-year").onclick=()=>{
+     const selected=$("#year-select").value;
+     if(!selected||!DATA.seasons?.[selected]) return;
+     YEAR=selected;
+     show("menu-screen");
+     updatePositionFilter("stats");
+     updatePositionFilter("own");
+   };
    $$("[data-go]").forEach(b=>b.onclick=()=>show(b.dataset.go));
    $("#league-manager").onchange=renderLeagues;
 
