@@ -1,33 +1,29 @@
 #!/usr/bin/env python3
 """
-Download and refresh one shared Sleeper player-headshot cache for all seasons.
+Refresh shared 4MANS image caches for players, managers, and leagues.
 
-Usage examples:
-  python refresh_player_images.py
-  python refresh_player_images.py --season 2026
-  python refresh_player_images.py --season 2026 --limit 50
-  python refresh_player_images.py --season 2026 --refresh-existing
+Storage:
+  assets/players/<player_id>.jpg
+  assets/managers/<manager_key>.jpg
+  assets/leagues/<league_id>.jpg
 
-This script is designed for GitHub Actions and uses only the Python standard library.
-It reads player IDs from 4mans_app_data.json when available so it only downloads the
-players relevant to 4MANS. Images are stored once at assets/players/<player_id>.jpg
-and reused by every historical season.
+The workflow runs annually and can also be run manually. Use --refresh-existing
+when you want to replace existing cached photos with the latest Sleeper images.
 """
 
 import argparse
 import json
-import os
-import sys
+import re
 import time
 import urllib.request
-from datetime import datetime, timezone
 from pathlib import Path
 
 API = "https://api.sleeper.app/v1"
-HEADSHOT_PATTERNS = [
+PLAYER_PATTERNS = [
     "https://sleepercdn.com/content/nfl/players/thumb/{player_id}.jpg",
     "https://sleepercdn.com/content/nfl/players/{player_id}.jpg",
 ]
+AVATAR_PATTERN = "https://sleepercdn.com/avatars/{avatar}"
 FALLBACK_SVG = '''<svg xmlns="http://www.w3.org/2000/svg" width="320" height="320" viewBox="0 0 320 320">
   <rect width="320" height="320" rx="24" fill="#f2f2ef"/>
   <circle cx="160" cy="118" r="58" fill="#d9d8d2"/>
@@ -37,18 +33,11 @@ FALLBACK_SVG = '''<svg xmlns="http://www.w3.org/2000/svg" width="320" height="32
 '''
 
 
-def now_iso():
-    return datetime.now(timezone.utc).isoformat()
-
-
 def get_json(url, tries=3, timeout=45):
     last = None
     for attempt in range(tries):
         try:
-            req = urllib.request.Request(
-                url,
-                headers={"User-Agent": "4MANS-Images/1.0", "Accept": "application/json"},
-            )
+            req = urllib.request.Request(url, headers={"User-Agent": "4MANS-Images/2.0", "Accept": "application/json"})
             with urllib.request.urlopen(req, timeout=timeout) as r:
                 return json.loads(r.read().decode("utf-8"))
         except Exception as e:
@@ -59,7 +48,7 @@ def get_json(url, tries=3, timeout=45):
 
 
 def fetch_bytes(url, timeout=45):
-    req = urllib.request.Request(url, headers={"User-Agent": "4MANS-Images/1.0", "Accept": "image/*,*/*"})
+    req = urllib.request.Request(url, headers={"User-Agent": "4MANS-Images/2.0", "Accept": "image/*,*/*"})
     with urllib.request.urlopen(req, timeout=timeout) as r:
         ctype = r.headers.get_content_type() or ""
         data = r.read()
@@ -68,134 +57,166 @@ def fetch_bytes(url, timeout=45):
 
 def ensure_fallback(out_dir: Path):
     out_dir.mkdir(parents=True, exist_ok=True)
-    na = out_dir / "na.svg"
-    if not na.exists() or na.read_text(encoding="utf-8") != FALLBACK_SVG:
-        na.write_text(FALLBACK_SVG, encoding="utf-8")
-    return na
+    path = out_dir / "na.svg"
+    if not path.exists() or path.read_text(encoding="utf-8") != FALLBACK_SVG:
+        path.write_text(FALLBACK_SVG, encoding="utf-8")
 
 
-def load_target_player_ids(season: str, app_path="4mans_app_data.json"):
-    path = Path(app_path)
-    if path.exists():
-        try:
-            app = json.loads(path.read_text(encoding="utf-8"))
-            seasons = app.get("seasons") or {}
-            # Shared cache: include every player referenced by every season so historical
-            # roster screens can use the same current headshot files.
-            ids = set()
-            for s in seasons.values():
-                pdir = (s or {}).get("player_directory") or {}
-                ids.update(str(pid) for pid in pdir.keys())
-                for r in ((s or {}).get("ownership") or []):
-                    if r.get("player_id"):
-                        ids.add(str(r.get("player_id")))
-            if ids:
-                return sorted(ids, key=lambda x: (not str(x).isdigit(), str(x)))
-        except Exception:
-            pass
-    # Fallback: use all active players from Sleeper (much larger).
-    players = get_json(f"{API}/players/nfl?active=true", timeout=120)
-    return sorted([str(pid) for pid in players.keys()], key=lambda x: (not str(x).isdigit(), str(x)))
+def load_app(path="4mans_app_data.json"):
+    p = Path(path)
+    if not p.exists():
+        return {}
+    try:
+        data = json.loads(p.read_text(encoding="utf-8"))
+        return data if isinstance(data, dict) else {}
+    except Exception:
+        return {}
 
 
-def download_headshot(player_id: str, out_file: Path):
-    for pattern in HEADSHOT_PATTERNS:
-        url = pattern.format(player_id=player_id)
+def safe_name(value):
+    return re.sub(r"[^A-Za-z0-9._-]+", "_", str(value))
+
+
+def download(urls, out_file):
+    for url in urls:
         try:
             ctype, data = fetch_bytes(url)
         except Exception:
             continue
-        if not ctype.startswith("image/"):
+        if ctype.startswith("image/") and data and len(data) >= 128:
+            out_file.parent.mkdir(parents=True, exist_ok=True)
+            out_file.write_bytes(data)
+            return url
+    return ""
+
+
+def player_ids(app):
+    ids = set()
+    for season in (app.get("seasons") or {}).values():
+        ids.update(str(pid) for pid in ((season or {}).get("player_directory") or {}).keys())
+        for row in ((season or {}).get("ownership") or []):
+            if row.get("player_id"):
+                ids.add(str(row["player_id"]))
+    if ids:
+        return sorted(ids, key=lambda x: (not x.isdigit(), x))
+    all_players = get_json(f"{API}/players/nfl?active=true", timeout=120)
+    return sorted((str(x) for x in all_players.keys()), key=lambda x: (not x.isdigit(), x))
+
+
+def manager_targets(app):
+    out = []
+    for m in app.get("managers") or []:
+        key, uid = str(m.get("key") or ""), str(m.get("user_id") or "")
+        if key and uid:
+            out.append((key, uid))
+    return out
+
+
+def league_ids(app):
+    ids = set()
+    for season in (app.get("seasons") or {}).values():
+        for league in (season or {}).get("leagues") or []:
+            lid = str(league.get("league_id") or "")
+            if lid:
+                ids.add(lid)
+    return sorted(ids)
+
+
+def avatar_url(obj):
+    avatar = str((obj or {}).get("avatar") or "").strip()
+    if not avatar or avatar.lower() in {"none", "null"}:
+        return ""
+    return AVATAR_PATTERN.format(avatar=avatar)
+
+
+def refresh_players(app, refresh_existing=False, limit=0):
+    out_dir = Path("assets/players")
+    ensure_fallback(out_dir)
+    ids = player_ids(app)
+    if limit:
+        ids = ids[:limit]
+    manifest = {"players": {}}
+    for i, pid in enumerate(ids, 1):
+        out_file = out_dir / f"{pid}.jpg"
+        if out_file.exists() and out_file.stat().st_size >= 128 and not refresh_existing:
+            manifest["players"][pid] = {"path": f"assets/players/{pid}.jpg", "status": "cached"}
             continue
-        if not data or len(data) < 128:
+        urls = [p.format(player_id=pid) for p in PLAYER_PATTERNS]
+        source = download(urls, out_file)
+        if source:
+            manifest["players"][pid] = {"path": f"assets/players/{pid}.jpg", "status": "refreshed" if refresh_existing else "downloaded", "source": source}
+        else:
+            out_file.unlink(missing_ok=True)
+            manifest["players"][pid] = {"path": "assets/players/na.svg", "status": "fallback"}
+        if i % 50 == 0:
+            print(f"Players {i}/{len(ids)}")
+    (out_dir / "manifest.json").write_text(json.dumps(manifest, separators=(",", ":")), encoding="utf-8")
+    return len(ids)
+
+
+def refresh_managers(app, refresh_existing=False):
+    out_dir = Path("assets/managers")
+    ensure_fallback(out_dir)
+    manifest = {"managers": {}}
+    for key, uid in manager_targets(app):
+        out_file = out_dir / f"{safe_name(key)}.jpg"
+        if out_file.exists() and out_file.stat().st_size >= 128 and not refresh_existing:
+            manifest["managers"][key] = {"path": f"assets/managers/{safe_name(key)}.jpg", "status": "cached"}
             continue
-        out_file.write_bytes(data)
-        return url
-    return None
+        try:
+            user = get_json(f"{API}/user/{uid}") or {}
+        except Exception as e:
+            print(f"WARNING manager lookup failed {key}: {e}")
+            user = {}
+        url = avatar_url(user)
+        source = download([url], out_file) if url else ""
+        if source:
+            manifest["managers"][key] = {"path": f"assets/managers/{safe_name(key)}.jpg", "status": "refreshed" if refresh_existing else "downloaded", "source": source}
+        else:
+            out_file.unlink(missing_ok=True)
+            manifest["managers"][key] = {"path": "assets/managers/na.svg", "status": "fallback"}
+    (out_dir / "manifest.json").write_text(json.dumps(manifest, separators=(",", ":")), encoding="utf-8")
+    return len(manifest["managers"])
+
+
+def refresh_leagues(app, refresh_existing=False):
+    out_dir = Path("assets/leagues")
+    ensure_fallback(out_dir)
+    manifest = {"leagues": {}}
+    ids = league_ids(app)
+    for i, lid in enumerate(ids, 1):
+        out_file = out_dir / f"{safe_name(lid)}.jpg"
+        if out_file.exists() and out_file.stat().st_size >= 128 and not refresh_existing:
+            manifest["leagues"][lid] = {"path": f"assets/leagues/{safe_name(lid)}.jpg", "status": "cached"}
+            continue
+        try:
+            league = get_json(f"{API}/league/{lid}") or {}
+        except Exception as e:
+            print(f"WARNING league lookup failed {lid}: {e}")
+            league = {}
+        url = avatar_url(league)
+        source = download([url], out_file) if url else ""
+        if source:
+            manifest["leagues"][lid] = {"path": f"assets/leagues/{safe_name(lid)}.jpg", "status": "refreshed" if refresh_existing else "downloaded", "source": source}
+        else:
+            out_file.unlink(missing_ok=True)
+            manifest["leagues"][lid] = {"path": "assets/leagues/na.svg", "status": "fallback"}
+        if i % 25 == 0:
+            print(f"Leagues {i}/{len(ids)}")
+    (out_dir / "manifest.json").write_text(json.dumps(manifest, separators=(",", ":")), encoding="utf-8")
+    return len(ids)
 
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--season", default=str(datetime.now(timezone.utc).year))
-    parser.add_argument("--limit", type=int, default=0)
-    parser.add_argument(
-        "--refresh-existing",
-        action="store_true",
-        help="Re-download existing cached headshots instead of skipping them.",
-    )
+    parser.add_argument("--limit", type=int, default=0, help="Player-only test limit.")
+    parser.add_argument("--refresh-existing", action="store_true", help="Replace existing cached images.")
     args = parser.parse_args()
-
-    season = str(args.season)
-    out_dir = Path("assets") / "players"
-    ensure_fallback(out_dir)
-    out_dir.mkdir(parents=True, exist_ok=True)
-
-    player_ids = load_target_player_ids(season)
-    if args.limit > 0:
-        player_ids = player_ids[: args.limit]
-
-    manifest_path = out_dir / "manifest.json"
-    prior_manifest = {}
-    if manifest_path.exists():
-        try:
-            prior_manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-        except Exception:
-            prior_manifest = {}
-
-    manifest = {
-        "generated_at": now_iso(),
-        "source_season": season,
-        "storage": "shared",
-        "headshot_fallback": "assets/players/na.svg",
-        "players": {},
-    }
-
-    ok = 0
-    miss = 0
-    skipped = 0
-    for i, pid in enumerate(player_ids, 1):
-        out_file = out_dir / f"{pid}.jpg"
-        if (not args.refresh_existing) and out_file.exists() and out_file.stat().st_size > 128:
-            manifest["players"][pid] = {
-                "path": f"assets/players/{pid}.jpg",
-                "status": "cached",
-                "source": (prior_manifest.get("players") or {}).get(pid, {}).get("source", ""),
-            }
-            skipped += 1
-            continue
-
-        source = download_headshot(pid, out_file)
-        if source:
-            manifest["players"][pid] = {
-                "path": f"assets/players/{pid}.jpg",
-                "status": "refreshed" if args.refresh_existing else "downloaded",
-                "source": source,
-            }
-            ok += 1
-        else:
-            if out_file.exists():
-                out_file.unlink(missing_ok=True)
-            manifest["players"][pid] = {
-                "path": "assets/players/na.svg",
-                "status": "fallback",
-                "source": "",
-            }
-            miss += 1
-
-        if i % 50 == 0:
-            print(f"Processed {i}/{len(player_ids)}")
-
-    manifest_path.write_text(json.dumps(manifest, separators=(",", ":"), ensure_ascii=False), encoding="utf-8")
-
-    print("\nHeadshot refresh complete")
-    print("source season:", season)
-    print("shared cache:", out_dir)
-    print("refresh existing:", args.refresh_existing)
-    print("target players:", len(player_ids))
-    print("downloaded:", ok)
-    print("already cached:", skipped)
-    print("fallback only:", miss)
-    print("manifest:", manifest_path)
+    app = load_app()
+    print("players:", refresh_players(app, args.refresh_existing, args.limit))
+    print("managers:", refresh_managers(app, args.refresh_existing))
+    print("leagues:", refresh_leagues(app, args.refresh_existing))
+    print("4MANS image refresh complete")
 
 
 if __name__ == "__main__":
