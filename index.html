@@ -825,14 +825,23 @@ const STAT_SCHEMAS={
 };
 function statVal(stats,key){if(stats[key]!=null)return stats[key];const aliases={pass_yd:"pass_yds",rush_yd:"rush_yds",rec_yd:"rec_yds",rec_tgt:"targets"};return aliases[key]&&stats[aliases[key]]!=null?stats[aliases[key]]:null}
 function statSections(meta,stats){let pos=String(meta.position||"").toUpperCase(),schema=STAT_SCHEMAS[pos]||((meta.side||positionSide(pos))==="defense"?STAT_SCHEMAS.IDP:STAT_SCHEMAS.WR);const sections=[];schema.forEach(sec=>{const items=sec.items.map(([k,l])=>[statVal(stats,k),l]).filter(([v])=>v!=null);if(items.length)sections.push({title:sec.title,items})});const fum=statVal(stats,"fum_lost");if(fum!=null&&Number(fum)!==0)sections.push({title:"MISC",items:[[fum,"FUMBLES LOST"]]});return sections}
+let PLAYER_DETAIL_SOURCE=null;
 function openPlayerDetail(pid){
+ PLAYER_DETAIL_SOURCE="week";
  const season=seasonData(),league=(season.leagues||[]).find(l=>String(l.league_id)===WEEK_DETAIL.leagueId),w=(league?.weeks||[]).find(x=>Number(x.week)===WEEK_DETAIL.week),r=(w?.rosters||[]).find(x=>x.manager===WEEK_DETAIL.manager);if(!league||!w||!r)return;
  const meta=playerMeta(pid),stats=weekStats(WEEK_DETAIL.week,pid),pts=Number((r.players_points||{})[String(pid)]||0),isStarter=(r.starters||[]).map(String).includes(String(pid));const sections=statSections(meta,stats);
  const sectionsHtml=sections.length?sections.map(sec=>`<section class="stat-section"><div class="stat-section-title">${esc(sec.title)}</div><div class="stat-grid">${sec.items.map(([v,l])=>`<div class="stat-card"><div class="stat-value">${esc(v)}</div><div class="stat-label">${esc(l)}</div></div>`).join("")}</div></section>`).join(""):`<section class="stat-section"><div class="waiting">Detailed box-score stats are not available for this player/week.</div></section>`;
  $("#player-detail-content").innerHTML=`<section class="player-hero"><div class="player-photo-large">${imageHtml(meta,"player-photo-large")}</div><div class="player-detail-name">${esc(meta.player)}</div><div class="player-detail-meta">${esc(meta.position||"—")} · ${esc(meta.team||"FA")}</div><div class="player-detail-matchup">Week ${WEEK_DETAIL.week} · ${esc(opponentText(stats))}</div><div class="player-fpts-box"><div class="player-fpts">${pts.toFixed(1)}</div><div class="player-fpts-label">FANTASY POINTS</div></div></section>${sectionsHtml}<section class="stat-section"><div class="stat-section-title">GAME CONTEXT</div><div class="game-context"><div><div class="game-context-title">${esc(meta.team||"Team")} · ${esc(opponentText(stats))}</div><div class="game-context-meta">Week ${WEEK_DETAIL.week} · ${esc(league.name)}</div></div><span class="context-badge">${isStarter?"STARTER":"BENCH"}</span></div></section>`;
  $("#player-detail-screen").classList.add("active");$("#player-detail-screen").scrollTop=0;
 }
-function closePlayerDetail(){$("#player-detail-screen").classList.remove("active")}
+function closePlayerDetail(){
+ $("#player-detail-screen").classList.remove("active");
+ if(PLAYER_DETAIL_SOURCE==="mvp"){
+   $("#mvp-detail-screen").classList.add("active");
+   $("#mvp-detail-screen").scrollTop=0;
+ }
+ PLAYER_DETAIL_SOURCE=null;
+}
 
 function seasonStatsForPlayer(pid){
  const weekly=seasonData().weekly_stats||{},sum={},maxKeys=new Set(["fgm_long"]);
@@ -864,13 +873,15 @@ function openMvpPlayerDetail(pid,fpts){
    :`<section class="stat-section"><div class="waiting">Season stat totals are not available for this player yet.</div></section>`;
  const through=latestWeek?`Through Week ${latestWeek}`:"Current season";
  $("#player-detail-content").innerHTML=`<section class="player-hero"><div class="player-photo-large">${imageHtml(meta,"player-photo-large")}</div><div class="player-detail-name">${esc(meta.player)}</div><div class="player-detail-meta">${esc(meta.position||"—")} · ${esc(meta.team||"FA")}</div><div class="player-detail-matchup">${esc(YEAR)} SEASON TOTALS</div><div class="player-fpts-box"><div class="player-fpts">${pts.toFixed(1)}</div><div class="player-fpts-label">SEASON FANTASY POINTS</div></div></section>${sectionsHtml}<section class="stat-section"><div class="stat-section-title">SEASON CONTEXT</div><div class="game-context"><div><div class="game-context-title">${esc(meta.team||"Team")} · ${esc(YEAR)} Season</div><div class="game-context-meta">${esc(through)} · ${esc(league.name)}</div></div><span class="context-badge">SEASON</span></div></section>`;
+ PLAYER_DETAIL_SOURCE="mvp";
+ $("#mvp-detail-screen").classList.remove("active");
  $("#player-detail-screen").classList.add("active");
  $("#player-detail-screen").scrollTop=0;
 }
 
 let MVP_DETAIL={leagueId:null,manager:null};
 function openMvpDetail(leagueId){MVP_DETAIL={leagueId:String(leagueId),manager:$("#league-manager")?.value||DATA.managers[0].key};renderMvpDetail();$("#mvp-detail-screen").classList.add("active");document.body.classList.add("no-scroll");$("#mvp-detail-screen").scrollTop=0}
-function closeMvpDetail(){$("#mvp-detail-screen").classList.remove("active");document.body.classList.remove("no-scroll")}
+function closeMvpDetail(){$("#mvp-detail-screen").classList.remove("active");PLAYER_DETAIL_SOURCE=null;document.body.classList.remove("no-scroll")}
 function renderMvpDetail(){
  const league=(seasonData().leagues||[]).find(l=>String(l.league_id)===MVP_DETAIL.leagueId);if(!league)return;
  const totals=league.totals||[];if(!totals.some(x=>x.manager===MVP_DETAIL.manager))MVP_DETAIL.manager=totals[0]?.manager||DATA.managers[0].key;
