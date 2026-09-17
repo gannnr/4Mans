@@ -45,27 +45,64 @@ svg{width:100%;height:auto;display:block}
 
 @media(max-width:380px){.app{padding-left:12px;padding-right:12px}.brand{font-size:31px}.manager-card .money{font-size:22px}.weeks{width:94%}}
 
+/* v10.1 approved league pin rail + cached manager/league imagery */
+.manager-select-wrap{display:grid;grid-template-columns:44px minmax(0,1fr);gap:10px;align-items:center}
+.manager-avatar,.league-logo,.score-avatar,.win-manager-avatar,.win-league-logo{
+  border-radius:50%;overflow:hidden;background:#f2f2ef;border:1px solid var(--line);
+  display:flex;align-items:center;justify-content:center;flex:0 0 auto
+}
+.manager-avatar{width:44px;height:44px}.league-logo{width:46px;height:46px}.score-avatar{width:30px;height:30px}
+.win-manager-avatar{width:46px;height:46px}.win-league-logo{width:42px;height:42px}
+.manager-avatar img,.league-logo img,.score-avatar img,.win-manager-avatar img,.win-league-logo img{width:100%;height:100%;object-fit:cover;display:block}
+.league-name-row{display:grid;grid-template-columns:46px minmax(0,1fr) 42px;gap:10px;align-items:center}
+.league-title-block{min-width:0}.league-name{font-size:16px}.league-sub{font-size:9px;font-weight:900;letter-spacing:.12em;color:var(--muted);margin-top:3px}
+.expand{width:42px;height:42px}
+.score-row{padding:10px 13px 11px}
+.score-meta{font-size:13px;margin:0 0 7px}
+.score-track{height:14px;border-radius:999px;margin:45px 20px 0;background:linear-gradient(90deg,#f4f4f1 0%,#eef8f1 48%,#8ad7a7 100%);overflow:visible}
+.score-range{margin:8px 20px 0;font-size:11px;color:var(--muted)}
+.marker.pin-marker{
+  top:-41px;width:42px;height:42px;border-radius:50% 50% 50% 8px;transform:translateX(-50%) rotate(-45deg);
+  background:#fff;border:2.5px solid var(--pin-color);padding:0;overflow:visible;box-shadow:none
+}
+.marker.pin-marker .pin-photo{
+  position:absolute;width:29px;height:29px;left:50%;top:50%;transform:translate(-50%,-50%) rotate(45deg);
+  border-radius:50%;overflow:hidden;background:#f2f2ef;border:1px solid rgba(0,0,0,.10)
+}
+.marker.pin-marker .pin-photo img{width:100%;height:100%;object-fit:cover;display:block}
+.marker.pin-marker.selected{background:var(--pin-color);border-color:var(--pin-color);box-shadow:0 0 0 4px color-mix(in srgb,var(--pin-color) 16%,transparent)}
+.marker.pin-marker.selected.win,.marker.pin-marker.selected.lose{background:var(--pin-color);color:inherit;border-color:var(--pin-color)}
+.week .score-row{padding:7px 8px 9px}.week .score-meta{font-size:11px;margin-bottom:4px}
+.week .score-track{height:12px;margin:37px 20px 0}.week .marker.pin-marker{top:-34px;width:35px;height:35px}
+.week .marker.pin-marker .pin-photo{width:24px;height:24px}
+.week .score-range{margin:7px 20px 0;font-size:10px}
+.mvp-link,.week-view-link{
+  margin:7px 13px 12px;padding:12px 13px;border:1px solid var(--line);border-radius:12px;background:#fafaf8;
+  text-align:left;color:var(--ink);font-size:10px;font-weight:950;letter-spacing:.08em;display:flex;align-items:center;justify-content:space-between
+}
+.week-view-link{margin:7px 9px 9px}
+.week{cursor:default}
+.week-score-box{cursor:pointer;display:grid;grid-template-columns:34px minmax(0,1fr);column-gap:8px;align-items:center}
+.week-score-box .score-avatar{grid-row:1/4}
+.week-score-box .mgr,.week-score-box .mgrpts,.week-score-box .mgrrank{grid-column:2}
+.week-score-box.active{outline:2px solid var(--blue);outline-offset:1px;background:#eef4ff}
 
-/* v10 cached Sleeper manager/league imagery + interactive winning-leagues drilldown */
-.manager-avatar,.league-avatar{border-radius:50%;overflow:hidden;background:#f2f2ef;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;flex:0 0 auto}
-.manager-avatar{width:34px;height:34px}.league-avatar{width:42px;height:42px}.manager-avatar img,.league-avatar img{width:100%;height:100%;object-fit:cover;display:block}
-.league-title-with-photo{display:flex;align-items:center;gap:10px;min-width:0}.league-title-copy{min-width:0}.league-title-copy .league-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.week-score-box[data-week-manager],.week-score-box[data-mvp-manager]{cursor:pointer;appearance:none;text-align:left;width:100%;font:inherit;color:inherit}
-.week-score-box .score-manager-top{display:flex;align-items:center;gap:8px;min-width:0}.week-score-box .score-manager-top .mgr{min-width:0;flex:1}
-.week-score-box .manager-avatar{width:30px;height:30px}
-.detail-league-title{display:flex;align-items:center;gap:11px}.detail-league-title .league-avatar{width:46px;height:46px}.detail-league-copy{min-width:0;flex:1}.detail-league-copy .week-hero-name,.detail-league-copy .mvp-title{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* Winning-league full-screen drilldown */
+.wins-detail{display:none;margin-top:14px;border:1px solid var(--line);border-radius:18px;background:var(--card);overflow:hidden;box-shadow:var(--shadow)}
+.chart-panel.fullscreen[data-chart="wins"] .wins-detail{display:block}
+.chart-panel.fullscreen[data-chart="wins"] .bar-chart{height:45vh;max-height:390px}
+.chart-panel.fullscreen[data-chart="wins"] .bar-col{cursor:pointer}
+.chart-panel.fullscreen[data-chart="wins"] .bar.selected-win-bar .bar-fill{
+  outline:4px solid #e3b92f;outline-offset:0;box-shadow:0 0 0 3px rgba(227,185,47,.15)
+}
+.bar-fill{width:100%;height:100%;border-radius:8px 8px 3px 3px}
+.wins-detail-head{padding:14px 15px 12px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px}
+.wins-detail-name{font-size:17px;font-weight:950}.wins-detail-count{font-size:10px;font-weight:900;letter-spacing:.12em;color:var(--muted);margin-top:2px}
+.win-league-row{display:grid;grid-template-columns:42px minmax(0,1fr) auto;gap:10px;align-items:center;padding:11px 14px;border-bottom:1px solid var(--line)}
+.win-league-row:last-child{border-bottom:0}.win-league-name{font-size:14px;font-weight:950;line-height:1.1}
+.win-league-meta{font-size:9px;font-weight:900;color:var(--muted);letter-spacing:.06em;margin-top:3px}
+.win-league-pts{text-align:right;font-size:16px;font-weight:950;white-space:nowrap}.win-league-pts small{display:block;font-size:8px;color:var(--muted);letter-spacing:.08em;margin-top:2px}
 
-.wins-drilldown{display:none;margin-top:14px;border:1px solid var(--line);border-radius:18px;background:var(--card);overflow:hidden;box-shadow:var(--shadow)}
-.chart-panel.fullscreen[data-chart="wins"] .wins-drilldown{display:block}
-.chart-panel.fullscreen[data-chart="wins"] .bar-chart{height:250px;max-height:250px;padding:10px 2px 0;gap:12px}
-.chart-panel.fullscreen[data-chart="wins"] .bar-col{cursor:pointer;border:0;background:transparent;padding:0;transition:transform .15s ease;appearance:none;font:inherit;color:inherit}
-.chart-panel.fullscreen[data-chart="wins"] .bar-col.selected-win-manager{transform:translateY(-2px)}
-.chart-panel.fullscreen[data-chart="wins"] .bar-col.selected-win-manager .bar{outline:3px solid #e1b72f;outline-offset:0;box-shadow:0 0 0 3px rgba(225,183,47,.16)}
-.chart-panel.fullscreen[data-chart="wins"] .bar{max-width:72px}
-.wins-detail-head{padding:14px 15px 12px;border-bottom:1px solid var(--line)}
-.wins-manager-row{display:flex;align-items:center;gap:10px;min-width:0}.wins-manager-row .manager-avatar{width:42px;height:42px}.wins-manager-copy{min-width:0}.wins-manager-name{font-size:16px;font-weight:950;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.wins-manager-count{font-size:10px;font-weight:900;letter-spacing:.12em;color:var(--muted);margin-top:2px}
-.wins-league-list{display:grid}.wins-league-row{display:grid;grid-template-columns:38px minmax(0,1fr) auto;gap:10px;align-items:center;padding:11px 14px;border-bottom:1px solid var(--line)}.wins-league-row:last-child{border-bottom:0}.wins-league-row .league-avatar{width:38px;height:38px}.wins-league-name{font-size:13px;font-weight:900;line-height:1.15}.wins-league-meta{font-size:9px;color:var(--muted);font-weight:800;margin-top:2px}.wins-league-points{text-align:right;font-size:13px;font-weight:950;white-space:nowrap}.wins-league-points span{display:block;font-size:8px;color:var(--muted);letter-spacing:.08em;margin-top:2px}
-.wins-empty{padding:22px;text-align:center;color:var(--muted);font-weight:850;font-size:12px}
 </style>
 </head>
 <body>
@@ -90,14 +127,14 @@ svg{width:100%;height:auto;display:block}
   <div class="top"><button class="back" data-go="menu-screen">←</button><div class="brand">4MANS</div><div></div></div>
   <div class="section-title">TOTAL STANDINGS</div>
   <div id="stand-cards" class="manager-cards"></div>
-  <div class="panel chart-panel" data-chart="wins"><button class="expand-chart" aria-label="Expand chart">↗</button><div class="panel-title">LEAGUES CURRENTLY WINNING</div><div id="wins-chart"></div><div id="wins-drilldown" class="wins-drilldown" aria-live="polite"></div></div>
+  <div class="panel chart-panel" data-chart="wins"><button class="expand-chart" aria-label="Expand chart">↗</button><div class="panel-title">LEAGUES CURRENTLY WINNING</div><div id="wins-chart"></div></div>
   <div class="panel chart-panel" data-chart="line"><button class="expand-chart" aria-label="Expand chart">↗</button><div class="panel-title">WINNINGS BY WEEK</div><div id="line-chart"></div></div>
   <div class="panel chart-panel" data-chart="pfpa"><button class="expand-chart" aria-label="Expand chart">↗</button><div class="panel-title">TOTAL POINTS FOR / AGAINST</div><div id="pfpa-chart"></div></div>
 </section>
 
 <section id="leagues-screen" class="screen">
   <div class="top"><button class="back" data-go="menu-screen">←</button><div class="brand">4MANS</div><div></div></div>
-  <div class="sticky-manager"><select id="league-manager" class="selector"></select></div>
+  <div class="sticky-manager"><div class="manager-select-wrap"><div id="league-manager-avatar" class="manager-avatar"></div><select id="league-manager" class="selector"></select></div></div>
   <div id="league-list"></div>
 </section>
 
@@ -155,16 +192,15 @@ svg{width:100%;height:auto;display:block}
 const COLORS={nactasty:"#2d6cdf",jpagonis:"#ec8a2f",TheChavenator:"#1f9d55",bingbongtinydong:"#7b55c7"};
 let DATA=null, YEAR="2026";
 let statSort={key:"fpts",dir:-1},ownSort={key:"Nactasty",dir:-1};
+let WIN_DETAIL_MANAGER=null;
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 function show(id){$$(".screen").forEach(x=>x.classList.remove("active"));$("#"+id).classList.add("active");window.scrollTo(0,0);if(id==="standings-screen")renderStandings();if(id==="leagues-screen")renderLeagues();if(id==="analysis-screen")renderAnalysis()}
 function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
 function managerLabel(k){return (DATA.managers.find(x=>x.key===k)||{}).label||k}
 function managerImagePath(k){return `assets/managers/${String(k)}.jpg`}
-function managerImageFallback(){return "assets/managers/na.svg"}
-function leagueImagePath(id){return `assets/leagues/${String(id)}.jpg`}
-function leagueImageFallback(){return "assets/leagues/na.svg"}
-function cachedImage(src,fallback,alt){return `<img src="${esc(src)}" alt="${esc(alt||"")}" onerror="this.onerror=null;this.src='${esc(fallback)}'">`}
-let WIN_DETAIL_MANAGER=null;
+function managerImageHtml(k,alt=""){return `<img src="${esc(managerImagePath(k))}" alt="${esc(alt||managerLabel(k))}" onerror="this.onerror=null;this.src='assets/managers/na.svg'">`}
+function leagueImageHtml(league,cls="league-logo"){const lid=String(league?.league_id||"");return `<span class="${cls}"><img src="assets/leagues/${esc(lid)}.jpg" alt="${esc(league?.name||"League")}" onerror="this.onerror=null;this.src='assets/leagues/na.svg'"></span>`}
+
 const intFmt=new Intl.NumberFormat("en-US",{maximumFractionDigits:0});
 const decFmt=new Intl.NumberFormat("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
 function num(v){return intFmt.format(Number(v||0))}
@@ -228,29 +264,40 @@ function renderStandings(){
  const s=computeSummary(YEAR),pre=s.state==="preseason";
  $("#stand-cards").innerHTML=DATA.managers.map(m=>{const v=s.current[m.key]||0;return `<div class="manager-card"><div class="name">${m.label}</div><div class="money ${pre?"":(v>=0?"pos":"neg")}">${pre?"—":money(v)}</div></div>`}).join("");
  if(pre){$("#wins-chart").innerHTML=$("#line-chart").innerHTML=$("#pfpa-chart").innerHTML=`<div class="waiting">Waiting for season to start</div>`;return}
- const maxWins=Math.max(1,...Object.values(s.wins));
- if(!WIN_DETAIL_MANAGER || !DATA.managers.some(m=>m.key===WIN_DETAIL_MANAGER)){
-   WIN_DETAIL_MANAGER=[...DATA.managers].sort((a,b)=>Number(s.wins[b.key]||0)-Number(s.wins[a.key]||0))[0]?.key||DATA.managers[0].key;
- }
- $("#wins-chart").innerHTML=`<div class="bar-chart">${DATA.managers.map(m=>{let v=s.wins[m.key]||0;return `<button type="button" class="bar-col ${m.key===WIN_DETAIL_MANAGER?"selected-win-manager":""}" data-win-manager="${esc(m.key)}"><div class="bar-value">${v}</div><div class="bar" style="height:${Math.max(3,120*v/maxWins)}px;background:${COLORS[m.key]}"></div><div class="bar-label">${esc(m.label)}</div></button>`}).join("")}</div>`;
- renderWinningLeagueDetail(s);
+ renderWinsChart(s);
  renderLine(s);
  renderPFPA(s);
 }
 
-function renderWinningLeagueDetail(s){
- const host=$("#wins-drilldown");if(!host)return;
- const manager=DATA.managers.find(m=>m.key===WIN_DETAIL_MANAGER)||DATA.managers[0];
- const leagues=(seasonData().leagues||[]).filter(l=>(l.totals||[]).some(r=>r.manager===manager.key&&Number(r.place)===1)).sort((a,b)=>String(a.name||"").localeCompare(String(b.name||"")));
- const list=leagues.length?leagues.map(l=>{
-   const row=(l.totals||[]).find(r=>r.manager===manager.key)||{};
-   return `<div class="wins-league-row"><div class="league-avatar">${cachedImage(leagueImagePath(l.league_id),leagueImageFallback(),l.name)}</div><div><div class="wins-league-name">${esc(l.name)}</div><div class="wins-league-meta">CURRENTLY 1ST</div></div><div class="wins-league-points">${num(row.pf||0)}<span>PTS</span></div></div>`;
- }).join(""):`<div class="wins-empty">No leagues currently in 1st.</div>`;
- host.innerHTML=`<div class="wins-detail-head"><div class="wins-manager-row"><div class="manager-avatar">${cachedImage(managerImagePath(manager.key),managerImageFallback(),manager.label)}</div><div class="wins-manager-copy"><div class="wins-manager-name">${esc(manager.label)}</div><div class="wins-manager-count">${leagues.length} ${leagues.length===1?"LEAGUE":"LEAGUES"} CURRENTLY WINNING</div></div></div></div><div class="wins-league-list">${list}</div>`;
+function winningLeaguesFor(manager){
+ const season=DATA.seasons[YEAR]||{};
+ return (season.leagues||[]).map(l=>{
+   const row=(l.totals||[]).find(r=>r.manager===manager);
+   return row&&Number(row.place)===1?{league:l,pf:Number(row.pf||0)}:null;
+ }).filter(Boolean).sort((a,b)=>String(a.league.name||"").localeCompare(String(b.league.name||"")));
+}
+function renderWinsChart(s){
  const panel=document.querySelector('.chart-panel[data-chart="wins"]');
- panel?.querySelectorAll('[data-win-manager]').forEach(b=>{
-   b.classList.toggle('selected-win-manager',b.dataset.winManager===WIN_DETAIL_MANAGER);
-   b.onclick=e=>{e.stopPropagation();if(!panel.classList.contains('fullscreen'))return;WIN_DETAIL_MANAGER=b.dataset.winManager;renderStandings();};
+ const full=!!panel?.classList.contains("fullscreen");
+ if(!WIN_DETAIL_MANAGER||!DATA.managers.some(m=>m.key===WIN_DETAIL_MANAGER)) WIN_DETAIL_MANAGER=DATA.managers[0]?.key||null;
+ const maxWins=Math.max(1,...Object.values(s.wins||{}));
+ const bars=DATA.managers.map(m=>{
+   const v=s.wins[m.key]||0;
+   const sel=full&&m.key===WIN_DETAIL_MANAGER?" selected-win-bar":"";
+   return `<div class="bar-col${sel}" data-win-manager="${esc(m.key)}"><div class="bar-value">${v}</div><div class="bar" style="height:${Math.max(3,120*v/maxWins)}px;background:transparent"><div class="bar-fill" style="background:${COLORS[m.key]}"></div></div><div class="bar-label">${esc(m.label)}</div></div>`;
+ }).join("");
+ let detail="";
+ if(full&&WIN_DETAIL_MANAGER){
+   const m=DATA.managers.find(x=>x.key===WIN_DETAIL_MANAGER)||{key:WIN_DETAIL_MANAGER,label:WIN_DETAIL_MANAGER};
+   const leagues=winningLeaguesFor(m.key);
+   detail=`<div class="wins-detail"><div class="wins-detail-head"><div class="win-manager-avatar">${managerImageHtml(m.key,m.label)}</div><div><div class="wins-detail-name">${esc(m.label)}</div><div class="wins-detail-count">${leagues.length} LEAGUES CURRENTLY WINNING</div></div></div>${leagues.length?leagues.map(x=>`<div class="win-league-row">${leagueImageHtml(x.league,"win-league-logo")}<div><div class="win-league-name">${esc(x.league.name)}</div><div class="win-league-meta">CURRENTLY 1ST</div></div><div class="win-league-pts">${Math.round(x.pf)}<small>PTS</small></div></div>`).join(""):`<div class="waiting">No leagues currently in 1st.</div>`}</div>`;
+ }
+ $("#wins-chart").innerHTML=`<div class="bar-chart">${bars}</div>${detail}`;
+ $$('#wins-chart [data-win-manager]').forEach(el=>el.onclick=e=>{
+   if(!panel?.classList.contains("fullscreen")) return;
+   e.stopPropagation();
+   WIN_DETAIL_MANAGER=el.dataset.winManager;
+   renderWinsChart(s);
  });
 }
 
@@ -384,23 +431,31 @@ function rowBar(rows,selected){
  const valid=rows.filter(r=>r.pf!=null);if(!valid.length)return `<div class="waiting" style="padding:14px">Waiting for season to start</div>`;
  const vals=valid.map(r=>Number(r.pf)),lo=Math.min(...vals),hi=Math.max(...vals),range=hi-lo||1;
  const sel=valid.find(r=>r.manager===selected); const place=sel?.place?`${sel.place}/4`:"—";
- return `<div class="score-row"><div class="score-meta">${place}</div><div class="score-track">${valid.map(r=>{let pct=(Number(r.pf)-lo)/range;let left=`calc(${(pct*100).toFixed(3)}% + ${(15-30*pct).toFixed(2)}px)`;let cls=r.manager===selected?("selected "+(r.place===1?"win":"lose")):"";return `<button class="marker ${cls}" style="left:${left}" data-manager="${esc(r.manager)}" data-pf="${r.pf}" data-pa="${r.pa??""}" data-place="${r.place||""}">${initials(r.manager)}</button>`}).join("")}</div><div class="score-range"><span>${num(lo)}</span><span>${num(hi)}</span></div></div>`;
+ const pins=valid.map(r=>{
+   const raw=(Number(r.pf)-lo)/range;
+   const pct=5+raw*90;
+   const cls=r.manager===selected?`selected ${r.place===1?"win":"lose"}`:"";
+   return `<button class="marker pin-marker ${cls}" style="left:${pct.toFixed(3)}%;--pin-color:${COLORS[r.manager]||"#777"}" data-manager="${esc(r.manager)}" data-pf="${r.pf}" data-pa="${r.pa??""}" data-place="${r.place||""}" aria-label="${esc(managerLabel(r.manager))}"><span class="pin-photo">${managerImageHtml(r.manager,managerLabel(r.manager))}</span></button>`;
+ }).join("");
+ return `<div class="score-row"><div class="score-meta">${place}</div><div class="score-track">${pins}</div><div class="score-range"><span>${num(lo)}</span><span>${num(hi)}</span></div></div>`;
 }
 function renderLeagues(){
  const selected=$("#league-manager").value||DATA.managers[0].key;
  const leagues=[...DATA.seasons[YEAR].leagues].sort((a,b)=>String(a.name||"").localeCompare(String(b.name||"")));
  $("#league-list").innerHTML=leagues.map((l,i)=>{
    const displayWeeks=isolatedWeeklyRows(l.weeks||[]);
-   return `<article class="league-card" data-league="${esc(l.league_id)}"><div class="league-head"><div class="league-name-row"><div class="league-title-with-photo"><div class="league-avatar">${cachedImage(leagueImagePath(l.league_id),leagueImageFallback(),l.name)}</div><div class="league-title-copy"><div class="league-name">${esc(l.name)}</div></div></div><button class="expand" aria-label="Expand">⌄</button></div>${rowBar(l.totals,selected)}<div class="mvp-link" data-mvp-league="${esc(l.league_id)}">TEAM MVPS →</div></div><div class="weeks">${displayWeeks.length?displayWeeks.map(w=>`<div class="week" data-league="${esc(l.league_id)}" data-week="${w.week}" role="button" tabindex="0" aria-label="Open Week ${w.week} roster"><div class="week-title">WEEK ${w.week}</div>${rowBar(w.rows,selected)}<div class="week-view-link">VIEW FULL ROSTER →</div></div>`).join(""):`<div class="waiting">Waiting for season to start</div>`}</div></article>`;
+   return `<article class="league-card" data-league="${esc(l.league_id)}"><div class="league-head"><div class="league-name-row">${leagueImageHtml(l)}<div class="league-title-block"><div class="league-name">${esc(l.name)}</div><div class="league-sub">SEASON TOTAL</div></div><button class="expand" aria-label="Expand">⌄</button></div>${rowBar(l.totals,selected)}<div class="mvp-link" data-mvp-league="${esc(l.league_id)}"><span>TEAM MVPS</span><span>›</span></div></div><div class="weeks">${displayWeeks.length?displayWeeks.map(w=>`<div class="week" data-league="${esc(l.league_id)}" data-week="${w.week}" aria-label="Open Week ${w.week} roster"><div class="week-title">WEEK ${w.week}</div>${rowBar(w.rows,selected)}<div class="week-view-link" role="button" tabindex="0"><span>VIEW FULL ROSTER</span><span>›</span></div></div>`).join(""):`<div class="waiting">Waiting for season to start</div>`}</div></article>`;
  }).join("");
  $$(".league-card .expand").forEach(b=>b.onclick=()=>{let card=b.closest(".league-card");card.classList.toggle("expanded");b.textContent=card.classList.contains("expanded")?"⌃":"⌄"});
  $$(".league-head .marker").forEach(b=>b.onclick=e=>{e.stopPropagation();$$(".popup").forEach(p=>p.remove());let p=document.createElement("div");p.className="popup";p.innerHTML=`<span class="label">Manager</span><strong>${esc(managerLabel(b.dataset.manager))}</strong>Points For: ${num2(b.dataset.pf)}<br>Points Against: ${b.dataset.pa?num2(b.dataset.pa):"—"}<br>Place: ${b.dataset.place||"—"}/4`;b.parentElement.appendChild(p);p.style.left=b.style.left;p.onclick=()=>p.remove()});
  $$(".mvp-link[data-mvp-league]").forEach(b=>b.onclick=e=>{e.stopPropagation();openMvpDetail(b.dataset.mvpLeague)});
  $$(".week[data-league]").forEach(w=>{
+   const btn=w.querySelector(".week-view-link");
    const open=()=>openWeekDetail(w.dataset.league,Number(w.dataset.week));
-   w.onclick=open;
-   w.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();open()}};
+   if(btn){btn.onclick=open;btn.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();open()}}}
  });
+ const avatar=$("#league-manager-avatar");
+ if(avatar) avatar.innerHTML=managerImageHtml(selected,managerLabel(selected));
 }
 
 let WEEK_DETAIL={leagueId:null,week:null,manager:null};
@@ -421,11 +476,12 @@ function renderWeekDetail(){
  const season=seasonData(),league=(season.leagues||[]).find(l=>String(l.league_id)===WEEK_DETAIL.leagueId),w=(league?.weeks||[]).find(x=>Number(x.week)===WEEK_DETAIL.week);if(!league||!w)return;
  const rosters=w.rosters||[];let r=rosters.find(x=>x.manager===WEEK_DETAIL.manager)||rosters[0];if(!r){$("#week-detail-content").innerHTML=`<div class="waiting">Weekly roster detail is not available for this saved week.</div>`;return}
  WEEK_DETAIL.manager=r.manager;
+ const opts=DATA.managers.filter(m=>rosters.some(x=>x.manager===m.key)).map(m=>`<option value="${esc(m.key)}" ${m.key===r.manager?"selected":""}>${esc(m.label)}</option>`).join("");
  const starters=(r.starters||[]).filter(Boolean),bench=(r.bench||[]).filter(Boolean),points=r.players_points||{};
  const row=(pid,isBench)=>{const meta=playerMeta(pid),st=weekStats(WEEK_DETAIL.week,pid),pts=Number(points[String(pid)]||0);return `<button class="player-row" data-player="${esc(pid)}"><span class="player-photo">${imageHtml(meta,"player-photo")}</span><span class="player-info"><span class="player-name">${esc(meta.player)}</span><span class="player-meta">${esc(meta.position||"—")} · ${esc(meta.team||"FA")} · ${esc(opponentText(st))}</span><span class="roster-tag ${isBench?"bench":""}">${isBench?"BENCH":"STARTER"}</span></span><span class="player-pts"><span class="num">${pts.toFixed(1)}</span><span class="lbl">FPTS</span></span></button>`};
- const scoreBoxes=[...rosters].sort((a,b)=>Number(b.pf||0)-Number(a.pf||0)).map((x,i)=>`<button type="button" class="week-score-box ${x.manager===r.manager?"active":""}" data-week-manager="${esc(x.manager)}"><div class="score-manager-top"><div class="manager-avatar">${cachedImage(managerImagePath(x.manager),managerImageFallback(),managerLabel(x.manager))}</div><div class="mgr">${esc(managerLabel(x.manager))}</div></div><div class="mgrpts">${Number(x.pf||0).toFixed(1)}</div><div class="mgrrank">${i+1}${i===0?"ST":i===1?"ND":i===2?"RD":"TH"}</div></button>`).join("");
- $("#week-detail-content").innerHTML=`<section class="week-hero"><div class="detail-league-title"><div class="league-avatar">${cachedImage(leagueImagePath(league.league_id),leagueImageFallback(),league.name)}</div><div class="detail-league-copy"><div class="week-hero-name">${esc(league.name)}</div><div class="week-kicker">WEEK ${WEEK_DETAIL.week} · FULL ROSTER</div></div></div><div class="week-score-grid">${scoreBoxes}</div></section><section class="roster-section"><div class="roster-section-title">STARTERS</div><div class="player-list">${starters.map(pid=>row(pid,false)).join("")||`<div class="waiting">No starters saved</div>`}</div></section><section class="roster-section"><div class="roster-section-title">BENCH</div><div class="player-list">${bench.map(pid=>row(pid,true)).join("")||`<div class="waiting">No bench players saved</div>`}</div></section>`;
- $$("#week-detail-content .week-score-box[data-week-manager]").forEach(b=>b.onclick=()=>{WEEK_DETAIL.manager=b.dataset.weekManager;renderWeekDetail()});
+ const scoreBoxes=[...rosters].sort((a,b)=>Number(b.pf||0)-Number(a.pf||0)).map((x,i)=>`<div class="week-score-box ${x.manager===r.manager?"active":""}" data-week-manager="${esc(x.manager)}"><div class="score-avatar">${managerImageHtml(x.manager,managerLabel(x.manager))}</div><div class="mgr">${esc(managerLabel(x.manager))}</div><div class="mgrpts">${Number(x.pf||0).toFixed(1)}</div><div class="mgrrank">${i+1}${i===0?"ST":i===1?"ND":i===2?"RD":"TH"}</div></div>`).join("");
+ $("#week-detail-content").innerHTML=`<section class="week-hero"><div class="week-hero-name">${esc(league.name)}</div><div class="week-kicker">WEEK ${WEEK_DETAIL.week} · FULL ROSTER</div><div class="week-score-grid">${scoreBoxes}</div></section><section class="roster-section"><div class="roster-section-title">STARTERS</div><div class="player-list">${starters.map(pid=>row(pid,false)).join("")||`<div class="waiting">No starters saved</div>`}</div></section><section class="roster-section"><div class="roster-section-title">BENCH</div><div class="player-list">${bench.map(pid=>row(pid,true)).join("")||`<div class="waiting">No bench players saved</div>`}</div></section>`;
+  $$("#week-detail-content .week-score-box[data-week-manager]").forEach(b=>b.onclick=()=>{WEEK_DETAIL.manager=b.dataset.weekManager;renderWeekDetail()});
  $$("#week-detail-content .player-row").forEach(b=>b.onclick=()=>openPlayerDetail(b.dataset.player));
 }
 const STAT_SCHEMAS={
@@ -453,11 +509,13 @@ function closeMvpDetail(){$("#mvp-detail-screen").classList.remove("active");doc
 function renderMvpDetail(){
  const league=(seasonData().leagues||[]).find(l=>String(l.league_id)===MVP_DETAIL.leagueId);if(!league)return;
  const totals=league.totals||[];if(!totals.some(x=>x.manager===MVP_DETAIL.manager))MVP_DETAIL.manager=totals[0]?.manager||DATA.managers[0].key;
- const boxes=[...totals].sort((a,b)=>Number(b.pf||0)-Number(a.pf||0)).map(x=>`<button type="button" class="week-score-box ${x.manager===MVP_DETAIL.manager?"active":""}" data-mvp-manager="${esc(x.manager)}"><div class="score-manager-top"><div class="manager-avatar">${cachedImage(managerImagePath(x.manager),managerImageFallback(),managerLabel(x.manager))}</div><div class="mgr">${esc(managerLabel(x.manager))}</div></div><div class="mgrpts">${Math.round(Number(x.pf||0)).toLocaleString()}</div><div class="mgrrank">TOTAL FPTS</div></button>`).join("");
+ const selected=totals.find(x=>x.manager===MVP_DETAIL.manager)||{};
+ const opts=totals.map(x=>`<option value="${esc(x.manager)}" ${x.manager===MVP_DETAIL.manager?"selected":""}>${esc(managerLabel(x.manager))}</option>`).join("");
+ const boxes=[...totals].sort((a,b)=>Number(b.pf||0)-Number(a.pf||0)).map(x=>`<div class="week-score-box ${x.manager===MVP_DETAIL.manager?"active":""}" data-mvp-manager="${esc(x.manager)}"><div class="score-avatar">${managerImageHtml(x.manager,managerLabel(x.manager))}</div><div class="mgr">${esc(managerLabel(x.manager))}</div><div class="mgrpts">${Math.round(Number(x.pf||0)).toLocaleString()}</div><div class="mgrrank">TOTAL FPTS</div></div>`).join("");
  const mvps=((league.mvps||{})[MVP_DETAIL.manager]||[]).slice(0,5);
  const rows=mvps.map((x,i)=>{const meta=playerMeta(x.player_id);return `<div class="mvp-row"><div class="mvp-rank">${i+1}</div><div class="player-photo">${imageHtml(meta,"player-photo")}</div><div style="min-width:0"><div class="mvp-player-name">${esc(x.player||meta.player)}</div><div class="mvp-player-meta">${esc(x.position||meta.position||"—")} · ${esc(x.team||meta.team||"FA")}</div></div><div class="mvp-points">${Math.round(Number(x.fpts||0)).toLocaleString()}<small>FPTS</small></div></div>`}).join("")||`<div class="waiting">Season MVP data is not available yet.</div>`;
- $("#mvp-detail-content").innerHTML=`<section class="mvp-hero"><div class="detail-league-title"><div class="league-avatar">${cachedImage(leagueImagePath(league.league_id),leagueImageFallback(),league.name)}</div><div class="detail-league-copy"><div class="mvp-title">${esc(league.name)}</div><div class="mvp-kicker">TEAM MVPS · SEASON TOTALS</div></div></div><div class="week-score-grid">${boxes}</div></section><section class="roster-section"><div class="roster-section-title">TOP 5 FANTASY SCORERS</div><div class="mvp-list">${rows}</div></section>`;
- $$("#mvp-detail-content .week-score-box[data-mvp-manager]").forEach(b=>b.onclick=()=>{MVP_DETAIL.manager=b.dataset.mvpManager;renderMvpDetail()});
+ $("#mvp-detail-content").innerHTML=`<section class="mvp-hero"><div class="mvp-title">${esc(league.name)}</div><div class="mvp-kicker">TEAM MVPS · SEASON TOTALS</div><div class="week-score-grid">${boxes}</div></section><section class="roster-section"><div class="roster-section-title">TOP 5 FANTASY SCORERS · ${Math.round(Number(selected.pf||0)).toLocaleString()} TOTAL FPTS</div><div class="mvp-list">${rows}</div></section>`;
+  $$("#mvp-detail-content .week-score-box[data-mvp-manager]").forEach(b=>b.onclick=()=>{MVP_DETAIL.manager=b.dataset.mvpManager;renderMvpDetail()});
 }
 function renderAnalysis(){renderStats();renderOwnership()}
 function sortRows(rows,key,dir){return [...rows].sort((a,b)=>{let av=a[key],bv=b[key];if(typeof av==="number"&&typeof bv==="number")return (av-bv)*dir;return String(av??"").localeCompare(String(bv??""))*dir})}
@@ -556,9 +614,9 @@ function wireChartExpansion(){
       panel.classList.toggle("fullscreen",opening);
       btn.textContent=opening?"×":"↗";
       document.body.classList.toggle("no-scroll",opening);
-      if(opening){panel.scrollTop=0;if(panel.dataset.chart==="wins"){const s=computeSummary(YEAR);if(!WIN_DETAIL_MANAGER){WIN_DETAIL_MANAGER=[...DATA.managers].sort((a,b)=>Number(s.wins[b.key]||0)-Number(s.wins[a.key]||0))[0]?.key||DATA.managers[0].key;}renderStandings();}}
+      if(opening) panel.scrollTop=0;
     };
-    panel.onclick=e=>{if(panel.dataset.chart==="wins"&&panel.classList.contains("fullscreen")&&e.target.closest("[data-win-manager]"))return;toggle(e)};
+    panel.onclick=toggle;
     btn.onclick=toggle;
   });
   document.addEventListener("keydown",e=>{

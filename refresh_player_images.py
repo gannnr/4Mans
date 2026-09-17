@@ -7,8 +7,8 @@ Storage:
   assets/managers/<manager_key>.jpg
   assets/leagues/<league_id>.jpg
 
-The workflow runs annually and can also be run manually. Use --refresh-existing
-when you want to replace existing cached photos with the latest Sleeper images.
+Managers are the fixed 4MANS Sleeper usernames. This intentionally does not
+depend on 4mans_app_data.json containing user_id fields.
 """
 
 import argparse
@@ -19,25 +19,26 @@ import urllib.request
 from pathlib import Path
 
 API = "https://api.sleeper.app/v1"
+MANAGERS = ["nactasty", "jpagonis", "TheChavenator", "bingbongtinydong"]
 PLAYER_PATTERNS = [
     "https://sleepercdn.com/content/nfl/players/thumb/{player_id}.jpg",
     "https://sleepercdn.com/content/nfl/players/{player_id}.jpg",
 ]
 AVATAR_PATTERN = "https://sleepercdn.com/avatars/{avatar}"
-FALLBACK_SVG = '''<svg xmlns="http://www.w3.org/2000/svg" width="320" height="320" viewBox="0 0 320 320">
+FALLBACK_SVG = """<svg xmlns="http://www.w3.org/2000/svg" width="320" height="320" viewBox="0 0 320 320">
   <rect width="320" height="320" rx="24" fill="#f2f2ef"/>
   <circle cx="160" cy="118" r="58" fill="#d9d8d2"/>
   <path d="M62 278c8-56 50-86 98-86s90 30 98 86" fill="#d9d8d2"/>
   <text x="160" y="302" font-family="Arial, sans-serif" font-size="28" text-anchor="middle" fill="#6f716d">N/A</text>
 </svg>
-'''
+"""
 
 
 def get_json(url, tries=3, timeout=45):
     last = None
     for attempt in range(tries):
         try:
-            req = urllib.request.Request(url, headers={"User-Agent": "4MANS-Images/2.0", "Accept": "application/json"})
+            req = urllib.request.Request(url, headers={"User-Agent": "4MANS-Images/2.1", "Accept": "application/json"})
             with urllib.request.urlopen(req, timeout=timeout) as r:
                 return json.loads(r.read().decode("utf-8"))
         except Exception as e:
@@ -48,7 +49,7 @@ def get_json(url, tries=3, timeout=45):
 
 
 def fetch_bytes(url, timeout=45):
-    req = urllib.request.Request(url, headers={"User-Agent": "4MANS-Images/2.0", "Accept": "image/*,*/*"})
+    req = urllib.request.Request(url, headers={"User-Agent": "4MANS-Images/2.1", "Accept": "image/*,*/*"})
     with urllib.request.urlopen(req, timeout=timeout) as r:
         ctype = r.headers.get_content_type() or ""
         data = r.read()
@@ -79,6 +80,8 @@ def safe_name(value):
 
 def download(urls, out_file):
     for url in urls:
+        if not url:
+            continue
         try:
             ctype, data = fetch_bytes(url)
         except Exception:
@@ -101,15 +104,6 @@ def player_ids(app):
         return sorted(ids, key=lambda x: (not x.isdigit(), x))
     all_players = get_json(f"{API}/players/nfl?active=true", timeout=120)
     return sorted((str(x) for x in all_players.keys()), key=lambda x: (not x.isdigit(), x))
-
-
-def manager_targets(app):
-    out = []
-    for m in app.get("managers") or []:
-        key, uid = str(m.get("key") or ""), str(m.get("user_id") or "")
-        if key and uid:
-            out.append((key, uid))
-    return out
 
 
 def league_ids(app):
@@ -154,27 +148,27 @@ def refresh_players(app, refresh_existing=False, limit=0):
     return len(ids)
 
 
-def refresh_managers(app, refresh_existing=False):
+def refresh_managers(refresh_existing=False):
     out_dir = Path("assets/managers")
     ensure_fallback(out_dir)
     manifest = {"managers": {}}
-    for key, uid in manager_targets(app):
-        out_file = out_dir / f"{safe_name(key)}.jpg"
+    for username in MANAGERS:
+        out_file = out_dir / f"{safe_name(username)}.jpg"
         if out_file.exists() and out_file.stat().st_size >= 128 and not refresh_existing:
-            manifest["managers"][key] = {"path": f"assets/managers/{safe_name(key)}.jpg", "status": "cached"}
+            manifest["managers"][username] = {"path": f"assets/managers/{safe_name(username)}.jpg", "status": "cached"}
             continue
         try:
-            user = get_json(f"{API}/user/{uid}") or {}
+            # Sleeper's documented user lookup accepts username; do not depend on generated JSON user_id fields.
+            user = get_json(f"{API}/user/{username}") or {}
         except Exception as e:
-            print(f"WARNING manager lookup failed {key}: {e}")
+            print(f"WARNING manager lookup failed {username}: {e}")
             user = {}
-        url = avatar_url(user)
-        source = download([url], out_file) if url else ""
+        source = download([avatar_url(user)], out_file)
         if source:
-            manifest["managers"][key] = {"path": f"assets/managers/{safe_name(key)}.jpg", "status": "refreshed" if refresh_existing else "downloaded", "source": source}
+            manifest["managers"][username] = {"path": f"assets/managers/{safe_name(username)}.jpg", "status": "refreshed" if refresh_existing else "downloaded", "source": source}
         else:
             out_file.unlink(missing_ok=True)
-            manifest["managers"][key] = {"path": "assets/managers/na.svg", "status": "fallback"}
+            manifest["managers"][username] = {"path": "assets/managers/na.svg", "status": "fallback"}
     (out_dir / "manifest.json").write_text(json.dumps(manifest, separators=(",", ":")), encoding="utf-8")
     return len(manifest["managers"])
 
@@ -194,8 +188,7 @@ def refresh_leagues(app, refresh_existing=False):
         except Exception as e:
             print(f"WARNING league lookup failed {lid}: {e}")
             league = {}
-        url = avatar_url(league)
-        source = download([url], out_file) if url else ""
+        source = download([avatar_url(league)], out_file)
         if source:
             manifest["leagues"][lid] = {"path": f"assets/leagues/{safe_name(lid)}.jpg", "status": "refreshed" if refresh_existing else "downloaded", "source": source}
         else:
@@ -214,7 +207,7 @@ def main():
     args = parser.parse_args()
     app = load_app()
     print("players:", refresh_players(app, args.refresh_existing, args.limit))
-    print("managers:", refresh_managers(app, args.refresh_existing))
+    print("managers:", refresh_managers(args.refresh_existing))
     print("leagues:", refresh_leagues(app, args.refresh_existing))
     print("4MANS image refresh complete")
 
