@@ -227,6 +227,60 @@ svg{width:100%;height:auto;display:block}
   .winnings-summary-value{font-size:14px}
 }
 
+
+/* ===== iPhone navigation / scrolling hardening v11.1 ===== */
+:root{--ios-top-safe:max(env(safe-area-inset-top),44px)}
+.app{
+  padding-top:calc(var(--ios-top-safe) + 14px)!important;
+  min-height:100dvh;
+}
+.top{position:relative;z-index:30}
+body.no-scroll{overflow:hidden!important;touch-action:none}
+body:not(.no-scroll){overflow-y:auto!important;-webkit-overflow-scrolling:touch}
+
+.chart-panel.fullscreen{
+  position:fixed!important;
+  inset:0!important;
+  top:0!important;left:0!important;right:0!important;bottom:0!important;
+  width:100vw!important;
+  height:100dvh!important;
+  max-width:none!important;
+  margin:0!important;
+  border:0!important;
+  border-radius:0!important;
+  z-index:9999!important;
+  background:var(--bg)!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
+  touch-action:pan-y;
+  padding-top:calc(var(--ios-top-safe) + 14px)!important;
+  padding-bottom:calc(env(safe-area-inset-bottom) + 24px)!important;
+}
+#standings-screen .chart-panel.fullscreen{
+  border-radius:0!important;
+  margin:0!important;
+  padding-top:calc(var(--ios-top-safe) + 14px)!important;
+}
+.chart-panel.fullscreen .expand-chart,
+#standings-screen .chart-panel.fullscreen .expand-chart{
+  position:fixed!important;
+  top:calc(var(--ios-top-safe) + 6px)!important;
+  right:16px!important;
+  z-index:10001!important;
+}
+.chart-panel.fullscreen .panel-title,
+#standings-screen .chart-panel.fullscreen .panel-title{
+  margin-top:6px!important;
+}
+
+/* Native iOS select: keep placeholder stable and avoid first-tap reinitialization quirks. */
+#year-select{
+  appearance:auto;
+  -webkit-appearance:menulist;
+}
+
 </style>
 </head>
 <body>
@@ -234,7 +288,7 @@ svg{width:100%;height:auto;display:block}
 <section id="year-screen" class="screen active hero">
   <div class="brand">4MANS</div>
   <div class="tag">4 Man best ball leagues for my mans</div>
-  <select id="year-select" class="yearbox" aria-label="Select league year"><option value="" selected disabled>SELECT YEAR</option></select>
+  <select id="year-select" class="yearbox" aria-label="Select league year"><option value="" selected>SELECT YEAR</option></select>
   <button class="menu-btn year-go" style="margin-top:14px" id="enter-year" disabled>GO</button>
 </section>
 
@@ -318,7 +372,23 @@ let DATA=null, YEAR="2026";
 let statSort={key:"fpts",dir:-1},ownSort={key:"Nactasty",dir:-1};
 let WIN_DETAIL_MANAGER=null;
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
-function show(id){$$(".screen").forEach(x=>x.classList.remove("active"));$("#"+id).classList.add("active");window.scrollTo(0,0);if(id==="standings-screen")renderStandings();if(id==="leagues-screen")renderLeagues();if(id==="analysis-screen")renderAnalysis()}
+function resetOverlayState(){
+  $$(".chart-panel.fullscreen").forEach(p=>{
+    p.classList.remove("fullscreen");
+    const b=p.querySelector(".expand-chart");if(b)b.textContent="↗";
+  });
+  $$(".popup").forEach(p=>p.remove());
+  document.body.classList.remove("no-scroll");
+}
+function show(id){
+  resetOverlayState();
+  $$(".screen").forEach(x=>x.classList.remove("active"));
+  $("#"+id).classList.add("active");
+  window.scrollTo(0,0);
+  if(id==="standings-screen")renderStandings();
+  if(id==="leagues-screen")renderLeagues();
+  if(id==="analysis-screen")renderAnalysis();
+}
 function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
 function managerLabel(k){return (DATA.managers.find(x=>x.key===k)||{}).label||k}
 function managerImagePath(k){return `assets/managers/${String(k)}.jpg`}
@@ -381,13 +451,15 @@ function computeSummary(year){
  return {state:summary.state||"active_or_complete", current, wins, weekly, history:season.poll_history||[], points_for:summary.points_for||{}, points_against:summary.points_against||{}};
 }
 
-function initYearSelector(){
+function initYearSelector(preserve=true){
   const years=Object.keys(DATA.seasons||{}).sort((a,b)=>Number(b)-Number(a));
   const sel=$("#year-select");
-  sel.innerHTML=`<option value="" selected disabled>SELECT YEAR</option>`+
+  const prior=preserve?(sel?.value||""):"";
+  sel.innerHTML=`<option value="">SELECT YEAR</option>`+
     years.map(y=>`<option value="${esc(y)}">${esc(y)}</option>`).join("");
-  sel.value="";
-  $("#enter-year").disabled=true;
+  if(prior&&DATA.seasons?.[prior]) sel.value=prior;
+  else sel.value="";
+  $("#enter-year").disabled=!sel.value;
   sel.onchange=()=>{$("#enter-year").disabled=!sel.value};
 }
 
@@ -867,7 +939,7 @@ function wireChartExpansion(){
       $$(".chart-panel.fullscreen").forEach(p=>{p.classList.remove("fullscreen");p.querySelector(".expand-chart").textContent="↗"});
       panel.classList.toggle("fullscreen",opening);
       btn.textContent=opening?"×":"↗";
-      document.body.classList.toggle("no-scroll",opening);
+      document.body.classList.toggle("no-scroll",opening); if(!opening) document.documentElement.style.overflow="";
       if(opening) panel.scrollTop=0;
 
       // Re-render after the fullscreen state changes so each chart can
@@ -901,12 +973,9 @@ async function refreshDataSilently(){
     const fresh=await (await fetch(`4mans_app_data.json?t=${Date.now()}`,{cache:"no-store"})).json();
     if(!DATA||fresh.generated_at!==DATA.generated_at){
       DATA=fresh;
-      const yearSelection=$("#year-select")?.value||"";
-      initYearSelector();
-      if(yearSelection&&DATA.seasons?.[yearSelection]){
-        $("#year-select").value=yearSelection;
-        $("#enter-year").disabled=false;
-      }
+      // Do not rebuild the year dropdown during background refreshes.
+      // Replacing its options while iOS has the native picker open can make
+      // the first tap appear to do nothing.
       populateTeamFilters();
       updatePositionFilter("stats");
       updatePositionFilter("own");
@@ -920,7 +989,7 @@ async function refreshDataSilently(){
 async function boot(){
  try{
    DATA=await (await fetch("4mans_app_data.json",{cache:"no-store"})).json();
-   initYearSelector();
+   initYearSelector(false);
    initSelectors();
    populateTeamFilters();
    updatePositionFilter("stats");
