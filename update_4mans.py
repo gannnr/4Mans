@@ -298,6 +298,37 @@ def fetch_week_stats_feed(season, week):
             print(f"Weekly stats fallback failed: {url} :: {e}")
     return {}
 
+def fetch_schedule_feed(season):
+    """Fetch real NFL schedule and build week/team opponent map."""
+    urls = [
+        f"https://api.sleeper.com/schedule/nfl/regular/{season}",
+    ]
+    for url in urls:
+        try:
+            data = get_json(url, tries=2, timeout=60)
+            if data:
+                print(f"Schedule feed OK: {season} :: {url}")
+                return data
+        except Exception as e:
+            print(f"Schedule feed failed: {url} :: {e}")
+    return []
+
+def schedule_opponents(schedule):
+    out = {}
+    rows = schedule.values() if isinstance(schedule, dict) else schedule
+    for g in (rows or []):
+        if not isinstance(g, dict):
+            continue
+        wk = g.get("week") or g.get("leg") or g.get("game_week")
+        home = g.get("home") or g.get("home_team") or g.get("home_team_abbr")
+        away = g.get("away") or g.get("away_team") or g.get("away_team_abbr")
+        try: wk = int(wk)
+        except Exception: continue
+        if home and away:
+            out[(wk, str(home).upper())] = {"opp": str(away).upper(), "home": True, "away": False}
+            out[(wk, str(away).upper())] = {"opp": str(home).upper(), "home": False, "away": True}
+    return out
+
 WEEK_STAT_KEYS = (
     # Context / availability
     "opp", "opponent", "home", "away", "game_id", "gp", "gs", "team",
@@ -419,7 +450,7 @@ def build():
     player_map = get_json(f"{API}/players/nfl", timeout=120)
 
     app = {
-        "version": 8,
+        "version": 9,
         "generated_at": now_iso(),
         "managers": [{"key": m["key"], "label": m["label"]} for m in MANAGERS],
         "assets": {
@@ -559,12 +590,32 @@ def build():
                     total_pa[key] += pa
             add_places(totals)
 
+            mvp_by_manager = {}
+            for m in MANAGERS:
+                key = m["key"]
+                rows_mvp = []
+                for pid, mgr_map in player_league_points.items():
+                    pts = (mgr_map.get(key) or {}).get(lid)
+                    if pts is None:
+                        continue
+                    meta = normalize_player(pid, player_map.get(pid) or {})
+                    rows_mvp.append({
+                        "player_id": str(pid),
+                        "player": meta["player"],
+                        "position": meta["position"],
+                        "team": meta["team"],
+                        "fpts": round(safe_num(pts), 2),
+                    })
+                rows_mvp.sort(key=lambda x: x["fpts"], reverse=True)
+                mvp_by_manager[key] = rows_mvp[:5]
+
             app_leagues.append({
                 "league_id": lid,
                 "name": lname,
                 "state": "active_or_complete" if weeks else "preseason",
                 "display_status": "" if weeks else "Waiting for season to start",
                 "totals": totals,
+                "mvps": mvp_by_manager,
                 "weeks": sorted(weeks, key=lambda x: x["week"], reverse=True),
             })
 
@@ -590,6 +641,7 @@ def build():
 
         # Raw season player stats plus compact week-by-week box-score stats for roster detail screens.
         raw_stats = stats_by_player(fetch_stats_feed(season))
+        opponent_map = schedule_opponents(fetch_schedule_feed(season))
         active_weeks = sorted({int(w.get("week") or 0) for l in app_leagues for w in (l.get("weeks") or []) if int(w.get("week") or 0) > 0})
         weekly_stats = {}
         for wk in active_weeks:
@@ -597,6 +649,11 @@ def build():
             filtered = {}
             for pid in all_ids:
                 compact = compact_week_stats(raw_week.get(pid) or {})
+                meta = normalize_player(pid, player_map.get(pid) or {})
+                team = str(compact.get("team") or meta.get("team") or "").upper()
+                sched = opponent_map.get((wk, team))
+                if sched:
+                    compact.update(sched)
                 if compact:
                     filtered[pid] = compact
             weekly_stats[str(wk)] = filtered
