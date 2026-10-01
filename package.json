@@ -1,0 +1,11 @@
+{
+  "name": "fourmans",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node tests/predictions.mjs && node tests/dashboard.cjs && python tests/updater.py && python tests/game-window.py"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.0"
+  }
+}
