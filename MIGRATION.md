@@ -1,6 +1,7 @@
 # 4MANS GitHub + Supabase migration
 
-The polished interface is available at `/4Mans/preview/` before replacing the homepage.
+The polished interface is published at the main GitHub Pages URL, `/4Mans/`.
+The preview path remains available with the same interface.
 All data and image paths use the existing repository. Login and predictions use the independent
 Supabase `fourmans` Edge Function in project `siakdeksohfnwurgrdvn`.
 
@@ -58,9 +59,8 @@ and prediction backups privately; do not commit them to the public repository.
 
 ## Current publication status
 
-Supabase is configured and verified. GitHub connector installation now permits repository writes.
-The migration is staged with preview/index.html and supporting files. The original homepage
-stays in place until the user verifies their real login at /4Mans/preview/.
-The dashboard check uses FOURMANS_HTML=preview/index.html during staging.
-After acceptance, publish the polished interface as root index.html and remove the preview
-base element from that root copy. The faster refresh workflow activates when merged into main.
+The commissioner accepted the GitHub preview. The polished interface is now the root homepage.
+The GitHub refresh workflow is configured for game-window and baseline updates.
+All six 2025 sample predictions and their responses/rulings were removed from Supabase;
+the application starts with zero predictions. All years now use real prediction records.
+The custom member login and commissioner account are preserved.
