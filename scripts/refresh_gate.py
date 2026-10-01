@@ -16,7 +16,8 @@ def decide(rows,now,last,manual=False):
 
 def main():
     now=datetime.now(timezone.utc);data=json.loads(Path('4mans_app_data.json').read_text());season=str(data['nfl_state']['season']);cache=Path('.cache/schedule.csv');cache.parent.mkdir(exist_ok=True)
-    manual=os.getenv('GITHUB_EVENT_NAME')=='workflow_dispatch';rows=[];error=None
+    # Code-only pushes are filtered in refresh.yml; data commits cannot retrigger this.
+    manual=os.getenv('GITHUB_EVENT_NAME') in ('workflow_dispatch','push');rows=[];error=None
     try:
         if not cache.exists() or time.time()-cache.stat().st_mtime>86400:
             req=urllib.request.Request(SCHEDULE_URL,headers={'User-Agent':'4MANS/2.0'})

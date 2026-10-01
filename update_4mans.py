@@ -369,6 +369,19 @@ def compact_week_stats(stats):
                 out[key] = val
     return out
 
+def has_recorded_week_stats(players):
+    """Schedule/identity fields alone do not establish a published stats feed."""
+    context_keys = {"opp", "opponent", "home", "away", "game_id", "team", "gp", "gs"}
+    stat_keys = set(WEEK_STAT_KEYS) - context_keys
+    for stats in (players or {}).values():
+        if not isinstance(stats, dict):
+            continue
+        if any(key in stats and stats[key] is not None for key in stat_keys):
+            return True  # A recorded zero is still a real stat, not missing data.
+        if any(safe_num(stats.get(key)) > 0 for key in ("gp", "gs")):
+            return True
+    return False
+
 def stats_by_player(raw):
     """
     Normalize common Sleeper stats response shapes to {player_id: stats_dict}.
@@ -707,8 +720,11 @@ def build():
                 weekly_stats[str(wk)] = previous_season["weekly_stats"][str(wk)]
                 continue
             raw_week = stats_by_player(fetch_week_stats_feed(season, wk))
-            if not raw_week and (previous_season or {}).get("weekly_stats", {}).get(str(wk)):
+            saved_week = (previous_season or {}).get("weekly_stats", {}).get(str(wk), {})
+            if not raw_week and has_recorded_week_stats(saved_week):
                 raise RuntimeError(f"Weekly stats feed unavailable for week {wk}; previous data retained")
+            if not raw_week:
+                print(f"Week {wk} player stats not published yet; retaining schedule context")
             filtered = {}
             for pid in all_ids:
                 compact = compact_week_stats(raw_week.get(pid) or {})
