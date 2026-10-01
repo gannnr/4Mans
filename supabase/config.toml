@@ -1,0 +1,3 @@
+project_id = "siakdeksohfnwurgrdvn"
+[functions.fourmans]
+verify_jwt = false # Custom opaque sessions are verified against the private sessions table.

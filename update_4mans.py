@@ -19,10 +19,12 @@ The website itself stays static. This file only refreshes 4mans_app_data.json.
 import json
 import math
 import os
+from pathlib import Path
 import time
 import urllib.parse
 import urllib.request
 from collections import defaultdict
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
 
 USERNAME = "Nactasty"
@@ -66,18 +68,25 @@ def load_previous_app(path="4mans_app_data.json"):
         return {}
 
 def current_winnings_snapshot(app_leagues):
-    """Same +$15 / -$5 standings logic used by the browser."""
+    """Split each league's $5-per-member prize among tied first places."""
     current = {m["key"]: 0 for m in MANAGERS}
     wins = {m["key"]: 0 for m in MANAGERS}
     for league in app_leagues:
-        for row in league.get("totals") or []:
-            mgr = row.get("manager")
-            place = row.get("place")
-            if mgr is None or place is None:
-                continue
-            current[mgr] = current.get(mgr, 0) + (15 if int(place) == 1 else -5)
-            if int(place) == 1:
-                wins[mgr] = wins.get(mgr, 0) + 1
+        rows = [r for r in (league.get("totals") or []) if r.get("pf") is not None and r.get("manager")]
+        if not rows or not any(safe_num(r["pf"]) != 0 for r in rows):
+            continue
+        high = max(safe_num(r["pf"]) for r in rows)
+        leaders = [r for r in rows if safe_num(r["pf"]) == high]
+        # Allocate whole cents deterministically so the league always balances.
+        pool = 500 * len(rows)
+        base, remainder = divmod(pool, len(leaders))
+        leaders = sorted(leaders, key=lambda r:r["manager"])
+        prizes = {r["manager"]:base + (i < remainder) for i,r in enumerate(leaders)}
+        for row in rows:
+            mgr = row["manager"]
+            current[mgr] += (prizes.get(mgr, 0) - 500) / 100
+            if mgr in prizes:
+                wins[mgr] += 1
     return current, wins
 
 def get_json(url, tries=3, timeout=45):
@@ -130,22 +139,19 @@ def manager_key(owner_id):
 
 def discover_leagues(user_id, season):
     leagues = get_json(f"{API}/user/{user_id}/leagues/nfl/{season}")
-    out = []
-    for league in leagues:
-        if int(league.get("total_rosters") or 0) != 4:
-            continue
+    candidates = [l for l in leagues if int(l.get("total_rosters") or 0) == 4]
+    def qualify(league):
         league_id = str(league["league_id"])
         try:
             complete, draft_ids = draft_is_complete(league_id)
         except Exception as e:
             print(f"WARNING draft check failed {league_id}: {e}")
-            continue
+            return None
         if not complete:
-            continue
-        league = dict(league)
-        league["_draft_ids"] = draft_ids
-        out.append(league)
-    return out
+            return None
+        return {**league, "_draft_ids": draft_ids}
+    with ThreadPoolExecutor(max_workers=6) as executor:
+        return [league for league in executor.map(qualify, candidates) if league]
 
 def fetch_members(league_id):
     users = get_json(f"{API}/league/{league_id}/users")
@@ -249,7 +255,7 @@ def add_places(rows):
     """Rank by PF descending. Competition rank for ties."""
     valid = [r for r in rows if r.get("pf") is not None]
     sorted_vals = sorted({safe_num(r["pf"]) for r in valid}, reverse=True)
-    rank_for = {v: i + 1 for i, v in enumerate(sorted_vals)}
+    rank_for = {v: 1 + sum(1 for r in valid if safe_num(r["pf"]) > v) for v in sorted_vals}
     for r in rows:
         if r.get("pf") is None:
             r["place"] = None
@@ -411,6 +417,10 @@ def app_stat_row(meta, stats, ownership, fpts_all, fpts_by_manager):
     }
     if side == "offense":
         base.update({
+            "rush_att": pick_stat(stats, "rush_att"),
+            "rec_tgt": pick_stat(stats, "rec_tgt", "targets"),
+            "pass_att": pick_stat(stats, "pass_att"),
+            "pass_cmp": pick_stat(stats, "pass_cmp"),
             "rush_yd": pick_stat(stats, "rush_yd", "rush_yds"),
             "rush_td": pick_stat(stats, "rush_td"),
             "rec": pick_stat(stats, "rec"),
@@ -439,6 +449,8 @@ def app_stat_row(meta, stats, ownership, fpts_all, fpts_by_manager):
 def build():
     print("4MANS refresh started", now_iso())
     previous_app = load_previous_app()
+    nfl_state = get_json(f"{API}/state/nfl")
+    display_week = int(nfl_state.get("display_week") or nfl_state.get("week") or 0)
 
     user = get_json(f"{API}/user/{urllib.parse.quote(USERNAME)}")
     user_id = str(user["user_id"])
@@ -447,10 +459,19 @@ def build():
     # 3 hours, but a single 5MB call per run is still modest. If desired later we can cache
     # this once/day in the repo.
     print("Fetching Sleeper player map...")
-    player_map = get_json(f"{API}/players/nfl", timeout=120)
+    cache_path = Path(os.getenv("SLEEPER_PLAYERS_CACHE", ".cache/players.json"))
+    if cache_path.exists() and time.time()-cache_path.stat().st_mtime < 86400:
+        player_map = json.loads(cache_path.read_text())
+    else:
+        player_map = get_json(f"{API}/players/nfl", timeout=120)
+        if not isinstance(player_map, dict) or len(player_map) < 1000:
+            raise RuntimeError("Player map is incomplete; previous data retained")
+        cache_path.parent.mkdir(parents=True, exist_ok=True)
+        cache_path.write_text(json.dumps(player_map))
 
     app = {
-        "version": 9,
+        "version": 10,
+        "nfl_state": nfl_state,
         "generated_at": now_iso(),
         "managers": [{"key": m["key"], "label": m["label"]} for m in MANAGERS],
         "assets": {
@@ -462,6 +483,12 @@ def build():
 
     for season in SEASONS:
         print(f"\n=== {season} ===")
+        previous_season = (previous_app.get("seasons") or {}).get(season)
+        if int(season) < int(nfl_state["season"]) and previous_season and previous_season.get("leagues"):
+            # Archived years stay retrievable without repeatedly fetching every old matchup.
+            app["seasons"][season] = previous_season
+            print("Reusing saved historical season", season)
+            continue
         leagues = discover_leagues(user_id, season)
         print("qualifying leagues:", len(leagues))
 
@@ -483,8 +510,11 @@ def build():
             lname = league.get("name") or f"League {lid}"
             print(f"[{li}/{len(leagues)}] {lname}")
 
-            rosters = fetch_rosters(lid)
-            members = fetch_members(lid)
+            with ThreadPoolExecutor(max_workers=2) as executor:
+                roster_future = executor.submit(fetch_rosters, lid)
+                member_future = executor.submit(fetch_members, lid)
+                rosters = roster_future.result()
+                members = member_future.result()
 
             roster_to_manager = {}
             current_players_by_manager = {m["key"]: [] for m in MANAGERS}
@@ -517,18 +547,43 @@ def build():
             cumulative_pf = defaultdict(float)
             cumulative_pa = defaultdict(float)
             weeks = []
-            for week in range(1, 19):
+            last_week = min(18, display_week) if season == str(nfl_state.get("season")) and nfl_state.get("season_type") == "regular" else 18
+            previous_league = next((l for l in (previous_season or {}).get("leagues", []) if str(l.get("league_id")) == lid), {})
+            previous_weeks = {int(w["week"]):w for w in previous_league.get("weeks", [])}
+            # Re-fetch the current and preceding week for scoring corrections; reuse older weeks.
+            first_live_week = max(1, last_week - 1)
+            needed = [week for week in range(1, last_week + 1) if week >= first_live_week or week not in previous_weeks or not previous_weeks[week].get("rosters")]
+            def fetch_week(week):
                 try:
-                    raw = get_matchup_week(lid, week)
+                    return week, get_matchup_week(lid, week)
                 except Exception as e:
-                    print(f"  week {week} fetch warning: {e}")
+                    # A failed current league update must not drop previously saved results.
+                    raise RuntimeError(f"League {lid} week {week} could not refresh: {e}")
+            with ThreadPoolExecutor(max_workers=6) as executor:
+                fetched = dict(executor.map(fetch_week, needed))
+            for week in range(1, last_week + 1):
+                if week in fetched:
+                    raw = fetched[week]
+                else:
+                    raw = [{"roster_id":rid,"matchup_id":None,"points":r["pf"],"players":r.get("players",[]),"starters":r.get("starters",[]),"players_points":r.get("players_points",{})} for rid,mgr in roster_to_manager.items() for r in previous_weeks[week].get("rosters",[]) if r["manager"]==mgr]
+                    # Reused weekly PA is restored below because saved rosters do not retain matchup IDs.
+                saved_pa = {r["manager"]:r.get("pa") for r in previous_weeks.get(week,{}).get("rosters",[])} if week not in fetched else {}
+
+                scored = week_has_activity(raw)
+                if not scored and week in previous_weeks and not previous_weeks[week].get("awaiting_scores") and any(safe_num(r.get("pf")) != 0 for r in previous_weeks[week].get("rosters", [])):
+                    raise RuntimeError(f"League {lid} week {week} lost saved scoring; previous data retained")
+                is_current = season == str(nfl_state.get("season")) and nfl_state.get("season_type") == "regular" and week == display_week
+                if not scored and not is_current:
                     continue
 
-                if not week_has_activity(raw):
-                    continue
-
-                any_scored_week = True
+                any_scored_week = any_scored_week or scored
                 rows = build_week_rows(raw, roster_to_manager, cumulative_pf, cumulative_pa)
+                if saved_pa:
+                    for row in rows:
+                        old_pa = saved_pa.get(row["manager"])
+                        if old_pa is not None:
+                            row["pa"] = old_pa
+                            cumulative_pa[row["manager"]] += safe_num(old_pa)
 
                 # Capture player points for Analysis.
                 for row in rows:
@@ -568,7 +623,7 @@ def build():
                             "pa": round(cumulative_pa[key], 2),
                         })
                 add_places(display_rows)
-                weeks.append({"week": week, "rows": display_rows, "rosters": detail_rows})
+                weeks.append({"week": week, "rows": display_rows, "rosters": detail_rows, "awaiting_scores": not scored})
 
             # Current / season totals. Prefer accumulated matchup data when available.
             totals = []
@@ -576,7 +631,7 @@ def build():
                 key = m["key"]
                 if key not in roster_to_manager.values():
                     continue
-                if weeks:
+                if any(not w.get("awaiting_scores") for w in weeks):
                     pf = round(cumulative_pf[key], 2)
                     pa = round(cumulative_pa[key], 2)
                 else:
@@ -612,10 +667,11 @@ def build():
             app_leagues.append({
                 "league_id": lid,
                 "name": lname,
-                "state": "active_or_complete" if weeks else "preseason",
+                "state": "active_or_complete" if any(not w.get("awaiting_scores") for w in weeks) else "preseason",
                 "display_status": "" if weeks else "Waiting for season to start",
                 "totals": totals,
                 "mvps": mvp_by_manager,
+                "current_rosters": current_players_by_manager,
                 "weeks": sorted(weeks, key=lambda x: x["week"], reverse=True),
             })
 
@@ -641,11 +697,18 @@ def build():
 
         # Raw season player stats plus compact week-by-week box-score stats for roster detail screens.
         raw_stats = stats_by_player(fetch_stats_feed(season))
+        if not raw_stats and (previous_season or {}).get("stats"):
+            raise RuntimeError("Season stats feed unavailable; previous data retained")
         opponent_map = schedule_opponents(fetch_schedule_feed(season))
         active_weeks = sorted({int(w.get("week") or 0) for l in app_leagues for w in (l.get("weeks") or []) if int(w.get("week") or 0) > 0})
         weekly_stats = {}
         for wk in active_weeks:
+            if wk < max(1, display_week - 1) and (previous_season or {}).get("weekly_stats", {}).get(str(wk)):
+                weekly_stats[str(wk)] = previous_season["weekly_stats"][str(wk)]
+                continue
             raw_week = stats_by_player(fetch_week_stats_feed(season, wk))
+            if not raw_week and (previous_season or {}).get("weekly_stats", {}).get(str(wk)):
+                raise RuntimeError(f"Weekly stats feed unavailable for week {wk}; previous data retained")
             filtered = {}
             for pid in all_ids:
                 compact = compact_week_stats(raw_week.get(pid) or {})
@@ -706,10 +769,10 @@ def build():
 
         # Save every automated refresh as a standings snapshot for the current season.
         # This gives the front end a true intra-week timeline instead of one point/week.
-        if season == str(CURRENT_YEAR) and any_scored_week:
+        if season == str(nfl_state.get("season")) and any_scored_week:
             current_winnings, winning_leagues = current_winnings_snapshot(app_leagues)
             latest_week = max(
-                [int(w.get("week") or 0) for l in app_leagues for w in (l.get("weeks") or [])]
+                [int(w.get("week") or 0) for l in app_leagues for w in (l.get("weeks") or []) if not w.get("awaiting_scores")]
                 or [0]
             )
             snapshot = {
@@ -744,6 +807,18 @@ def build():
             "poll_history": poll_history,
         }
 
+    for season, old in previous_app.get("seasons", {}).items():
+        new = app.get("seasons", {}).get(season)
+        if not new:
+            raise RuntimeError(f"Season {season} missing; previous data retained")
+        old_ids = {str(l["league_id"]) for l in old.get("leagues", [])}
+        new_ids = {str(l["league_id"]) for l in new.get("leagues", [])}
+        if not old_ids.issubset(new_ids):
+            raise RuntimeError(f"Season {season} lost leagues; previous data retained")
+        if any(len(l.get("totals", [])) != 4 for l in new.get("leagues", [])):
+            raise RuntimeError("Incomplete manager standings; previous data retained")
+    app["refresh_status"] = {"game_window": os.getenv("FOURMANS_GAME_WINDOW") == "true", "expected_minutes": 10 if os.getenv("FOURMANS_GAME_WINDOW") == "true" else 180}
+    app["generated_at"] = now_iso()
     tmp = "4mans_app_data.json.tmp"
     with open(tmp, "w", encoding="utf-8") as f:
         json.dump(app, f, separators=(",", ":"), ensure_ascii=False)
