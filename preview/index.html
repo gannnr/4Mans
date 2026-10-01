@@ -1180,7 +1180,7 @@ const pdName=m=>managerLabel(m);
 function pdError(message,dialog=false){const el=$(dialog?'#pred-dialog-error':$('#invites-screen').classList.contains('active')?'#invites-error':$('#prediction-history-screen').classList.contains('active')?'#pred-log-error':'#pred-error');el.textContent=message||'';el.hidden=!message;}
 async function pdRequest(data){const r=await fourmansFetch('/api/predictions',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});const result=await r.json();if(!r.ok)throw new Error(result.error||'Could not save. Please try again.');return result;}
 async function loadPredictions(){
- if(PRED_YEAR!==YEAR){PRED_YEAR=YEAR;PRED_TEST=YEAR==='2025';}
+ if(PRED_YEAR!==YEAR){PRED_YEAR=YEAR;PRED_TEST=false;}
  $('#pred-log-season').textContent=PRED_YEAR;
  const seq=++PRED_LOADING;pdError('');if(!PRED)$('#pred-open').innerHTML='<div class="waiting">Loading predictions…</div>';
  try{const response=await fourmansFetch(`/api/predictions?season=${encodeURIComponent(PRED_YEAR)}&test=${PRED_TEST?1:0}`,{cache:'no-store'});const data=await response.json();if(!response.ok)throw new Error(data.error);if(seq!==PRED_LOADING)return;PRED=data;SESSION_USER=data.user;syncSession();if(!SESSION_USER){show('login-screen');renderLogin();return;}renderPredictions();}catch(e){if(seq!==PRED_LOADING)return;pdError(e.message);$('#pred-open').innerHTML='<button class="pred-btn" id="pred-retry">Try again</button>';$('#pred-retry').onclick=loadPredictions;}

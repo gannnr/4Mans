@@ -235,7 +235,7 @@ svg{width:100%;height:auto;display:block}
   min-height:100dvh;
 }
 .top{position:relative;z-index:30}
-body.no-scroll{overflow:hidden!important;touch-action:none}
+body.no-scroll{overflow:hidden!important}
 body:not(.no-scroll){overflow-y:auto!important;-webkit-overflow-scrolling:touch}
 
 .chart-panel.fullscreen{
@@ -285,98 +285,207 @@ body:not(.no-scroll){overflow-y:auto!important;-webkit-overflow-scrolling:touch}
 /* MVP -> Player detail stacking fix */
 #player-detail-screen{z-index:1300!important}
 
+.pred-heading{font-size:26px;margin:20px 0 16px;font-weight:950}.pred-toolbar{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}.pred-toolbar label{font-size:14px;font-weight:750}.pred-toolbar select{margin-top:6px}.pred-test{background:#fff1cf;border:1px solid #e5c572;color:#65470b;padding:12px;border-radius:12px;font-size:14px;line-height:1.5;margin:12px 0}.pred-error{color:#912525;background:#fff0ef;border:1px solid #edb5b2;padding:12px;border-radius:10px;font-size:16px;line-height:1.5;margin:12px 0}.pred-heading-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:24px 0 12px}.pred-heading-row h2{font-size:20px;line-height:1.2;margin:0}.pred-btn{border:1px solid var(--line);border-radius:10px;padding:10px 14px;min-height:44px;background:#fff;font-size:14px;font-weight:800;cursor:pointer}.pred-primary{background:#171717;border-color:#171717;color:white}.pred-btn:disabled{opacity:.55;cursor:wait}.pred-flex{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.pred-card{border:1px solid var(--line);border-radius:16px;background:white;padding:16px;margin:12px 0;box-shadow:var(--shadow);font-size:16px;line-height:1.5}.pred-card h3{font-size:20px;line-height:1.3;margin:12px 0}.pred-meta{font-size:14px;color:var(--muted);overflow-wrap:anywhere}.pred-badge{font-size:13px;font-weight:850;border-radius:6px;padding:4px 7px;background:#ecece7}.pred-badge.won{background:#e2f4e9;color:#17743b}.pred-badge.lost{background:#ffe8e8;color:#a82d2d}.pred-amount{font-size:24px;font-weight:950;margin:14px 0 0}.pred-criteria{margin:10px 0;padding:10px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);white-space:pre-wrap;overflow-wrap:anywhere}.pred-responses{display:grid;gap:7px;margin:12px 0;font-size:14px}.pred-responses>div{display:flex;justify-content:space-between;gap:10px}.pred-card input{width:120px;min-height:44px;padding:8px;font:inherit;border:1px solid var(--line);border-radius:8px}.pred-card details{margin-top:12px;font-size:14px}.pred-card summary{cursor:pointer;font-weight:800;min-height:35px}.pred-member-name{font-size:14px;font-weight:800;overflow-wrap:anywhere}.pred-leader-money{font-size:27px;font-weight:950;margin:7px 0}.pred-form{display:grid;gap:14px}.pred-form label{font-size:14px;font-weight:800;display:grid;gap:6px}.pred-form input,.pred-form select,.pred-form textarea{width:100%;padding:11px;border:1px solid var(--line);border-radius:10px;font:inherit;font-size:16px;background:white;color:var(--ink)}.pred-form textarea{min-height:100px;resize:vertical}.pred-form small{font-size:14px;font-weight:400;color:var(--muted);line-height:1.5}.pred-dialog{width:calc(100% - 28px);max-width:550px;max-height:90vh;border:1px solid var(--line);border-radius:18px;padding:20px;background:var(--bg);color:var(--ink);overflow:auto}.pred-dialog::backdrop{background:rgba(0,0,0,.5)}.pred-dialog .pred-heading-row{margin:0 0 20px}.pred-dialog h2{font-size:22px}.pred-invite{display:block;word-break:break-all;background:#f0f0eb;padding:12px;border-radius:9px;margin:10px 0;font-size:14px}.pred-small{font-size:14px;color:var(--muted);line-height:1.5}.pred-net{font-weight:850}.pred-admin summary{font-size:16px;font-weight:850;cursor:pointer}.pred-admin p{font-size:14px;line-height:1.5}.pred-account-title{font-weight:850;margin:0 0 6px;font-size:16px}#predictions-screen [hidden]{display:none!important}#predictions-screen .manager-card{box-shadow:none}#predictions-screen .manager-card .money{font-size:27px}
+@media(max-width:380px){.pred-heading-row{flex-wrap:wrap}.pred-toolbar{grid-template-columns:1fr}.pred-card{padding:13px}}
+
+[hidden]{display:none!important}
+.auth-shell{max-width:460px;margin:22px auto 0}.auth-shell .pred-heading{margin:0 0 18px;font-size:24px}
+.auth-tabs{margin-top:18px}.session-bar{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:14px;margin:0 0 16px;color:var(--muted)}
+#predictions-screen,#prediction-history-screen{padding-top:0;margin-top:0}
+#predictions-screen .pred-toolbar{align-items:center}#predictions-screen .pred-heading{margin-top:16px}
+.pred-person>span:last-child{min-width:0;overflow-wrap:anywhere}.pred-responses>div>span:last-child{flex-shrink:0}.pred-person{display:inline-flex;align-items:center;gap:9px;min-width:0}.pred-avatar{display:inline-block;width:38px;height:38px;flex:0 0 38px;border-radius:50%;overflow:hidden;border:1px solid var(--line);background:var(--bg)}.pred-avatar img{display:block;width:100%;height:100%;object-fit:cover}.pred-summary-head{display:flex;align-items:center;gap:10px;margin-bottom:8px}.pred-summary-head .pred-avatar{width:48px;height:48px;flex-basis:48px}.pred-responses>div{align-items:center}.pred-accept{min-height:48px;background:var(--green);border-color:var(--green);color:#fff;font-size:16px}#pred-close-season{margin-top:12px}
+
+.top,.detail-top{grid-template-columns:44px minmax(0,1fr) auto;gap:8px}.top .brand{font-size:clamp(20px,6vw,28px)}.top .session-logout{padding:8px 10px;font-size:14px}.app{padding-bottom:70px}.session-footer{position:fixed;bottom:0;left:max(16px,calc((100vw - 648px)/2));padding:10px 0 calc(10px + env(safe-area-inset-bottom));font-size:13px;color:var(--muted);background:var(--bg);z-index:35}.session-footer[hidden]{display:none}.pred-btn:disabled{cursor:default}.year-top{margin-bottom:16px}
+
+.data-status{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:24px;font-size:13px;color:var(--muted);line-height:1.5}.data-status[hidden]{display:none}.text-btn{border:0;background:none;color:var(--blue);font-size:14px;padding:10px 0;text-decoration:underline;cursor:pointer}.league-view{margin-top:12px;max-width:none}.league-tools{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:14px}.sort-label{font-size:14px;max-width:170px}.sort-label select{height:42px;margin-top:4px}.toggle button{font-size:14px}.toggle button:disabled{opacity:.5}.win-league-row{width:100%;text-align:left;color:inherit;font:inherit;cursor:pointer}.league-standings{display:grid;gap:10px;margin-top:16px}.league-standing{width:100%;display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:10px;align-items:center;text-align:left;padding:14px;border:1px solid var(--line);background:var(--card);border-radius:14px;font:inherit}.league-standing.selected{outline:2px solid var(--blue)}.league-standing .pred-person{font-size:14px}.standing-numbers{text-align:right;font-size:18px;font-weight:850}.standing-numbers small{display:block;font-size:14px;color:var(--muted);font-weight:500}.league-detail-weeks{display:grid;gap:9px;margin-top:16px}.league-detail-week{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--card);font:inherit;text-align:left}.analysis-more{margin:0 0 14px}.analysis-more summary{font-size:14px;cursor:pointer;padding:10px 0}.analysis-more .filters{margin-top:8px}.analysis-actions{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:10px}#stats-table,#own-table{font-size:14px}#stats-table th,#own-table th{font-size:13px}#stats-table th button,#own-table th button{min-height:32px}#stats-table td,#own-table td{padding:12px 10px}.field label{font-size:13px}.field select,.field input{font-size:16px;height:46px}.hint{font-size:13px;line-height:1.5}.analysis-player{border:0;background:transparent;padding:0;font:inherit;font-weight:800;text-align:left;text-decoration:underline;cursor:pointer;white-space:normal;max-width:160px}.analysis-fpts-help{border:0;background:none;padding:8px;color:var(--muted);font-size:14px;text-decoration:underline;cursor:pointer}.table-shell.table-fullscreen{position:fixed;inset:0;z-index:1300;border-radius:0;padding:calc(14px + env(safe-area-inset-top)) 12px calc(14px + env(safe-area-inset-bottom));background:var(--bg)}.table-shell.table-fullscreen .table-scroll{max-height:calc(100dvh - 100px);height:calc(100dvh - 100px)}.table-close{display:none}.table-fullscreen .table-close{display:block;margin:0 0 12px auto}.analysis-leagues{margin-top:14px}.analysis-leagues summary{font-size:16px;cursor:pointer;padding:10px 0}.pred-balances summary{cursor:pointer;font-size:16px;font-weight:800}.balance-row{display:flex;gap:10px;justify-content:space-between;align-items:center;padding:12px 0;border-top:1px solid var(--line);font-size:14px}.pred-fpts-caption{font-size:14px;color:var(--muted)}.season-context{font-size:14px;color:var(--muted);margin:10px 0}.section-title,.panel-title{font-size:13px}.bar-label{font-size:12px}.week-view-link{font-size:14px;min-height:44px}.session-footer{max-width:calc(100vw - 32px)}
+.league-title-button{border:0;padding:0;background:none;text-align:left;font:inherit;font-size:16px;font-weight:900;text-decoration:underline;cursor:pointer}.sort-label{flex-shrink:0}.week-view-link:disabled{opacity:.55;text-decoration:none;cursor:default}#league-detail-screen .league-standings{overflow-wrap:anywhere}#league-detail-screen{z-index:1301}#week-detail-screen{z-index:1302}#mvp-detail-screen{z-index:1301}#player-detail-screen{z-index:1303!important}.pred-balances{margin-top:20px}
+.chart-panel.fullscreen{z-index:1000!important}.detail-screen{touch-action:pan-y;overscroll-behavior:contain}.table-fullscreen .table-scroll{touch-action:pan-x pan-y;overscroll-behavior:contain}.bar-col{border:0;padding:0;background:none;font:inherit;cursor:pointer}.detail-top .brand{font-size:clamp(20px,6vw,28px)}
+.league-card.expanded .league-head{top:var(--league-controls-height,124px)}
+.sticky-manager .league-view{margin:10px 0 0;max-width:none}
+.side-toggle{margin:0;max-width:none;height:46px}.side-toggle button{font-size:14px;min-height:44px}
+.prediction-results{border-top:1px solid var(--line);margin-top:18px;padding-top:14px}.prediction-results h4{margin:0 0 12px;font-size:18px}.prediction-results .pred-responses{border:0;padding:0}
+.manager-debts{padding:14px 0;border-top:1px solid var(--line)}.debt-list{padding-left:48px}.debt-list p{margin:10px 0;line-height:1.5}.debt-total{font-weight:850;margin-top:10px}
+/* Shared pinned navigation; footers remain in document flow. */
+:root{--app-header-height:calc(64px + env(safe-area-inset-top))}
+.app{padding-top:0!important;padding-bottom:calc(18px + env(safe-area-inset-bottom));display:flex;flex-direction:column}.screen.active{flex:1}
+.top,.detail-top{position:sticky;top:0;z-index:40;height:var(--app-header-height);min-height:var(--app-header-height);padding-top:env(safe-area-inset-top);background:var(--bg);margin-bottom:14px}
+.detail-screen{padding-top:0}.sticky-manager{top:var(--app-header-height);z-index:30}
+.session-footer{position:static;left:auto;bottom:auto;width:100%;max-width:none;background:transparent;z-index:auto;padding:12px 0 0}.data-status{margin-top:24px}
+#session-invites{width:100%}.league-selected-score{padding:2px 13px 10px;font-size:14px;color:var(--muted)}
+.history-weeks .week{margin:14px 0;padding:14px;border:1px solid var(--line);border-radius:16px;background:var(--card)}
+.chart-top,.table-top{display:none}.chart-panel.fullscreen .chart-top,.table-fullscreen .table-top{display:grid}
+.chart-panel.fullscreen,#standings-screen .chart-panel.fullscreen,.table-shell.table-fullscreen{padding-top:0!important}.chart-panel.fullscreen .expand-chart,.table-fullscreen .table-close{display:none!important}
+.chart-panel.fullscreen .panel-title,#standings-screen .chart-panel.fullscreen .panel-title{margin-top:12px!important}.table-shell.table-fullscreen .table-scroll{height:calc(100dvh - var(--app-header-height) - 46px);max-height:calc(100dvh - var(--app-header-height) - 46px)}
 </style>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
 </head>
 <body>
 <main class="app">
-<section id="year-screen" class="screen active hero">
-  <div class="brand">4MANS</div>
+<section id="login-screen" class="screen active">
+ <div class="brand">4MANS</div>
+ <div class="auth-shell panel">
+ <h1 class="pred-heading" id="auth-title">Member login</h1>
+ <div id="auth-content"><p class="pred-small">Loading member login…</p></div>
+ <div id="auth-error" class="pred-error" role="alert" hidden></div>
+ </div>
+</section>
+
+
+<section id="year-screen" class="screen">
+  <div class="top year-top"><div></div><div class="brand">4MANS</div><button class="pred-btn session-logout">Log out</button></div>
   <div class="tag">4 Man best ball leagues for my mans</div>
   <select id="year-select" class="yearbox" aria-label="Select league year"><option value="" selected>SELECT YEAR</option></select>
   <button class="menu-btn year-go" style="margin-top:14px" id="enter-year" disabled>GO</button>
+  <button class="pred-btn" id="session-invites" style="margin-top:14px" hidden>Invite Members</button>
 </section>
 
 <section id="menu-screen" class="screen">
-  <div class="top"><button class="back" data-go="year-screen">←</button><div class="brand">4MANS</div><div></div></div>
+  <div class="top"><button class="back" data-go="year-screen">←</button><div class="brand">4MANS</div><button class="pred-btn session-logout">Log out</button></div>
   <div class="menu">
     <button class="menu-btn" data-go="standings-screen">Total Standings</button>
     <button class="menu-btn" data-go="leagues-screen">Leagues</button>
     <button class="menu-btn" data-go="analysis-screen">Analysis</button>
+    <button class="menu-btn" data-go="predictions-screen">Predictions</button>
   </div>
 </section>
 
 <section id="standings-screen" class="screen">
-  <div class="top"><button class="back" data-go="menu-screen">←</button><div class="brand">4MANS</div><div></div></div>
+  <div class="top"><button class="back" data-go="menu-screen">←</button><div class="brand">4MANS</div><button class="pred-btn session-logout">Log out</button></div>
   <div class="section-title">TOTAL STANDINGS</div>
   <div id="stand-cards" class="manager-cards"></div>
-  <div class="panel chart-panel" data-chart="wins"><button class="expand-chart" aria-label="Expand chart">↗</button><div class="panel-title">LEAGUES CURRENTLY WINNING</div><div id="wins-chart"></div></div>
-  <div class="panel chart-panel" data-chart="line"><button class="expand-chart" aria-label="Expand chart">↗</button><div class="panel-title">WINNINGS RACE</div><div id="line-chart"></div></div>
-  <div class="panel chart-panel" data-chart="pfpa"><button class="expand-chart" aria-label="Expand chart">↗</button><div class="panel-title">POINTS BATTLE</div><div id="pfpa-chart"></div></div>
+  <div class="panel chart-panel" data-chart="wins"><div class="detail-top chart-top"><button class="detail-back" data-chart-back="true" aria-label="Back">←</button><div class="brand">4MANS</div><button class="pred-btn session-logout">Log out</button></div><button class="expand-chart" aria-label="Expand chart">↗</button><div class="panel-title">LEAGUES CURRENTLY WINNING</div><div id="wins-chart"></div></div>
+  <div class="panel chart-panel" data-chart="line"><div class="detail-top chart-top"><button class="detail-back" data-chart-back="true" aria-label="Back">←</button><div class="brand">4MANS</div><button class="pred-btn session-logout">Log out</button></div><button class="expand-chart" aria-label="Expand chart">↗</button><div class="panel-title">WINNINGS RACE</div><div id="line-chart"></div></div>
+  <div class="panel chart-panel" data-chart="pfpa"><div class="detail-top chart-top"><button class="detail-back" data-chart-back="true" aria-label="Back">←</button><div class="brand">4MANS</div><button class="pred-btn session-logout">Log out</button></div><button class="expand-chart" aria-label="Expand chart">↗</button><div class="panel-title">POINTS BATTLE</div><div id="pfpa-chart"></div></div>
 </section>
 
 <section id="leagues-screen" class="screen">
-  <div class="top"><button class="back" data-go="menu-screen">←</button><div class="brand">4MANS</div><div></div></div>
-  <div class="sticky-manager"><div class="manager-select-wrap"><div id="league-manager-avatar" class="manager-avatar"></div><select id="league-manager" class="selector"></select></div></div>
-  <div id="league-list"></div>
+  <div class="top"><button class="back" data-go="menu-screen">←</button><div class="brand">4MANS</div><button class="pred-btn session-logout">Log out</button></div>
+  <div class="sticky-manager"><div class="manager-select-wrap"><div id="league-manager-avatar" class="manager-avatar"></div><select id="league-manager" class="selector"></select></div>
+  <div class="toggle league-view" role="group" aria-label="League view"><button id="league-view-week" aria-pressed="false">Current Week</button><button id="league-view-season" aria-pressed="true">Full Season</button></div></div><div class="league-tools"><span id="league-week-label" class="pred-small"></span><label class="sort-label">Sort<select id="league-sort" class="selector"><option value="most">Most points</option><option value="fewest">Fewest points</option><option value="place">Place</option></select></label></div><div id="league-list"></div>
 </section>
 
 <section id="analysis-screen" class="screen">
-  <div class="top"><button class="back" data-go="menu-screen">←</button><div class="brand">4MANS</div><div></div></div>
+  <div class="top"><button class="back" data-go="menu-screen">←</button><div class="brand">4MANS</div><button class="pred-btn session-logout">Log out</button></div>
   <div class="section-title">ANALYSIS</div>
   <div class="toggle"><button id="stats-tab" class="active">STATS</button><button id="own-tab">OWNERSHIP %</button></div>
   <div id="stats-view">
-    <div class="filters">
-      <div class="field"><label>MANAGER</label><select id="stats-manager"></select></div>
-      <div class="field"><label>NFL TEAM</label><select id="stats-team"><option value="All">All</option></select></div>
-      <div class="field"><label>SIDE</label><select id="stats-side"><option>All</option><option>Offense</option><option>Defense</option></select></div>
-      <div class="field"><label>POSITION</label><select id="stats-position"><option>All</option></select></div>
-      <div class="field search"><label>PLAYER SEARCH</label><input id="stats-search" type="search" placeholder="Search any player…" autocomplete="off"></div>
-    </div>
-    <div class="table-shell"><div class="table-scroll"><table id="stats-table"><thead></thead><tbody></tbody></table></div></div>
-    <div class="hint">Tap a column heading to sort · FPTS = average actual 4MANS league-scored season points where rostered</div>
+    <div class="filters basic-filters">
+ <div class="field"><label for="stats-manager">MANAGER</label><select id="stats-manager"></select></div>
+ <div class="field"><label>SIDE</label><input id="stats-side" type="hidden" value="Offense"><div class="toggle side-toggle" role="group" aria-label="Stats side"><button data-analysis-side="stats" data-side="Offense" class="active" aria-pressed="true">Offense</button><button data-analysis-side="stats" data-side="Defense" aria-pressed="false">Defense</button></div></div>
+ <div class="field"><label for="stats-position">POSITION</label><select id="stats-position"><option>All</option></select></div>
+ <div class="field"><label for="stats-team">NFL TEAM</label><select id="stats-team"><option value="All">All</option></select></div>
+ <div class="field search"><label for="stats-search">PLAYER SEARCH</label><input id="stats-search" type="search" placeholder="Search any player…" autocomplete="off"></div>
+ </div>
+    <div class="analysis-actions"><span id="stats-row-count" class="pred-small"></span><button class="pred-btn" data-analysis-full="stats">Expand table</button></div>
+    <div class="table-shell"><div class="detail-top table-top"><button class="detail-back" data-analysis-close="stats" aria-label="Back">←</button><div class="brand">4MANS</div><button class="pred-btn session-logout">Log out</button></div><div class="table-scroll"><table id="stats-table"><thead></thead><tbody></tbody></table></div></div>
+    <div class="hint">Tap a column heading to sort · Tap a player for details</div>
   </div>
   <div id="own-view" class="hidden">
-    <div class="filters">
-      <div class="field"><label>MANAGER</label><select id="own-manager"></select></div>
-      <div class="field"><label>NFL TEAM</label><select id="own-team"><option value="All">All</option></select></div>
-      <div class="field"><label>SIDE</label><select id="own-side"><option>All</option><option>Offense</option><option>Defense</option></select></div>
-      <div class="field"><label>POSITION</label><select id="own-position"><option>All</option></select></div>
-      <div class="field search"><label>PLAYER SEARCH</label><input id="own-search" type="search" placeholder="Search any player…" autocomplete="off"></div>
-    </div>
-    <div class="table-shell"><div class="table-scroll"><table id="own-table"><thead></thead><tbody></tbody></table></div></div>
-    <div class="hint">Tap a column heading to sort · Player column stays pinned</div>
+    <div class="filters basic-filters">
+ <div class="field"><label for="own-manager">MANAGER</label><select id="own-manager"></select></div>
+ <div class="field"><label>SIDE</label><input id="own-side" type="hidden" value="Offense"><div class="toggle side-toggle" role="group" aria-label="Ownership side"><button data-analysis-side="own" data-side="Offense" class="active" aria-pressed="true">Offense</button><button data-analysis-side="own" data-side="Defense" aria-pressed="false">Defense</button></div></div>
+ <div class="field"><label for="own-position">POSITION</label><select id="own-position"><option>All</option></select></div>
+ <div class="field"><label for="own-team">NFL TEAM</label><select id="own-team"><option value="All">All</option></select></div>
+ <div class="field search"><label for="own-search">PLAYER SEARCH</label><input id="own-search" type="search" placeholder="Search any player…" autocomplete="off"></div>
+ </div>
+    <div class="analysis-actions"><span id="own-row-count" class="pred-small"></span><button class="pred-btn" data-analysis-full="own">Expand table</button></div>
+    <div class="table-shell"><div class="detail-top table-top"><button class="detail-back" data-analysis-close="own" aria-label="Back">←</button><div class="brand">4MANS</div><button class="pred-btn session-logout">Log out</button></div><div class="table-scroll"><table id="own-table"><thead></thead><tbody></tbody></table></div></div>
+    <div class="hint">Tap a column heading to sort · Tap a player for details</div>
   </div>
 </section>
+<section id="predictions-screen" class="screen">
+ <div class="top"><button class="back" data-go="menu-screen" aria-label="Back to menu">←</button><div class="brand">4MANS</div><button class="pred-btn session-logout">Log out</button></div>
+ <h1 class="pred-heading">Predictions</h1>
+ <div id="pred-error" class="pred-error" role="alert" hidden></div>
+ <div id="pred-leaderboard" class="manager-cards" aria-live="polite"></div>
+
+ <div id="pred-season-status" class="pred-small"></div><button id="pred-close-season" class="pred-btn" hidden>Close Season</button>
+ <div class="pred-heading-row"><h2>Prediction board</h2><button id="pred-new" class="pred-btn pred-primary">Add prediction</button></div>
+ <div class="toggle" role="group" aria-label="Prediction filter"><button id="pred-filter-all" class="active" aria-pressed="true">All active</button><button id="pred-filter-response" aria-pressed="false">Needs your response</button></div><div id="pred-open"></div><details class="panel pred-balances"><summary>Amounts owed</summary><p class="pred-small">Net balances from completed predictions. This does not track payments already made.</p><div id="pred-balances"></div></details>
+ <button class="pred-btn" data-go="prediction-history-screen" style="margin-top:16px">Completed prediction log</button>
+</section>
+<section id="prediction-history-screen" class="screen">
+ <div class="top"><button class="back" data-go="predictions-screen" aria-label="Back to predictions">←</button><div class="brand">4MANS</div><button class="pred-btn session-logout">Log out</button></div>
+ <h1 class="pred-heading">Completed predictions</h1>
+ <p id="pred-log-season" class="pred-small"></p><div id="pred-log-error" class="pred-error" role="alert" hidden></div>
+ <div id="pred-history"></div>
+</section>
+<section id="invites-screen" class="screen">
+ <div class="top"><button class="back" id="invites-back" aria-label="Back">←</button><div class="brand">4MANS</div><button class="pred-btn session-logout">Log out</button></div>
+ <h1 class="pred-heading">Invite Members</h1><p class="pred-small">Send each member a private link to create their username and password. Invitations expire after seven days.</p>
+ <div id="invites-error" class="pred-error" role="alert" hidden></div><div id="invites-content"></div><div id="pred-invite-output"></div>
+</section>
+<section id="prediction-edit-screen" class="screen"><div class="top"><button class="back" data-go="predictions-screen" aria-label="Back to predictions">←</button><div class="brand">4MANS</div><button class="pred-btn session-logout">Log out</button></div><h1 class="pred-heading" id="prediction-edit-title">Add prediction</h1><div id="prediction-edit-error" class="pred-error" role="alert" hidden></div><div id="prediction-edit-content"></div></section>
+<div id="data-status" class="data-status" hidden><span id="data-updated"></span><button id="data-check" class="text-btn">Check for updates</button></div>
+<footer id="member-session" class="session-footer" hidden><span id="session-member"></span></footer>
 </main>
 
+<section id="league-history-screen" class="detail-screen" aria-label="Full season weekly history"><div class="detail-wrap"><div class="detail-top "><button class="detail-back" id="league-history-back" aria-label="Back">←</button><div class="brand">4MANS</div><button class="pred-btn session-logout">Log out</button></div><div id="league-history-content"></div></div></section>
+<section id="league-detail-screen" class="detail-screen" aria-label="League standings"><div class="detail-wrap"><div class="detail-top"><button id="league-detail-back" class="detail-back" aria-label="Back">←</button><div class="brand">4MANS</div><button class="pred-btn session-logout">Log out</button></div><div id="league-detail-content"></div></div></section>
 <section id="week-detail-screen" class="detail-screen" aria-label="Week roster detail">
   <div class="detail-wrap">
-    <div class="detail-top"><button id="week-detail-back" class="detail-back" aria-label="Back">←</button><div class="brand">4MANS</div><div></div></div>
+    <div class="detail-top"><button id="week-detail-back" class="detail-back" aria-label="Back">←</button><div class="brand">4MANS</div><button class="pred-btn session-logout">Log out</button></div>
     <div id="week-detail-content"></div>
   </div>
 </section>
 
 <section id="player-detail-screen" class="detail-screen" aria-label="Player game detail">
   <div class="detail-wrap">
-    <div class="detail-top"><button id="player-detail-back" class="detail-back" aria-label="Back">←</button><div class="brand">4MANS</div><div></div></div>
+    <div class="detail-top"><button id="player-detail-back" class="detail-back" aria-label="Back">←</button><div class="brand">4MANS</div><button class="pred-btn session-logout">Log out</button></div>
     <div id="player-detail-content"></div>
   </div>
 </section>
 
 <section id="mvp-detail-screen" class="detail-screen" aria-label="Team MVPs">
   <div class="detail-wrap">
-    <div class="detail-top"><button id="mvp-detail-back" class="detail-back" aria-label="Back">←</button><div class="brand">4MANS</div><div></div></div>
+    <div class="detail-top"><button id="mvp-detail-back" class="detail-back" aria-label="Back">←</button><div class="brand">4MANS</div><button class="pred-btn session-logout">Log out</button></div>
     <div id="mvp-detail-content"></div>
   </div>
 </section>
 
+<dialog id="pred-dialog" class="pred-dialog"><div class="pred-heading-row"><h2 id="pred-dialog-title"></h2><button id="pred-dialog-close" class="pred-btn" aria-label="Close dialog">Close</button></div><div id="pred-dialog-body"></div><div id="pred-dialog-error" class="pred-error" role="alert" hidden></div></dialog>
+
 <script>
+
+const FOURMANS_EDGE='https://siakdeksohfnwurgrdvn.supabase.co/functions/v1/fourmans';
+const FOURMANS_SESSION_KEY='fourmans_session_v1';
+async function fourmansFetch(url,options={}){
+ if(String(url).startsWith('/api/predictions')){
+  const headers=new Headers(options.headers||{});const session=localStorage.getItem(FOURMANS_SESSION_KEY);
+  if(session)headers.set('Authorization','Bearer '+session);
+  const response=await fetch(FOURMANS_EDGE+String(url).slice('/api/predictions'.length),{...options,headers,credentials:'omit'});
+  const data=await response.json();
+  if(data.sessionToken){localStorage.setItem(FOURMANS_SESSION_KEY,data.sessionToken);delete data.sessionToken;}
+  if(data.clearSession)localStorage.removeItem(FOURMANS_SESSION_KEY);
+  return new Response(JSON.stringify(data),{status:response.status,headers:{'Content-Type':'application/json'}});
+ }
+ if(url==='/api/nfl-state'){
+  const r=await fetch('https://api.sleeper.app/v1/state/nfl',{cache:'no-store'});if(!r.ok)return r;const s=await r.json();
+  return Response.json({season:String(s.season),week:Number(s.display_week??s.week),phase:s.season_type,checked_at:new Date().toISOString()});
+ }
+ if(url==='/api/data-status')return fetch('4mans_app_data.json',{cache:'no-store'});
+ return fetch(url,options);
+}
+
 const COLORS={nactasty:"#2d6cdf",jpagonis:"#ec8a2f",TheChavenator:"#1f9d55",bingbongtinydong:"#7b55c7"};
 let DATA=null, YEAR="2026";
 let statSort={key:"fpts",dir:-1},ownSort={key:"Nactasty",dir:-1};
-let WIN_DETAIL_MANAGER=null;
+let WIN_DETAIL_MANAGER=null, NFL_STATE=null, LEAGUE_VIEW='season', LEAGUE_SORT='most', PRED_FILTER='all';
+let LEAGUE_DETAIL={id:null,manager:null};
+const LEAGUE_PREFS={};
+function getLeagueMode(){try{return localStorage.getItem('4mans-league-view-'+YEAR)||LEAGUE_PREFS[YEAR]||null;}catch{return LEAGUE_PREFS[YEAR]||null;}}
+function setLeagueMode(value){LEAGUE_VIEW=value;LEAGUE_PREFS[YEAR]=value;try{localStorage.setItem('4mans-league-view-'+YEAR,value);}catch{}renderLeagues();}
+function activeNFLWeek(){return NFL_STATE&&String(NFL_STATE.season)===YEAR&&NFL_STATE.phase==='regular'&&NFL_STATE.week>=1&&NFL_STATE.week<=18?Number(NFL_STATE.week):null;}
+async function loadNFLState(){try{const r=await fourmansFetch('/api/nfl-state',{cache:'no-store'});if(!r.ok)throw new Error();NFL_STATE=await r.json();}catch{NFL_STATE=null;}if($('.screen.active')?.id==='leagues-screen')renderLeagues();}
+function updateDataStatus(message){$('#data-status').hidden=!SESSION_USER;const stale=DATA.refresh_status&&Date.now()-Date.parse(DATA.generated_at)>(DATA.refresh_status.expected_minutes+10)*60000;$('#data-updated').textContent=message||((stale?'Update delayed · ':'')+'Sleeper data updated '+new Date(DATA.generated_at).toLocaleString('en-US',{timeZone:'America/Chicago',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})+' Central');}
+
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 function resetOverlayState(){
+ $$('.detail-screen.active').forEach(x=>x.classList.remove('active'));
+ $$('.table-shell.table-fullscreen').forEach(x=>x.classList.remove('table-fullscreen'));
+ if($('#pred-dialog').open)$('#pred-dialog').close();
+ PLAYER_DETAIL_SOURCE=null;
+
   $$(".chart-panel.fullscreen").forEach(p=>{
     p.classList.remove("fullscreen");
     const b=p.querySelector(".expand-chart");if(b)b.textContent="↗";
@@ -384,14 +493,25 @@ function resetOverlayState(){
   $$(".popup").forEach(p=>p.remove());
   document.body.classList.remove("no-scroll");
 }
+let SESSION_USER=null, AUTH_STATE=null;
+function syncSession(){
+ $('#data-status').hidden=!SESSION_USER;$('#member-session').hidden=!SESSION_USER;$('#session-invites').hidden=!(SESSION_USER?.member==='nactasty'&&SESSION_USER.role==='commissioner');
+ $('#session-member').textContent=SESSION_USER?pdName(SESSION_USER.member):'';
+}
 function show(id){
+  if(id!=='login-screen'&&!SESSION_USER)id='login-screen';
+  if(!['predictions-screen','prediction-history-screen'].includes(id))++PRED_LOADING;
+  if(id==='invites-screen'&&!(SESSION_USER?.member==='nactasty'&&SESSION_USER.role==='commissioner'))id='year-screen';
   resetOverlayState();
   $$(".screen").forEach(x=>x.classList.remove("active"));
   $("#"+id).classList.add("active");
   window.scrollTo(0,0);
   if(id==="standings-screen")renderStandings();
-  if(id==="leagues-screen")renderLeagues();
+  if(id==="leagues-screen"){LEAGUE_VIEW=getLeagueMode()||(activeNFLWeek()?'week':'season');renderLeagues();}
   if(id==="analysis-screen")renderAnalysis();
+  if(id==="predictions-screen"||id==="prediction-history-screen")loadPredictions();
+  if(id==='invites-screen')loadInvites();
+  syncSession();
 }
 function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
 function managerLabel(k){return (DATA.managers.find(x=>x.key===k)||{}).label||k}
@@ -403,56 +523,23 @@ const intFmt=new Intl.NumberFormat("en-US",{maximumFractionDigits:0});
 const decFmt=new Intl.NumberFormat("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
 function num(v){return intFmt.format(Number(v||0))}
 function num2(v){return decFmt.format(Number(v||0))}
-function money(v){const n=Math.round(Number(v||0));return `${n>=0?"+":"-"}$${intFmt.format(Math.abs(n))}`}
+function money(v){const n=Number(v||0);return `${n>=0?"+":"-"}$${Math.abs(n).toLocaleString("en-US",{maximumFractionDigits:2})}`}
 function signedNum(v){const n=Math.round(Number(v||0));return `${n>=0?"+":"-"}${intFmt.format(Math.abs(n))}`}
 function ordinal(n){n=Number(n||0);if(n===1)return "1ST";if(n===2)return "2ND";if(n===3)return "3RD";return `${n}TH`}
-function placeWinnings(place){return Number(place)===1?15:-5}
+function rankedRows(rows){const valid=rows.filter(r=>r&&r.pf!=null).map(r=>({...r,pf:Number(r.pf)})).sort((a,b)=>b.pf-a.pf||String(a.manager).localeCompare(String(b.manager)));return valid.map(r=>({...r,place:1+valid.filter(x=>x.pf>r.pf).length}));}
+function leaguePayouts(rows){
+ const ranked=rankedRows(rows);if(!ranked.length||ranked.every(r=>r.pf===0))return {};
+ const leaders=ranked.filter(r=>r.place===1).sort((a,b)=>String(a.manager).localeCompare(String(b.manager))),pool=ranked.length*500,base=Math.floor(pool/leaders.length),rem=pool%leaders.length;
+ const prizes=Object.fromEntries(leaders.map((r,i)=>[r.manager,base+(i<rem?1:0)]));return Object.fromEntries(ranked.map(r=>[r.manager,((prizes[r.manager]||0)-500)/100]));
+}
 function computeSummary(year){
  const season=DATA.seasons[year], summary=season.summary||{};
- if(summary.state==="preseason") return {state:"preseason", current:{}, wins:{}, weekly:{}, history:season.poll_history||[], points_for:summary.points_for||{}, points_against:summary.points_against||{}};
-
- // Current cards / current winners use current full-season standings.
- const current=Object.fromEntries(DATA.managers.map(m=>[m.key,0]));
- const wins=Object.fromEntries(DATA.managers.map(m=>[m.key,0]));
- season.leagues.forEach(l=>{
-   (l.totals||[]).forEach(r=>{
-     if(r && r.manager!=null && r.place!=null){
-       current[r.manager]=(current[r.manager]||0)+placeWinnings(r.place);
-       if(Number(r.place)===1) wins[r.manager]=(wins[r.manager]||0)+1;
-     }
-   });
- });
-
- // Weekly line = "if the season ended after this week".
- // Week rows are already cumulative season-to-date snapshots.
- // Use each week's snapshot directly; do NOT add cumulative snapshots together.
- const weekNums=[...new Set(season.leagues.flatMap(l=>(l.weeks||[]).map(w=>Number(w.week))))].filter(Number.isFinite).sort((a,b)=>a-b);
- const weekly={};
-
- weekNums.forEach(wk=>{
-   const snapshot=Object.fromEntries(DATA.managers.map(m=>[m.key,0]));
-
-   season.leagues.forEach(l=>{
-     const wkRow=(l.weeks||[]).find(w=>Number(w.week)===wk);
-     if(!wkRow) return;
-
-     const active=(wkRow.rows||[])
-       .filter(r=>r && r.manager!=null && r.pf!=null)
-       .map(r=>({manager:r.manager,pf:Number(r.pf||0)}));
-
-     if(!active.length || !active.some(r=>r.pf>0)) return;
-
-     const high=Math.max(...active.map(r=>r.pf));
-     // Existing app behavior: all tied leaders are treated as first.
-     active.forEach(r=>{
-       snapshot[r.manager]=(snapshot[r.manager]||0)+(r.pf===high?15:-5);
-     });
-   });
-
-   weekly[wk]=snapshot;
- });
-
- return {state:summary.state||"active_or_complete", current, wins, weekly, history:season.poll_history||[], points_for:summary.points_for||{}, points_against:summary.points_against||{}};
+ if(summary.state==='preseason')return {state:'preseason',current:{},wins:{},weekly:{},history:season.poll_history||[],points_for:summary.points_for||{},points_against:summary.points_against||{}};
+ const current=Object.fromEntries(DATA.managers.map(m=>[m.key,0])),wins={...current};
+ season.leagues.forEach(l=>{const payouts=leaguePayouts(l.totals||[]);Object.entries(payouts).forEach(([m,v])=>current[m]=(current[m]||0)+v);rankedRows(l.totals||[]).filter(r=>r.place===1&&Object.keys(payouts).length).forEach(r=>wins[r.manager]=(wins[r.manager]||0)+1);});
+ const weeks=[...new Set(season.leagues.flatMap(l=>(l.weeks||[]).filter(w=>!w.awaiting_scores).map(w=>Number(w.week))))].sort((a,b)=>a-b),weekly={};
+ weeks.forEach(wk=>{const snapshot=Object.fromEntries(DATA.managers.map(m=>[m.key,0]));season.leagues.forEach(l=>{const w=(l.weeks||[]).filter(w=>Number(w.week)<=wk&&!w.awaiting_scores).sort((a,b)=>b.week-a.week)[0];if(w)Object.entries(leaguePayouts(w.rows||[])).forEach(([m,v])=>snapshot[m]=(snapshot[m]||0)+v);});weekly[wk]=snapshot;});
+ return {state:summary.state||'active_or_complete',current,wins,weekly,history:season.poll_history||[],points_for:summary.points_for||{},points_against:summary.points_against||{}};
 }
 
 function initYearSelector(preserve=true){
@@ -476,7 +563,7 @@ function initSelectors(){
 function renderStandings(){
  const s=computeSummary(YEAR),pre=s.state==="preseason";
  const ranked=[...DATA.managers].sort((a,b)=>(Number(s.current[b.key]||0)-Number(s.current[a.key]||0)));
- const rankMap=Object.fromEntries(ranked.map((m,i)=>[m.key,i+1]));
+ const rankMap=Object.fromEntries(ranked.map(m=>[m.key,1+ranked.filter(x=>Number(s.current[x.key]||0)>Number(s.current[m.key]||0)).length]));
  const pf=s.points_for||{},pa=s.points_against||{};
 
  $("#stand-cards").innerHTML=DATA.managers.map(m=>{
@@ -512,8 +599,8 @@ function renderStandings(){
 function winningLeaguesFor(manager){
  const season=DATA.seasons[YEAR]||{};
  return (season.leagues||[]).map(l=>{
-   const row=(l.totals||[]).find(r=>r.manager===manager);
-   return row&&Number(row.place)===1?{league:l,pf:Number(row.pf||0)}:null;
+   const row=rankedRows(l.totals||[]).find(r=>r.manager===manager);
+   return row&&Number(row.place)===1&&Object.keys(leaguePayouts(l.totals||[])).length?{league:l,pf:Number(row.pf||0)}:null;
  }).filter(Boolean).sort((a,b)=>String(a.league.name||"").localeCompare(String(b.league.name||"")));
 }
 function renderWinsChart(s){
@@ -529,13 +616,13 @@ function renderWinsChart(s){
  const bars=DATA.managers.map(m=>{
    const v=s.wins[m.key]||0;
    const sel=m.key===WIN_DETAIL_MANAGER?" selected-win-bar":"";
-   return `<div class="bar-col${sel}" data-win-manager="${esc(m.key)}">
+   return `<button class="bar-col${sel}" data-win-manager="${esc(m.key)}" aria-label="${esc(m.label)} · ${v} leagues winning">
      <div class="bar-value">${v}</div>
      <div class="bar" style="height:${Math.max(3,120*v/maxWins)}px;background:transparent">
        <div class="bar-fill" style="background:${COLORS[m.key]}"></div>
      </div>
      <div class="bar-label">${esc(m.label)}</div>
-   </div>`;
+   </button>`;
  }).join("");
 
  let detail="";
@@ -550,19 +637,20 @@ function renderWinsChart(s){
          <div class="wins-detail-count">${leagues.length} LEAGUES CURRENTLY WINNING</div>
        </div>
      </div>
-     ${leagues.length?leagues.map(x=>`<div class="win-league-row">
+     ${leagues.length?leagues.map(x=>`<button class="win-league-row" data-win-league="${esc(x.league.league_id)}">
        ${leagueImageHtml(x.league,"win-league-logo")}
        <div>
          <div class="win-league-name">${esc(x.league.name)}</div>
          <div class="win-league-meta">CURRENTLY 1ST</div>
        </div>
        <div class="win-league-pts">${Math.round(x.pf)}<small>PTS</small></div>
-     </div>`).join(""):`<div class="waiting">No leagues currently in 1st.</div>`}
+     </button>`).join(""):`<div class="waiting">No leagues currently in 1st.</div>`}
    </div>`;
  }
 
  $("#wins-chart").innerHTML=`<div class="bar-chart">${bars}</div>${detail}`;
 
+ $$('#wins-chart [data-win-league]').forEach(button=>button.onclick=e=>{e.stopPropagation();openLeagueDetail(button.dataset.winLeague,WIN_DETAIL_MANAGER);});
  $$('#wins-chart [data-win-manager]').forEach(el=>el.onclick=e=>{
    // In compact mode, let the parent chart open fullscreen.
    if(!panel?.classList.contains("fullscreen")) return;
@@ -580,7 +668,7 @@ function renderLine(s){
  const min=Math.min(...vals),max=Math.max(...vals),span=Math.max(1,max-min);
 
  const top3=ranked.slice(0,3).map((m,i)=>`<div class="race-summary-item">
-   <div class="race-summary-label">${ordinal(i+1)}</div>
+   <div class="race-summary-label">${ordinal(1+ranked.filter(x=>Number(s.current[x.key]||0)>Number(s.current[m.key]||0)).length)}</div>
    <div class="race-summary-value">${esc(initials(m.key))} ${money(s.current[m.key]||0)}</div>
  </div>`).join("");
 
@@ -633,7 +721,7 @@ function renderLine(s){
    const summaryCards=ranked.map((m,i)=>`<div class="winnings-summary-card">
      <div class="winnings-summary-name">${esc(m.label)}</div>
      <div class="winnings-summary-value" style="color:${COLORS[m.key]}">${money(s.current[m.key]||0)}</div>
-     <div class="winnings-summary-rank">${ordinal(i+1)}</div>
+     <div class="winnings-summary-rank">${ordinal(1+ranked.filter(x=>Number(s.current[x.key]||0)>Number(s.current[m.key]||0)).length)}</div>
    </div>`).join("");
 
    const tableHead=DATA.managers.map(m=>`<div class="val">${esc(initials(m.key))}</div>`).join("");
@@ -693,7 +781,7 @@ function renderPFPA(s){
  }).join("");
 
  const table=rows.map((r,i)=>`<div class="points-table-row">
-   <div class="points-table-name">${esc(r.m.label)} <span class="points-rank-pill">${ordinal(i+1)}</span></div>
+   <div class="points-table-name">${esc(r.m.label)} <span class="points-rank-pill">${ordinal(1+rows.filter(x=>x.diff>r.diff).length)}</span></div>
    <div class="points-table-num">${num(r.pf)}</div>
    <div class="points-table-num">${num(r.pa)}</div>
    <div class="points-table-num ${r.diff>=0?"pos":"neg"}">${signedNum(r.diff)}</div>
@@ -758,7 +846,7 @@ function isolatedWeeklyRows(weeks){
  return original.map(w=>convertedByWeek.get(Number(w.week))||w);
 }
 function rowBar(rows,selected){
- const valid=rows.filter(r=>r.pf!=null);if(!valid.length)return `<div class="waiting" style="padding:14px">Waiting for season to start</div>`;
+ const valid=rankedRows(rows).map(r=>({...r,place:rows.every(x=>Number(x.pf||0)===0)?null:r.place}));if(!valid.length)return `<div class="waiting" style="padding:14px">Waiting for season to start</div>`;
  const vals=valid.map(r=>Number(r.pf)),lo=Math.min(...vals),hi=Math.max(...vals),range=hi-lo||1;
  const sel=valid.find(r=>r.manager===selected); const place=sel?.place?`${sel.place}/4`:"—";
  const pins=valid.map(r=>{
@@ -769,39 +857,71 @@ function rowBar(rows,selected){
  }).join("");
  return `<div class="score-row"><div class="score-meta">${place}</div><div class="score-track">${pins}</div><div class="score-range"><span>${num(lo)}</span><span>${num(hi)}</span></div></div>`;
 }
+function leagueRows(l){if(LEAGUE_VIEW!=='week')return rankedRows(l.totals||[]);const w=(l.weeks||[]).find(w=>Number(w.week)===activeNFLWeek());return w?rankedRows(w.rosters?.length?w.rosters:isolatedWeeklyRows(l.weeks||[]).find(x=>Number(x.week)===activeNFLWeek())?.rows||[]):[];}
+function leagueGap(l){const rows=leagueRows(l);return rows.length>1?rows[0].pf-rows[1].pf:null;}
+function leagueSortValue(l,selected){
+ const w=LEAGUE_VIEW==='week'?(l.weeks||[]).find(w=>Number(w.week)===activeNFLWeek()):null,rows=leagueRows(l),r=rows.find(r=>r.manager===selected);
+ if(!r||(LEAGUE_VIEW==='week'&&(!w||w.awaiting_scores))||rows.every(x=>Number(x.pf||0)===0))return null;
+ return {points:Number(r.pf),place:r.place,gap:r.place===1?-(Number(r.pf)-Number(rows.find(x=>x.manager!==selected)?.pf??r.pf)):Number(rows[0].pf)-Number(r.pf)};
+}
+function compareManagerLeagues(a,b,selected){const av=leagueSortValue(a,selected),bv=leagueSortValue(b,selected),name=String(a.name||'').localeCompare(String(b.name||''));if(!av)return !bv?name:1;if(!bv)return -1;return (LEAGUE_SORT==='place'?(av.place-bv.place||av.gap-bv.gap):LEAGUE_SORT==='fewest'?av.points-bv.points:bv.points-av.points)||name;}
+function wireLeagueControls(){
+ $('#league-manager').onchange=()=>{LEAGUE_SORT=$('#league-sort').value||'most';renderLeagues();};
+ $('#league-sort').onchange=()=>{LEAGUE_SORT=$('#league-sort').value;renderLeagues();};
+ $('#league-history-back').onclick=closeLeagueHistory;
+}
 function renderLeagues(){
- const selected=$("#league-manager").value||DATA.managers[0].key;
- const leagues=[...DATA.seasons[YEAR].leagues].sort((a,b)=>String(a.name||"").localeCompare(String(b.name||"")));
- $("#league-list").innerHTML=leagues.map((l,i)=>{
-   const displayWeeks=isolatedWeeklyRows(l.weeks||[]);
-   return `<article class="league-card" data-league="${esc(l.league_id)}"><div class="league-head"><div class="league-name-row">${leagueImageHtml(l)}<div class="league-title-block"><div class="league-name">${esc(l.name)}</div><div class="league-sub">SEASON TOTAL</div></div><button class="expand" aria-label="Expand">⌄</button></div>${rowBar(l.totals,selected)}<div class="mvp-link" data-mvp-league="${esc(l.league_id)}"><span>TEAM MVPS</span><span>›</span></div></div><div class="weeks">${displayWeeks.length?displayWeeks.map(w=>`<div class="week" data-league="${esc(l.league_id)}" data-week="${w.week}" aria-label="Open Week ${w.week} roster"><div class="week-title">WEEK ${w.week}</div>${rowBar(w.rows,selected)}<div class="week-view-link" role="button" tabindex="0"><span>VIEW FULL ROSTER</span><span>›</span></div></div>`).join(""):`<div class="waiting">Waiting for season to start</div>`}</div></article>`;
- }).join("");
- $$(".league-card .expand").forEach(b=>b.onclick=()=>{let card=b.closest(".league-card");card.classList.toggle("expanded");b.textContent=card.classList.contains("expanded")?"⌃":"⌄"});
- $$(".league-head .marker").forEach(b=>b.onclick=e=>{e.stopPropagation();$$(".popup").forEach(p=>p.remove());let p=document.createElement("div");p.className="popup";p.innerHTML=`<span class="label">Manager</span><strong>${esc(managerLabel(b.dataset.manager))}</strong>Points For: ${num2(b.dataset.pf)}<br>Points Against: ${b.dataset.pa?num2(b.dataset.pa):"—"}<br>Place: ${b.dataset.place||"—"}/4`;b.parentElement.appendChild(p);p.style.left=b.style.left;p.onclick=()=>p.remove()});
- $$(".mvp-link[data-mvp-league]").forEach(b=>b.onclick=e=>{e.stopPropagation();openMvpDetail(b.dataset.mvpLeague)});
- $$(".week[data-league]").forEach(w=>{
-   const btn=w.querySelector(".week-view-link");
-   const open=()=>openWeekDetail(w.dataset.league,Number(w.dataset.week));
-   if(btn){btn.onclick=open;btn.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();open()}}}
- });
- const avatar=$("#league-manager-avatar");
- if(avatar) avatar.innerHTML=managerImageHtml(selected,managerLabel(selected));
+ const week=activeNFLWeek();if(!week&&NFL_STATE)LEAGUE_VIEW='season';
+ $('#league-view-week').disabled=!!NFL_STATE&&!week;
+ $('#league-view-week').classList.toggle('active',LEAGUE_VIEW==='week');$('#league-view-season').classList.toggle('active',LEAGUE_VIEW==='season');
+ $('#league-view-week').setAttribute?.('aria-pressed',String(LEAGUE_VIEW==='week'));$('#league-view-season').setAttribute?.('aria-pressed',String(LEAGUE_VIEW==='season'));
+ $('#league-week-label').textContent=LEAGUE_VIEW==='week'?(week?`Week ${week} · Weekly points`:'Current NFL week unavailable. Check again shortly.'):`${YEAR} · Season totals`;
+ const selected=$('#league-manager').value||DATA.managers[0].key;
+ const leagues=[...DATA.seasons[YEAR].leagues].sort((a,b)=>compareManagerLeagues(a,b,selected));
+ const controls=$('#leagues-screen .sticky-manager');if(controls?.getBoundingClientRect)$('#leagues-screen').style.setProperty('--league-controls-height',Math.ceil(controls.getBoundingClientRect().height)+'px');
+ $('#league-list').innerHTML=leagues.map(l=>{
+ const w=LEAGUE_VIEW==='week'?(l.weeks||[]).find(w=>Number(w.week)===week):null;
+ const rows=leagueRows(l),weekly=LEAGUE_VIEW==='week',awaiting=weekly&&(!w||w.awaiting_scores||rows.every(r=>r.pf===0));
+ const score=leagueSortValue(l,selected),history='';
+ return `<article class="league-card" data-league="${esc(l.league_id)}"><div class="league-head"><div class="league-name-row">${leagueImageHtml(l)}<div class="league-title-block"><button class="league-title-button" data-league-open="${esc(l.league_id)}">${esc(l.name)}</button><div class="league-sub">${weekly?(week?`WEEK ${week}`:'CURRENT WEEK'):'SEASON TOTAL'}</div></div>${weekly?'':`<button class="expand" aria-label="Open full season weekly history">↗</button>`}</div>${rows.length?(awaiting?`<div class="pred-flex" style="padding:14px">${rows.map(r=>`<span class="pred-avatar" title="${esc(managerLabel(r.manager))}">${managerImageHtml(r.manager)}</span>`).join('')}</div>`:rowBar(rows,selected)):'<div class="waiting">'+(weekly?'Current-week snapshot not saved yet':'Waiting for season to start')+'</div>'}${score?`<div class="league-selected-score">${esc(managerLabel(selected))} · ${num2(score.points)} pts · Place ${score.place}/4</div>`:''}${awaiting?'<p class="pred-small" style="padding:0 13px">Awaiting scores</p>':''}${weekly?`<button class="week-view-link text-btn" data-week-open="${esc(l.league_id)}" data-week="${week||''}" ${!w?.rosters?.length?'disabled':''}>View Full Roster</button>`:`<button class="mvp-link text-btn" data-mvp-league="${esc(l.league_id)}">Team MVPs</button>`}</div>${history}</article>`;
+ }).join('');
+ $$('.league-card .expand').forEach(b=>b.onclick=()=>openLeagueHistory(b.closest('.league-card').dataset.league,selected));
+ $$('[data-league-open]').forEach(b=>b.onclick=()=>openLeagueDetail(b.dataset.leagueOpen,selected));
+ $$('[data-week-open]').forEach(b=>b.onclick=()=>openWeekDetail(b.dataset.weekOpen,Number(b.dataset.week),selected));
+ $$('.league-head .marker').forEach(b=>b.onclick=()=>openLeagueDetail(b.closest('.league-card').dataset.league,b.dataset.manager));
+ $$('[data-mvp-league]').forEach(b=>b.onclick=()=>openMvpDetail(b.dataset.mvpLeague));
+ $('#league-manager-avatar').innerHTML=managerImageHtml(selected,managerLabel(selected));
+}
+let LEAGUE_HISTORY_RETURN=0;
+function openLeagueHistory(id,manager){const l=seasonData().leagues.find(l=>String(l.league_id)===String(id));if(!l)return;LEAGUE_HISTORY_RETURN=window.scrollY||0;const weeks=isolatedWeeklyRows(l.weeks||[]).sort((a,b)=>Number(b.week)-Number(a.week));
+ $('#league-history-content').innerHTML=`<div class="week-hero"><div class="week-hero-name">${esc(l.name)}</div><p class="season-context">${YEAR} · Full season · ${esc(managerLabel(manager))}</p></div><div class="history-weeks">${weeks.map(w=>`<section class="week"><div class="week-title">WEEK ${w.week}${w.awaiting_scores?' · AWAITING SCORES':''}</div>${rowBar(w.rosters?.length?w.rosters:w.rows,manager)}<button class="week-view-link text-btn" data-history-week="${w.week}" ${!w.rosters?.length?'disabled':''}>View Full Roster</button></section>`).join('')||'<p class="waiting">Waiting for season to start</p>'}</div>`;
+ $$('[data-history-week]').forEach(b=>b.onclick=()=>openWeekDetail(id,Number(b.dataset.historyWeek),manager));$('#league-history-screen').classList.add('active');$('#league-history-screen').scrollTop=0;document.body.classList.add('no-scroll');
+}
+function closeLeagueHistory(){$('#league-history-screen').classList.remove('active');if(!$('.detail-screen.active')&&!$('.chart-panel.fullscreen')&&!$('.table-shell.table-fullscreen'))document.body.classList.remove('no-scroll');window.scrollTo(0,LEAGUE_HISTORY_RETURN);}
+let WEEK_DETAIL={leagueId:null,week:null,manager:null};
+function openLeagueDetail(id,manager,returnPlayer){const l=seasonData().leagues?.find(l=>String(l.league_id)===String(id));if(!l)return;LEAGUE_DETAIL={id:String(id),manager:manager||SESSION_USER.member,returnPlayer:returnPlayer||null};if(returnPlayer)$('#player-detail-screen').classList.remove('active');renderLeagueDetail();$('#league-detail-screen').classList.add('active');$('#league-detail-screen').scrollTop=0;document.body.classList.add('no-scroll');}
+function closeLeagueDetail(){$('#league-detail-screen').classList.remove('active');if(LEAGUE_DETAIL.returnPlayer){openAnalysisPlayerDetail(LEAGUE_DETAIL.returnPlayer,ANALYSIS_PLAYER_KIND);return;}if(!$('.detail-screen.active')&&!$('.chart-panel.fullscreen')&&!$('.table-shell.table-fullscreen'))document.body.classList.remove('no-scroll');}
+function renderLeagueDetail(){
+ const l=seasonData().leagues.find(l=>String(l.league_id)===LEAGUE_DETAIL.id);if(!l)return;
+ const rows=rankedRows(l.totals||[]),high=rows[0]?.pf||0;
+ $('#league-detail-content').innerHTML=`<div class="week-hero"><div class="week-hero-name">${esc(l.name)}</div><div class="season-context">${YEAR} · Season standings</div><div class="league-standings">${rows.map(r=>`<button class="league-standing ${r.manager===LEAGUE_DETAIL.manager?'selected':''}" data-league-manager="${esc(r.manager)}"><strong>${r.place}</strong>${pdPerson(r.manager)}<span class="standing-numbers">${num2(r.pf)}<small>${r.place===1?(rows.filter(x=>x.place===1).length>1?'Tied for first':'First place'):num2(high-r.pf)+' behind first'}</small></span></button>`).join('')||'<p class="pred-small">No scored standings yet.</p>'}</div></div><h2 class="pred-heading">${esc(managerLabel(LEAGUE_DETAIL.manager))}</h2><p class="pred-small">Select a week to see points and the full roster.</p><div class="league-detail-weeks">${(l.weeks||[]).map(w=>{const r=(w.rosters||[]).find(r=>r.manager===LEAGUE_DETAIL.manager);return `<button class="league-detail-week" data-league-detail-week="${w.week}"><span>Week ${w.week}${w.awaiting_scores?' · Awaiting scores':''}</span><strong>${r?num2(r.pf)+' pts':'View roster'}</strong></button>`;}).join('')||'<p class="pred-small">Weekly rosters are not available yet.</p>'}</div>`;
+ $$('[data-league-manager]').forEach(b=>b.onclick=()=>{LEAGUE_DETAIL.manager=b.dataset.leagueManager;renderLeagueDetail();});
+ $$('[data-league-detail-week]').forEach(b=>b.onclick=()=>openWeekDetail(l.league_id,Number(b.dataset.leagueDetailWeek),LEAGUE_DETAIL.manager));
 }
 
-let WEEK_DETAIL={leagueId:null,week:null,manager:null};
 function seasonData(){return DATA.seasons[YEAR]||{}}
 function playerMeta(pid){return (seasonData().player_directory||{})[String(pid)]||{player_id:String(pid),player:String(pid),team:"",position:"",headshot:`assets/players/${String(pid)}.jpg`,headshot_fallback:"assets/players/na.svg"}}
 function weekStats(week,pid){return (((seasonData().weekly_stats||{})[String(week)]||{})[String(pid)]||{})}
 function imageHtml(meta,cls){const src=meta.headshot||`assets/players/${meta.player_id}.jpg`;const fallback=meta.headshot_fallback||DATA.assets?.player_headshot_fallback||"assets/players/na.svg";return `<img src="${esc(src)}" alt="${esc(meta.player)}" onerror="this.onerror=null;this.src='${esc(fallback)}'">`}
 function opponentText(stats){const opp=stats.opp||stats.opponent||"";if(!opp)return "Opponent —";if(stats.home===true||stats.home===1||stats.home==="1")return `vs ${opp}`;if(stats.away===true||stats.away===1||stats.away==="1")return `@ ${opp}`;return `vs/@ ${opp}`}
-function openWeekDetail(leagueId,week){
+function openWeekDetail(leagueId,week,manager){
  const season=seasonData(),league=(season.leagues||[]).find(l=>String(l.league_id)===String(leagueId));if(!league)return;
  const w=(league.weeks||[]).find(x=>Number(x.week)===Number(week));if(!w)return;
- WEEK_DETAIL={leagueId:String(leagueId),week:Number(week),manager:$("#league-manager")?.value||DATA.managers[0].key};
+ WEEK_DETAIL={leagueId:String(leagueId),week:Number(week),manager:manager||$("#league-manager")?.value||DATA.managers[0].key};
  renderWeekDetail();
  $("#week-detail-screen").classList.add("active");document.body.classList.add("no-scroll");$("#week-detail-screen").scrollTop=0;
 }
-function closeWeekDetail(){$("#week-detail-screen").classList.remove("active");document.body.classList.remove("no-scroll")}
+function closeWeekDetail(){$("#week-detail-screen").classList.remove("active");if(!$(".detail-screen.active")&&!$(".chart-panel.fullscreen"))document.body.classList.remove("no-scroll")}
 function renderWeekDetail(){
  const season=seasonData(),league=(season.leagues||[]).find(l=>String(l.league_id)===WEEK_DETAIL.leagueId),w=(league?.weeks||[]).find(x=>Number(x.week)===WEEK_DETAIL.week);if(!league||!w)return;
  const rosters=w.rosters||[];let r=rosters.find(x=>x.manager===WEEK_DETAIL.manager)||rosters[0];if(!r){$("#week-detail-content").innerHTML=`<div class="waiting">Weekly roster detail is not available for this saved week.</div>`;return}
@@ -809,7 +929,7 @@ function renderWeekDetail(){
  const opts=DATA.managers.filter(m=>rosters.some(x=>x.manager===m.key)).map(m=>`<option value="${esc(m.key)}" ${m.key===r.manager?"selected":""}>${esc(m.label)}</option>`).join("");
  const starters=(r.starters||[]).filter(Boolean),bench=(r.bench||[]).filter(Boolean),points=r.players_points||{};
  const row=(pid,isBench)=>{const meta=playerMeta(pid),st=weekStats(WEEK_DETAIL.week,pid),pts=Number(points[String(pid)]||0);return `<button class="player-row" data-player="${esc(pid)}"><span class="player-photo">${imageHtml(meta,"player-photo")}</span><span class="player-info"><span class="player-name">${esc(meta.player)}</span><span class="player-meta">${esc(meta.position||"—")} · ${esc(meta.team||"FA")} · ${esc(opponentText(st))}</span><span class="roster-tag ${isBench?"bench":""}">${isBench?"BENCH":"STARTER"}</span></span><span class="player-pts"><span class="num">${pts.toFixed(1)}</span><span class="lbl">FPTS</span></span></button>`};
- const scoreBoxes=[...rosters].sort((a,b)=>Number(b.pf||0)-Number(a.pf||0)).map((x,i)=>`<div class="week-score-box ${x.manager===r.manager?"active":""}" data-week-manager="${esc(x.manager)}"><div class="score-avatar">${managerImageHtml(x.manager,managerLabel(x.manager))}</div><div class="mgr">${esc(managerLabel(x.manager))}</div><div class="mgrpts">${Number(x.pf||0).toFixed(1)}</div><div class="mgrrank">${i+1}${i===0?"ST":i===1?"ND":i===2?"RD":"TH"}</div></div>`).join("");
+ const scoreBoxes=rankedRows(rosters).map((x,i)=>`<div class="week-score-box ${x.manager===r.manager?"active":""}" data-week-manager="${esc(x.manager)}"><div class="score-avatar">${managerImageHtml(x.manager,managerLabel(x.manager))}</div><div class="mgr">${esc(managerLabel(x.manager))}</div><div class="mgrpts">${Number(x.pf||0).toFixed(1)}</div><div class="mgrrank">${w.awaiting_scores?'Awaiting scores':ordinal(x.place)}</div></div>`).join("");
  $("#week-detail-content").innerHTML=`<section class="week-hero"><div class="week-hero-name">${esc(league.name)}</div><div class="week-kicker">WEEK ${WEEK_DETAIL.week} · FULL ROSTER</div><div class="week-score-grid">${scoreBoxes}</div></section><section class="roster-section"><div class="roster-section-title">STARTERS</div><div class="player-list">${starters.map(pid=>row(pid,false)).join("")||`<div class="waiting">No starters saved</div>`}</div></section><section class="roster-section"><div class="roster-section-title">BENCH</div><div class="player-list">${bench.map(pid=>row(pid,true)).join("")||`<div class="waiting">No bench players saved</div>`}</div></section>`;
   $$("#week-detail-content .week-score-box[data-week-manager]").forEach(b=>b.onclick=()=>{WEEK_DETAIL.manager=b.dataset.weekManager;renderWeekDetail()});
  $$("#week-detail-content .player-row").forEach(b=>b.onclick=()=>openPlayerDetail(b.dataset.player));
@@ -823,9 +943,15 @@ const STAT_SCHEMAS={
  DEF:[{title:"DEFENSE",items:[["sack","SACKS"],["int","INT"],["fum_rec","FUM REC"],["def_td","DEF TD"],["pts_allow","PTS ALLOWED"],["yds_allow","YDS ALLOWED"],["blk_kick","BLOCKED KICK"],["safety","SAFETY"]]}],
  IDP:[{title:"DEFENSE",items:[["idp_tkl","TACKLES"],["idp_tkl_solo","SOLO"],["idp_tkl_ast","ASSISTS"],["idp_sack","SACKS"],["idp_tkl_loss","TFL"],["idp_qb_hit","QB HITS"],["idp_int","INT"],["idp_pass_def","PASS DEF"],["idp_ff","FF"],["idp_fum_rec","FR"],["idp_def_td","DEF TD"]]}]
 };
-function statVal(stats,key){if(stats[key]!=null)return stats[key];const aliases={pass_yd:"pass_yds",rush_yd:"rush_yds",rec_yd:"rec_yds",rec_tgt:"targets"};return aliases[key]&&stats[aliases[key]]!=null?stats[aliases[key]]:null}
-function statSections(meta,stats){let pos=String(meta.position||"").toUpperCase(),schema=STAT_SCHEMAS[pos]||((meta.side||positionSide(pos))==="defense"?STAT_SCHEMAS.IDP:STAT_SCHEMAS.WR);const sections=[];schema.forEach(sec=>{const items=sec.items.map(([k,l])=>[statVal(stats,k),l]).filter(([v])=>v!=null);if(items.length)sections.push({title:sec.title,items})});const fum=statVal(stats,"fum_lost");if(fum!=null&&Number(fum)!==0)sections.push({title:"MISC",items:[[fum,"FUMBLES LOST"]]});return sections}
-let PLAYER_DETAIL_SOURCE=null;
+function statVal(stats,key){if(stats[key]!=null)return stats[key];const aliases={pass_yd:"pass_yds",rush_yd:"rush_yds",rec_yd:"rec_yds",rec_tgt:"targets",idp_tkl:"tackles",idp_tkl_solo:"solo",idp_sack:"sacks",idp_tkl_loss:"tfl",idp_int:"ints",idp_pass_def:"pd",idp_ff:"ff",idp_fum_rec:"fr"};return aliases[key]&&stats[aliases[key]]!=null?stats[aliases[key]]:null}
+// Complete saved metrics relevant to each position, including two-point plays.
+STAT_SCHEMAS.QB[0].items.push(['pass_2pt','PASS 2PT']);
+for(const p of ['QB','RB','WR','TE']){STAT_SCHEMAS[p].find(s=>s.title==='RUSHING').items.push(['rush_2pt','RUSH 2PT']);if(p!=='QB')STAT_SCHEMAS[p].find(s=>s.title==='RECEIVING').items.push(['rec_2pt','REC 2PT']);}
+STAT_SCHEMAS.K[0].items.push(['fgm_0_19','FG 0-19'],['fgm_20_29','FG 20-29'],['fgm_30_39','FG 30-39'],['fgmiss','FG MISSED'],['fgmiss_0_19','MISS 0-19'],['fgmiss_20_29','MISS 20-29'],['fgmiss_30_39','MISS 30-39'],['fgmiss_40_49','MISS 40-49'],['fgmiss_50p','MISS 50+'],['xpmiss','XP MISSED']);
+STAT_SCHEMAS.DEF[0].items.push(['def_st_td','SPECIAL TEAMS TD'],['def_kr_td','KICK RETURN TD'],['def_pr_td','PUNT RETURN TD'],['pass_yd_allow','PASS YDS ALLOWED'],['rush_yd_allow','RUSH YDS ALLOWED']);
+function positionStatSchema(pos){pos=String(pos||'').toUpperCase();const schema=STAT_SCHEMAS[pos]||(positionSide(pos)==='defense'?STAT_SCHEMAS.IDP:STAT_SCHEMAS.WR);return ['QB','RB','WR','TE'].includes(pos)?[{title:'APPEARANCES',items:[['gp','GAMES'],['gs','STARTS']]}].concat(schema).concat([{title:'MISC',items:[['fum','FUMBLES'],['fum_lost','FUMBLES LOST'],['two_pt','2PT TOTAL']]}]):[{title:'APPEARANCES',items:[['gp','GAMES'],['gs','STARTS']]}].concat(schema);}
+function statSections(meta,stats){return positionStatSchema(meta.position).map(sec=>({title:sec.title,items:sec.items.map(([key,label])=>[statVal(stats,key)??'—',label])}));}
+
 function openPlayerDetail(pid){
  PLAYER_DETAIL_SOURCE="week";
  const season=seasonData(),league=(season.leagues||[]).find(l=>String(l.league_id)===WEEK_DETAIL.leagueId),w=(league?.weeks||[]).find(x=>Number(x.week)===WEEK_DETAIL.week),r=(w?.rosters||[]).find(x=>x.manager===WEEK_DETAIL.manager);if(!league||!w||!r)return;
@@ -841,9 +967,13 @@ function closePlayerDetail(){
    $("#mvp-detail-screen").scrollTop=0;
  }
  PLAYER_DETAIL_SOURCE=null;
+ if(!$('.detail-screen.active')&&!$('.chart-panel.fullscreen')&&!$('.table-shell.table-fullscreen'))document.body.classList.remove('no-scroll');
 }
 
+let SEASON_STATS_CACHE={data:null,year:null,rows:new Map()};
 function seasonStatsForPlayer(pid){
+ if(SEASON_STATS_CACHE.data!==DATA||SEASON_STATS_CACHE.year!==YEAR)SEASON_STATS_CACHE={data:DATA,year:YEAR,rows:new Map()};
+ if(SEASON_STATS_CACHE.rows.has(String(pid)))return SEASON_STATS_CACHE.rows.get(String(pid));
  const weekly=seasonData().weekly_stats||{},sum={},maxKeys=new Set(["fgm_long"]);
  Object.values(weekly).forEach(week=>{
    const st=(week||{})[String(pid)]||{};
@@ -855,7 +985,7 @@ function seasonStatsForPlayer(pid){
      else sum[k]=Number(sum[k]||0)+n;
    });
  });
- return sum;
+ SEASON_STATS_CACHE.rows.set(String(pid),sum);return sum;
 }
 function latestSeasonWeekForPlayer(pid){
  const weekly=seasonData().weekly_stats||{};
@@ -887,15 +1017,16 @@ function renderMvpDetail(){
  const totals=league.totals||[];if(!totals.some(x=>x.manager===MVP_DETAIL.manager))MVP_DETAIL.manager=totals[0]?.manager||DATA.managers[0].key;
  const selected=totals.find(x=>x.manager===MVP_DETAIL.manager)||{};
  const opts=totals.map(x=>`<option value="${esc(x.manager)}" ${x.manager===MVP_DETAIL.manager?"selected":""}>${esc(managerLabel(x.manager))}</option>`).join("");
- const boxes=[...totals].sort((a,b)=>Number(b.pf||0)-Number(a.pf||0)).map(x=>`<div class="week-score-box ${x.manager===MVP_DETAIL.manager?"active":""}" data-mvp-manager="${esc(x.manager)}"><div class="score-avatar">${managerImageHtml(x.manager,managerLabel(x.manager))}</div><div class="mgr">${esc(managerLabel(x.manager))}</div><div class="mgrpts">${Math.round(Number(x.pf||0)).toLocaleString()}</div><div class="mgrrank">TOTAL FPTS</div></div>`).join("");
+ const boxes=rankedRows(totals).map(x=>`<div class="week-score-box ${x.manager===MVP_DETAIL.manager?"active":""}" data-mvp-manager="${esc(x.manager)}"><div class="score-avatar">${managerImageHtml(x.manager,managerLabel(x.manager))}</div><div class="mgr">${esc(managerLabel(x.manager))}</div><div class="mgrpts">${Math.round(Number(x.pf||0)).toLocaleString()}</div><div class="mgrrank">TOTAL FPTS</div></div>`).join("");
  const mvps=((league.mvps||{})[MVP_DETAIL.manager]||[]).slice(0,5);
  const rows=mvps.map((x,i)=>{const meta=playerMeta(x.player_id);return `<button class="mvp-row" data-mvp-player="${esc(x.player_id)}" data-mvp-fpts="${Number(x.fpts||0)}"><div class="mvp-rank">${i+1}</div><div class="player-photo">${imageHtml(meta,"player-photo")}</div><div style="min-width:0"><div class="mvp-player-name">${esc(x.player||meta.player)}</div><div class="mvp-player-meta">${esc(x.position||meta.position||"—")} · ${esc(x.team||meta.team||"FA")}</div></div><div class="mvp-points">${Math.round(Number(x.fpts||0)).toLocaleString()}<small>FPTS</small></div></button>`}).join("")||`<div class="waiting">Season MVP data is not available yet.</div>`;
  $("#mvp-detail-content").innerHTML=`<section class="mvp-hero"><div class="mvp-title">${esc(league.name)}</div><div class="mvp-kicker">TEAM MVPS · SEASON TOTALS</div><div class="week-score-grid">${boxes}</div></section><section class="roster-section"><div class="roster-section-title">TOP 5 FANTASY SCORERS · ${Math.round(Number(selected.pf||0)).toLocaleString()} TOTAL FPTS</div><div class="mvp-list">${rows}</div></section>`;
   $$("#mvp-detail-content .week-score-box[data-mvp-manager]").forEach(b=>b.onclick=()=>{MVP_DETAIL.manager=b.dataset.mvpManager;renderMvpDetail()});
   $$("#mvp-detail-content .mvp-row[data-mvp-player]").forEach(b=>b.onclick=()=>openMvpPlayerDetail(b.dataset.mvpPlayer,Number(b.dataset.mvpFpts||0)));
 }
+function setAnalysisSide(kind,side){$('#'+kind+'-side').value=side;$$('[data-analysis-side="'+kind+'"]').forEach(b=>{const active=b.dataset.side===side;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active));});updatePositionFilter(kind);if(kind==='stats'){statSort={key:'player',dir:1};renderStats();}else renderOwnership();}
 function renderAnalysis(){renderStats();renderOwnership()}
-function sortRows(rows,key,dir){return [...rows].sort((a,b)=>{let av=a[key],bv=b[key];if(typeof av==="number"&&typeof bv==="number")return (av-bv)*dir;return String(av??"").localeCompare(String(bv??""))*dir})}
+function sortRows(rows,key,dir){return [...rows].sort((a,b)=>{const av=a[key],bv=b[key];if(av==null||av==='')return bv==null||bv===''?0:1;if(bv==null||bv==='')return -1;if(typeof av==='number'&&typeof bv==='number')return (av-bv)*dir;return String(av).localeCompare(String(bv))*dir;});}
 function tableHead(cols,state,fn){return `<tr>${cols.map(c=>`<th><button data-key="${c[0]}">${c[1]}${state.key===c[0]?(state.dir<0?" ▼":" ▲"):""}</button></th>`).join("")}</tr>`}
 function fmtStatVal(key,val){
  if(val==null||val==="") return "—";
@@ -936,38 +1067,49 @@ function applyCommonFilters(rows,kind){
       &&(!q||String(r.player||"").toLowerCase().includes(q));
   });
 }
+function analysisColumns(pos,side,mgr){
+ const common=[['player','PLAYER'],['team','TEAM'],['position','POS']];if(mgr!=='All')common.push(['exposure','OWNED %']);
+ const positions=pos!=='All'?[pos]:side==='defense'?['DEF','IDP']:side==='offense'?['QB','RB','WR','TE','K']:['QB','RB','WR','TE','K','DEF','IDP'];
+ const seen=new Set();return common.concat(positions.flatMap(p=>positionStatSchema(p).flatMap(s=>s.items)).filter(([key])=>{if(seen.has(key))return false;seen.add(key);return true;}));
+}
+
+function analysisStat(row,key){if(row[key]!=null)return row[key];const stats=seasonStatsForPlayer(row.player_id),value=statVal(stats,key);return value??statVal(row,key);}
+function wireAnalysisPlayers(kind){$$('#'+kind+'-table [data-analysis-player]').forEach(b=>b.onclick=()=>openAnalysisPlayerDetail(b.dataset.analysisPlayer,kind));}
 function renderStats(){
-  const season=DATA.seasons[YEAR], mgr=$("#stats-manager").value||"All", side=$("#stats-side").value.toLowerCase();
-  if(season.summary.state==="preseason"){$("#stats-table thead").innerHTML="";$("#stats-table tbody").innerHTML=`<tr><td style="padding:28px">Waiting for season to start</td></tr>`;return}
-  let rows=(season.stats||[]).filter(r=>(mgr==="All"||Number(r.ownership[mgr]||0)>0)).map(r=>({...r,fpts:mgr==="All"?r.fpts_all:r.fpts_by_manager[mgr]}));
-  rows=applyCommonFilters(rows,"stats");
-
-  let cols;
-  if(side==="defense"){
-    cols=[["player","PLAYER"],["team","TEAM"],["position","POS"],["fpts","FPTS"],["tackles","TACK"],["solo","SOLO"],["ast","AST"],["sacks","SACK"],["tfl","TFL"],["qbh","QB HIT"],["ints","INT"],["pd","PD"],["ff","FF"],["fr","FR"],["def_td","TD"]];
-  }else if(side==="offense"){
-    cols=[["player","PLAYER"],["team","TEAM"],["position","POS"],["fpts","FPTS"],["rush_yd","RUSH YDS"],["rush_td","RUSH TD"],["rec","REC"],["rec_yd","REC YDS"],["rec_td","REC TD"],["pass_yd","PASS YDS"],["pass_td","PASS TD"],["pass_int","INT"]];
-  }else{
-    cols=[["player","PLAYER"],["team","TEAM"],["position","POS"],["fpts","FPTS"]];
-  }
-
-  rows=sortRows(rows,statSort.key,statSort.dir);
-  $("#stats-table thead").innerHTML=tableHead(cols,statSort);
-  $("#stats-table tbody").innerHTML=rows.length?rows.map(r=>`<tr>${cols.map(c=>`<td>${fmtStatVal(c[0],r[c[0]])}</td>`).join("")}</tr>`).join(""):`<tr><td colspan="${cols.length}" style="padding:28px;text-align:center;color:var(--muted)">No players match these filters</td></tr>`;
-  $$("#stats-table th button").forEach(b=>b.onclick=()=>{let k=b.dataset.key;statSort=statSort.key===k?{key:k,dir:-statSort.dir}:{key:k,dir:-1};renderStats()});
+ const season=DATA.seasons[YEAR],mgr=$('#stats-manager').value||'All',side=($('#stats-side').value||'All').toLowerCase(),pos=$('#stats-position').value||'All';
+ const cols=analysisColumns(pos,side,mgr);
+ let rows=applyCommonFilters((season.stats||[]).filter(r=>mgr==='All'||Number(r.ownership?.[mgr]||0)>0),'stats').map(r=>{const row={...r,fpts:mgr==='All'?r.fpts_all:r.fpts_by_manager?.[mgr],exposure:Number(r.ownership?.[mgr]||0)};cols.forEach(([key])=>{if(!['player','team','position','fpts','exposure'].includes(key))row[key]=analysisStat(r,key);});return row;});
+ if(!cols.some(c=>c[0]===statSort.key)){const first=cols.find(c=>!['player','team','position','exposure'].includes(c[0]));statSort={key:first?.[0]||'player',dir:first?-1:1};}rows=sortRows(rows,statSort.key,statSort.dir);
+ $('#stats-row-count').textContent=rows.length+' players';
+ $('#stats-table thead').innerHTML=tableHead(cols,statSort);
+ $('#stats-table tbody').innerHTML=rows.length?rows.map(r=>`<tr>${cols.map(([key])=>`<td>${key==='player'?`<button class="analysis-player" data-analysis-player="${esc(r.player_id)}">${esc(r.player)}</button>`:key==='exposure'?r.exposure.toFixed(1)+'%':fmtStatVal(key,r[key])}</td>`).join('')}</tr>`).join(''):`<tr><td colspan="${cols.length}" style="padding:28px;text-align:center">${season.summary.state==='preseason'?'Waiting for season to start':'No players match these filters'}</td></tr>`;
+ $$('#stats-table th button').forEach(b=>b.onclick=()=>{const key=b.dataset.key;statSort=statSort.key===key?{key,dir:-statSort.dir}:{key,dir:-1};renderStats();});wireAnalysisPlayers('stats');
 }
 function renderOwnership(){
-  let rows=[...(DATA.seasons[YEAR].ownership||[])];
-  const mgr=$("#own-manager").value||"All";
-  if(mgr!=="All") rows=rows.filter(r=>Number(r.ownership?.[mgr]||0)>0);
-  rows=applyCommonFilters(rows,"own");
-  rows=rows.map(r=>({...r,Nactasty:r.ownership.nactasty,JPagonis:r.ownership.jpagonis,TheChavenator:r.ownership.TheChavenator,Bingbongtinydong:r.ownership.bingbongtinydong}));
-  const cols=[["player","PLAYER"],["position","POS"],["team","TEAM"],["Nactasty","NACTASTY"],["JPagonis","JP"],["TheChavenator","CHAV"],["Bingbongtinydong","BING"]];
-  rows=sortRows(rows,ownSort.key,ownSort.dir);
-  $("#own-table thead").innerHTML=tableHead(cols,ownSort);
-  $("#own-table tbody").innerHTML=rows.length?rows.map(r=>`<tr>${cols.map(c=>`<td>${["Nactasty","JPagonis","TheChavenator","Bingbongtinydong"].includes(c[0])?Number(r[c[0]]||0).toFixed(1)+"%":esc(r[c[0]])}</td>`).join("")}</tr>`).join(""):`<tr><td colspan="${cols.length}" style="padding:28px;text-align:center;color:var(--muted)">No players match these filters</td></tr>`;
-  $$("#own-table th button").forEach(b=>b.onclick=()=>{let k=b.dataset.key;ownSort=ownSort.key===k?{key:k,dir:-ownSort.dir}:{key:k,dir:-1};renderOwnership()});
+ const mgr=$('#own-manager').value||'All';
+ let rows=applyCommonFilters((DATA.seasons[YEAR].ownership||[]).filter(r=>mgr==='All'||Number(r.ownership?.[mgr]||0)>0),'own').map(r=>({...r,Nactasty:r.ownership.nactasty,JPagonis:r.ownership.jpagonis,TheChavenator:r.ownership.TheChavenator,Bingbongtinydong:r.ownership.bingbongtinydong}));
+ const cols=[['player','PLAYER'],['position','POS'],['team','TEAM'],['Nactasty','NACTASTY'],['JPagonis','JP'],['TheChavenator','CHAV'],['Bingbongtinydong','BING']];rows=sortRows(rows,ownSort.key,ownSort.dir);
+ $('#own-row-count').textContent=rows.length+' players';$('#own-table thead').innerHTML=tableHead(cols,ownSort);
+ $('#own-table tbody').innerHTML=rows.length?rows.map(r=>`<tr>${cols.map(([key])=>`<td>${key==='player'?`<button class="analysis-player" data-analysis-player="${esc(r.player_id)}">${esc(r.player)}</button>`:['Nactasty','JPagonis','TheChavenator','Bingbongtinydong'].includes(key)?Number(r[key]||0).toFixed(1)+'%':esc(r[key])}</td>`).join('')}</tr>`).join(''):`<tr><td colspan="${cols.length}" style="padding:28px;text-align:center">No players match these filters</td></tr>`;
+ $$('#own-table th button').forEach(b=>b.onclick=()=>{const key=b.dataset.key;ownSort=ownSort.key===key?{key,dir:-ownSort.dir}:{key,dir:-1};renderOwnership();});wireAnalysisPlayers('own');
 }
+let ANALYSIS_PLAYER=null,ANALYSIS_PLAYER_KIND='stats';
+function weeklyPlayerAverage(pid,week,member){
+ const points=[];for(const l of seasonData().leagues||[]){const w=(l.weeks||[]).find(w=>Number(w.week)===week);if(!w||w.awaiting_scores)continue;for(const r of w.rosters||[]){if(member!=='All'&&r.manager!==member)continue;if((r.players||[]).map(String).includes(String(pid))&&r.players_points?.[pid]!=null)points.push(Number(r.players_points[pid]));}}
+ return points.length?points.reduce((a,b)=>a+b,0)/points.length:null;
+}
+function openAnalysisPlayerDetail(pid,kind='stats'){
+ ANALYSIS_PLAYER=String(pid);ANALYSIS_PLAYER_KIND=kind;PLAYER_DETAIL_SOURCE='analysis';
+ const meta=playerMeta(pid),season=seasonData(),row=season.stats?.find(r=>String(r.player_id)===String(pid)),mgr=$('#'+kind+'-manager').value||'All';
+ const points=mgr==='All'?row?.fpts_all:row?.fpts_by_manager?.[mgr],stats=seasonStatsForPlayer(pid),sections=statSections(meta,stats);
+ const metrics=positionStatSchema(meta.position).flatMap(s=>s.items);
+ const weeks=Object.keys(season.weekly_stats||{}).map(Number).sort((a,b)=>b-a);
+ const ownership=DATA.managers.map(m=>{const leagues=(season.leagues||[]).filter(l=>{const w=[...(l.weeks||[])].sort((a,b)=>b.week-a.week)[0],r=w?.rosters?.find(r=>r.manager===m.key);return (l.current_rosters?.[m.key]||r?.players||[]).map(String).includes(String(pid));});const exposure=row?.ownership?.[m.key]??season.ownership?.find(r=>String(r.player_id)===String(pid))?.ownership?.[m.key]??0;return `<details class="analysis-leagues"><summary>${esc(m.label)} · ${Number(exposure).toFixed(1)}% owned</summary>${leagues.length?leagues.map(l=>`<button class="league-detail-week" data-player-league="${esc(l.league_id)}" data-player-owner="${esc(m.key)}">${esc(l.name)}</button>`).join(''):'<p class="pred-small">No ownership in the latest saved rosters.</p>'}</details>`;}).join('');
+ $('#player-detail-content').innerHTML=`<section class="player-hero"><div class="player-photo-large">${imageHtml(meta,'player-photo-large')}</div><div class="player-detail-name">${esc(meta.player)}</div><div class="player-detail-meta">${esc(meta.position)} · ${esc(meta.team||'FA')} · ${YEAR}</div><div class="player-fpts-box"><div class="player-fpts">${points==null?'—':Number(points).toFixed(1)}</div><div class="player-fpts-label">AVG LEAGUE FPTS · SEASON</div></div><p class="pred-small">${mgr==='All'?'All managers':esc(managerLabel(mgr))} · Average scored points across leagues where this player was rostered. League scoring rules vary.</p></section>${sections.map(sec=>`<section class="stat-section"><div class="stat-section-title">${esc(sec.title)} · SEASON</div><div class="stat-grid">${sec.items.map(([v,l])=>`<div class="stat-card"><div class="stat-value">${esc(v)}</div><div class="stat-label">${esc(l)}</div></div>`).join('')}</div></section>`).join('')}<section class="panel"><h2 style="font-size:20px">Weekly production</h2><div class="table-scroll"><table><thead><tr><th>Week</th><th>Avg league FPTS</th>${metrics.map(([key,label])=>`<th>${esc(label)}</th>`).join('')}</tr></thead><tbody>${weeks.map(week=>{const st=weekStats(week,pid),avg=weeklyPlayerAverage(pid,week,mgr);return `<tr><td>${week}</td><td>${avg==null?'—':avg.toFixed(1)}</td>${metrics.map(([key])=>`<td>${fmtStatVal(key,statVal(st,key))}</td>`).join('')}</tr>`;}).join('')||`<tr><td colspan="${metrics.length+2}">No weekly production saved yet.</td></tr>`}</tbody></table></div></section><section class="panel"><h2 style="font-size:20px">Ownership by manager</h2><p class="pred-small">Ownership uses the latest saved roster snapshot. Older data may use the most recent weekly roster.</p>${ownership}</section>`;
+ $('#player-detail-screen').classList.add('active');$('#player-detail-screen').scrollTop=0;document.body.classList.add('no-scroll');
+ $$('[data-player-league]').forEach(b=>b.onclick=()=>openLeagueDetail(b.dataset.playerLeague,b.dataset.playerOwner,ANALYSIS_PLAYER));
+}
+function toggleAnalysisFull(kind,open){const shell=$('#'+kind+'-table').closest('.table-shell');shell.classList.toggle('table-fullscreen',open);document.body.classList.toggle('no-scroll',open||!!$('.detail-screen.active'));}
 function populateTeamFilters(){
   const teams=[...new Set(Object.values(DATA.seasons).flatMap(s=>[
     ...(s.stats||[]).map(r=>r.team),
@@ -1001,13 +1143,13 @@ function wireChartExpansion(){
       else if(panel.dataset.chart==="pfpa") renderPFPA(s);
     };
     panel.onclick=e=>{
-      // Tapping the compact chart opens it. Once fullscreen, only the X closes it.
+      // Tapping the compact chart opens it. Once fullscreen, the Back button closes it.
       if(!panel.classList.contains("fullscreen")) toggle(e);
     };
-    btn.onclick=toggle;
+    btn.onclick=toggle;panel.querySelector("[data-chart-back]").onclick=toggle;
   });
   document.addEventListener("keydown",e=>{
-    if(e.key==="Escape"){
+    if(e.key==="Escape"&&!$(".detail-screen.active")&&!$(".table-shell.table-fullscreen")&&!$("#pred-dialog").open){
       const p=$(".chart-panel.fullscreen");
       if(p){
         p.classList.remove("fullscreen");p.querySelector(".expand-chart").textContent="↗";document.body.classList.remove("no-scroll");
@@ -1019,27 +1161,122 @@ function wireChartExpansion(){
     }
   });
 }
-async function refreshDataSilently(){
-  try{
-    const fresh=await (await fetch(`4mans_app_data.json?t=${Date.now()}`,{cache:"no-store"})).json();
-    if(!DATA||fresh.generated_at!==DATA.generated_at){
-      DATA=fresh;
-      // Do not rebuild the year dropdown during background refreshes.
-      // Replacing its options while iOS has the native picker open can make
-      // the first tap appear to do nothing.
-      populateTeamFilters();
-      updatePositionFilter("stats");
-      updatePositionFilter("own");
-      const active=$(".screen.active")?.id;
-      if(active==="standings-screen")renderStandings();
-      else if(active==="leagues-screen")renderLeagues();
-      else if(active==="analysis-screen")renderAnalysis();
-    }
-  }catch(_){}
+let REFRESHING=false;
+async function refreshDataSilently(manual=false){
+ if(REFRESHING||!SESSION_USER)return;REFRESHING=true;
+ try{
+  const response=await fourmansFetch('/api/data-status',{cache:'no-store',signal:AbortSignal.timeout(10000)});if(!response.ok)throw new Error('Could not check updates');const status=await response.json();
+  if(!DATA||status.generated_at!==DATA.generated_at){const response=await fourmansFetch('4mans_app_data.json',{cache:'no-store',signal:AbortSignal.timeout(15000)});if(!response.ok)throw new Error('Could not load updates');const fresh=await response.json();if(!fresh.seasons?.[YEAR])throw new Error('Season data unavailable');DATA=fresh;populateTeamFilters();updatePositionFilter('stats');updatePositionFilter('own');const active=$('.screen.active')?.id;if(active==='standings-screen')renderStandings();else if(active==='leagues-screen')renderLeagues();else if(active==='analysis-screen')renderAnalysis();}
+  updateDataStatus();if(manual)$('#data-updated').textContent+=' · Latest saved data';
+ }catch{updateDataStatus('Could not check updates. Showing saved data from '+new Date(DATA.generated_at).toLocaleString('en-US',{timeZone:'America/Chicago'})+' Central.');}
+ finally{REFRESHING=false;}
 }
+let PRED=null, PRED_TEST=false, PRED_YEAR=null, PRED_LOADING=0;
+const pdMoney=c=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:2}).format(c/100);
+const pdNet=c=>(c>0?'+':'')+pdMoney(c);
+const pdDate=t=>new Date(t).toLocaleString('en-US',{timeZone:'America/Chicago',month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'});
+const pdName=m=>managerLabel(m);
+function pdError(message,dialog=false){const el=$(dialog?'#pred-dialog-error':$('#invites-screen').classList.contains('active')?'#invites-error':$('#prediction-history-screen').classList.contains('active')?'#pred-log-error':'#pred-error');el.textContent=message||'';el.hidden=!message;}
+async function pdRequest(data){const r=await fourmansFetch('/api/predictions',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});const result=await r.json();if(!r.ok)throw new Error(result.error||'Could not save. Please try again.');return result;}
+async function loadPredictions(){
+ if(PRED_YEAR!==YEAR){PRED_YEAR=YEAR;PRED_TEST=false;}
+ $('#pred-log-season').textContent=PRED_YEAR;
+ const seq=++PRED_LOADING;pdError('');if(!PRED)$('#pred-open').innerHTML='<div class="waiting">Loading predictions…</div>';
+ try{const response=await fourmansFetch(`/api/predictions?season=${encodeURIComponent(PRED_YEAR)}&test=${PRED_TEST?1:0}`,{cache:'no-store'});const data=await response.json();if(!response.ok)throw new Error(data.error);if(seq!==PRED_LOADING)return;PRED=data;SESSION_USER=data.user;syncSession();if(!SESSION_USER){show('login-screen');renderLogin();return;}renderPredictions();}catch(e){if(seq!==PRED_LOADING)return;pdError(e.message);$('#pred-open').innerHTML='<button class="pred-btn" id="pred-retry">Try again</button>';$('#pred-retry').onclick=loadPredictions;}
+}
+function pdDialog(title,html,submit){$('#pred-dialog-title').textContent=title;$('#pred-dialog-body').innerHTML=html;pdError('',true);$('#pred-dialog-close').onclick=()=>$('#pred-dialog').close();$('#pred-dialog').showModal();const form=$('#pred-dialog-body form');if(form)form.onsubmit=async e=>{e.preventDefault();const btn=form.querySelector('[type=submit]');btn.disabled=true;try{await submit(Object.fromEntries(new FormData(form)));$('#pred-dialog').close();await loadPredictions();}catch(err){pdError(err.message,true)}finally{btn.disabled=false;}};}
+function authError(message){const el=$('#auth-error');el.textContent=message||'';el.hidden=!message;}
+async function loadAuth(){
+ try{
+  const response=await fourmansFetch('/api/predictions?season='+encodeURIComponent(YEAR),{cache:'no-store'});
+  const data=await response.json();if(!response.ok)throw new Error(data.error||'Login is temporarily unavailable.');
+  AUTH_STATE=data;SESSION_USER=data.user;syncSession();
+  if(SESSION_USER){show('year-screen');return;}
+  show('login-screen');renderLogin(location.hash.startsWith('#invite=')?'join':'login');
+ }catch(e){authError(e.message);$('#auth-content').innerHTML='<button class="pred-btn" id="auth-retry">Try again</button>';$('#auth-retry').onclick=loadAuth;}
+}
+function renderLogin(mode='login'){
+ const state=AUTH_STATE||PRED;if(!state)return loadAuth();
+ if(mode==='setup'&&!state.canSetup)mode='login';
+ const setup=mode==='setup',join=mode==='join',invite=new URLSearchParams(location.hash.slice(1));
+ $('#auth-title').textContent=setup?'Your commissioner account':join?'Create your member account':'Member login';authError('');
+ const members=state.members.filter(m=>m!=='nactasty');
+ $('#auth-content').innerHTML=`<form id="member-login-form" class="pred-form">
+ ${setup?'<p class="pred-small">nactasty · Commissioner</p>':join?`<label>Your member profile<select name="member">${members.map(m=>`<option value="${esc(m)}" ${invite.get('member')===m?'selected':''}>${esc(pdName(m))}</option>`).join('')}</select></label>`:''}
+ <label>Username<input name="username" required minlength="3" maxlength="30" autocomplete="username" pattern="[A-Za-z0-9_]{3,30}"></label>
+ <label>Password<input name="password" type="password" required ${setup||join?'minlength="8"':''} maxlength="128" autocomplete="${setup||join?'new-password':'current-password'}"></label>
+ ${join?`<label>Invitation code<input name="code" required value="${esc(invite.get('invite')||'')}" autocomplete="off"></label>`:''}
+ <button type="submit" class="pred-btn pred-primary">${setup?'Create my commissioner account':join?'Create my account':'Log in'}</button>
+ </form><div class="pred-flex auth-tabs">
+ ${mode!=='login'?'<button class="pred-btn" id="auth-login-mode">Back to login</button>':'<button class="pred-btn" id="auth-join-mode">I have an invitation</button>'}
+ ${mode==='login'&&state.canSetup?'<button class="pred-btn" id="auth-setup-mode">Set up my commissioner account</button>':''}
+ </div><p class="pred-small">${join?'Use the invitation from nactasty.':setup?'This account is reserved for nactasty.':'Log in once, then choose a football season.'}</p>`;
+ $('#auth-login-mode')?.addEventListener('click',()=>renderLogin('login'));$('#auth-join-mode')?.addEventListener('click',()=>renderLogin('join'));$('#auth-setup-mode')?.addEventListener('click',()=>renderLogin('setup'));
+ $('#member-login-form').onsubmit=async e=>{
+ e.preventDefault();const form=e.target,button=form.querySelector('[type=submit]');button.disabled=true;authError('');
+ try{const values=Object.fromEntries(new FormData(form));await pdRequest({action:mode,...values,...(setup?{member:'nactasty'}:{})});if(join)history.replaceState(null,'',location.pathname);PRED=null;PRED_YEAR=null;await loadAuth();}catch(error){authError(error.message);}finally{button.disabled=false;}
+ };
+}
+function pdAuth(mode='login'){show('login-screen');renderLogin(mode);}
+async function memberLogout(){
+ try{await pdRequest({action:'logout'});++PRED_LOADING;SESSION_USER=null;PRED=null;PRED_YEAR=null;show('login-screen');await loadAuth();}catch(error){if($('#login-screen').classList.contains('active'))authError(error.message);else pdError(error.message);}
+}
+function pdPerson(member){return `<span class="pred-person"><span class="pred-avatar">${managerImageHtml(member,pdName(member))}</span><span>${esc(pdName(member))}</span></span>`;}
+let INVITES_RETURN='year-screen';
+async function loadInvites(){
+ if(!(SESSION_USER?.member==='nactasty'&&SESSION_USER.role==='commissioner'))return;
+ try{const response=await fourmansFetch('/api/predictions?season='+encodeURIComponent(YEAR),{cache:'no-store'});const data=await response.json();if(!response.ok)throw new Error(data.error);if(data.user?.member!=='nactasty'||data.user.role!=='commissioner'){show('login-screen');return;}
+ $('#invites-content').innerHTML=data.members.filter(m=>m!=='nactasty').map(m=>`<div class="panel pred-flex" style="justify-content:space-between">${pdPerson(m)}${data.accounts.some(a=>a.member===m)?'<span class="pred-small">Account ready</span>':`<button class="pred-btn pred-primary" data-pd-invite="${esc(m)}">Create invitation</button>`}</div>`).join('');
+ $$('[data-pd-invite]').forEach(button=>button.onclick=async()=>{button.disabled=true;pdError('');try{const result=await pdRequest({action:'invite',member:button.dataset.pdInvite});const link=location.origin+location.pathname+'#invite='+result.code+'&member='+encodeURIComponent(result.member);$('#pred-invite-output').innerHTML=`<p class="pred-small">Send privately to ${esc(pdName(result.member))}:</p><code class="pred-invite">${esc(link)}</code><button class="pred-btn" id="pred-copy-invite">Copy link</button>`;$('#pred-copy-invite').onclick=async e=>{try{await navigator.clipboard.writeText(link);e.target.textContent='Copied';}catch(_){e.target.textContent='Select and copy the link above';}};}catch(error){pdError(error.message);}finally{button.disabled=false;}});
+ }catch(error){pdError(error.message);}
+}
+function renderPredictions(){
+ $('#pred-leaderboard').innerHTML=PRED.leaderboard.map(m=>`<div class="manager-card" style="border-top:4px solid ${COLORS[m.member]}"><div class="pred-summary-head"><span class="pred-avatar">${managerImageHtml(m.member,pdName(m.member))}</span><div class="pred-member-name">${esc(pdName(m.member))}</div></div><div class="money ${m.net<0?'neg':'pos'}">${pdNet(m.net)}</div><div class="pred-meta">${m.wins} won · ${m.losses} lost</div><div class="pred-meta">Open risk ${pdMoney(m.risk)}</div></div>`).join('');
+ const closed=!!PRED.seasonStatus,u=PRED.user;const open=PRED.predictions.filter(p=>!p.outcome),settled=PRED.predictions.filter(p=>p.outcome);
+ $('#pred-season-status').textContent=closed?`Season closed · ${pdDate(PRED.seasonStatus.closed_at)}. Winnings and results are frozen.`:'';
+ $('#pred-close-season').hidden=closed||u?.role!=='commissioner'||open.length>0;$('#pred-close-season').disabled=open.length>0;$('#pred-close-season').textContent='Close Season';$('#pred-close-season').onclick=pdCloseSeason;
+ const needsResponse=open.filter(p=>p.author!==u?.member&&!PRED.responses.some(r=>r.prediction_id===p.id&&r.member===u?.member)&&Date.now()<p.deadline);const visible=PRED_FILTER==='response'?needsResponse:open;
+ $('#pred-filter-all').classList.toggle('active',PRED_FILTER==='all');$('#pred-filter-response').classList.toggle('active',PRED_FILTER==='response');$('#pred-filter-all').setAttribute?.('aria-pressed',String(PRED_FILTER==='all'));$('#pred-filter-response').setAttribute?.('aria-pressed',String(PRED_FILTER==='response'));$('#pred-filter-response').textContent=`Needs your response (${needsResponse.length})`;
+ $('#pred-open').innerHTML=visible.length?visible.map(pdCard).join(''):`<div class="panel pred-small">${closed?'This season is closed. View its completed prediction log.':PRED_FILTER==='response'?'You’re caught up. No predictions need your response.':'No open predictions for this season. Add the first one.'}</div>`;
+ $('#pred-history').innerHTML=settled.length?settled.map(pdCard).join(''):'<div class="panel pred-small">Completed predictions and commissioner rulings will appear here.</div>';
+ $('#pred-log-season').textContent=PRED_YEAR+(closed?' · Closed':'');
+ $('#pred-balances').innerHTML=PRED.members.map(m=>{const debts=PRED.members.filter(other=>other!==m).map(other=>({member:other,amount:-(PRED.balances?.[m]?.[other]||0)})).filter(d=>d.amount>0);const total=debts.reduce((sum,d)=>sum+d.amount,0);return '<section class="manager-debts">'+pdPerson(m)+'<div class="debt-list">'+(debts.length?debts.map(d=>'<p>Owes '+esc(pdName(d.member))+' <strong>'+pdMoney(d.amount)+'</strong></p>').join('')+'<div class="debt-total">Total owed '+pdMoney(total)+'</div>':'<p class="pred-small">Nothing owed</p>')+'</div></section>';}).join('');
+ $('#pred-new').disabled=closed;$('#pred-new').hidden=closed;$('#pred-new').onclick=()=>u?pdCreate():pdAuth('login');
+ $$('[data-pd-respond]').forEach(button=>button.onclick=()=>pdRespond(button.dataset.pdRespond,button.dataset.decision));$$('[data-pd-settle]').forEach(button=>button.onclick=()=>pdSettle(button.dataset.pdSettle));$$('[data-pd-edit]').forEach(button=>button.onclick=()=>pdCreate(button.dataset.pdEdit));
+}
+function pdCloseSeason(){
+ pdDialog('Close '+PRED_YEAR+' season',`<form class="pred-form"><p>After the Super Bowl, close the football season once all predictions are settled or voided.</p><p>This freezes ${esc(PRED_YEAR)} winnings and results, and prevents new predictions or acceptances. The completed log remains available.</p><button type="submit" class="pred-btn pred-primary">Confirm season closure</button></form>`,()=>pdRequest({action:'close_season',season:Number(PRED_YEAR),test:PRED_TEST}));
+}
+function pdCard(p){
+ const all=PRED.responses.filter(r=>r.prediction_id===p.id),bets=all.filter(r=>r.decision==='accept'),total=bets.reduce((s,b)=>s+b.amount,0);const me=all.find(r=>r.member===PRED.user?.member),closed=!!PRED.seasonStatus,locked=Date.now()>=p.deadline||p.outcome||closed;
+ const result=p.outcome==='happened'?'Happened':p.outcome==='didnt'?"Didn’t happen":p.outcome==='void'?'Void':locked?'Awaiting ruling':'Open';
+ const rows=PRED.members.filter(m=>m!==p.author).map(m=>{const response=all.find(r=>r.member===m);return `<div>${pdPerson(m)}<span>${response?.decision==='accept'?`Accepted ${pdMoney(response.amount)}`:response?.decision==='decline'?'Declined':'No response'}</span></div>`;}).join('');
+ const can=PRED.user&&PRED.user.member!==p.author&&!locked&&me?.decision!=='accept'&&p.mode==='each';
+ let controls=can?`<div class="pred-flex"><button class="pred-btn pred-accept" data-pd-respond="${p.id}" data-decision="accept">Accept ${pdMoney(p.amount)}</button>${me?.decision!=='decline'?`<button class="pred-btn" data-pd-respond="${p.id}" data-decision="decline">Decline</button>`:''}</div>`:'';
+ if(me?.decision==='accept'&&!p.outcome)controls=`<div class="pred-small">You’re in for ${pdMoney(me.amount)}. Your commitment is locked.</div>`;
+ let payouts='';if(p.outcome){const sign=p.outcome==='void'?0:p.outcome==='happened'?1:-1;const transfers=sign?bets.map(b=>'<p class="pred-small">'+esc(pdName(sign>0?b.member:p.author))+' owes '+esc(pdName(sign>0?p.author:b.member))+' <strong>'+pdMoney(b.amount)+'</strong></p>').join(''):'<p class="pred-small">Void — no winnings or losses.</p>';payouts=`<section class="prediction-results"><h4>Results</h4>${transfers}<div class="pred-responses"><div>${pdPerson(p.author)}<strong class="pred-net">${pdNet(total*sign)}</strong></div>${bets.map(b=>`<div>${pdPerson(b.member)}<span class="pred-net">${pdNet(-b.amount*sign)}</span></div>`).join('')}</div><p class="pred-small">${esc(p.note)}</p></section>`;}
+ const audits=PRED.rulings.filter(r=>r.prediction_id===p.id);
+ return `<article class="pred-card"><div class="pred-flex" style="justify-content:space-between">${pdPerson(p.author)}<span class="pred-badge ${p.outcome==='happened'?'won':p.outcome==='didnt'?'lost':''}">${result}</span></div><h3>${esc(p.title)}</h3><div class="pred-amount">${pdMoney(p.amount)} <span class="pred-meta">${p.mode==='each'?'per accepting opponent':'original total wager'}</span></div><div class="pred-small">${bets.length} accepted · Creator’s ${p.outcome?'accepted wagers':'open risk'} ${pdMoney(total)}</div><div class="pred-criteria">${esc(p.criteria)}</div>${!p.outcome?`<div class="pred-meta">${`Accept by ${pdDate(p.deadline)} Central`}</div>`:''}<details ${!p.outcome?'open':''}><summary>Participants</summary><div class="pred-responses">${rows}</div></details>${controls}${payouts}${!closed?`<div class="pred-flex" style="margin-top:12px">${!p.outcome?`<button class="pred-btn" data-pd-edit="${p.id}" ${PRED.user?.member!==p.author?'disabled title="Only the creator can edit this prediction"':''}>Edit</button>`:''}${PRED.user?.role==='commissioner'?`<button class="pred-btn" data-pd-settle="${p.id}">${p.outcome?'Edit':'Settle prediction'}</button>`:''}</div>`:''}${audits.length?`<details><summary>Ruling history (${audits.length})</summary>${audits.map(r=>`<p class="pred-small">${pdDate(r.created_at)} · ${esc(pdName(r.commissioner))} · ${r.outcome==='happened'?'Happened':r.outcome==='didnt'?"Didn’t happen":r.outcome==='active'?'Reopened':'Void'}<br>${esc(r.note)}</p>`).join('')}</details>`:''}</article>`;
+}
+function pdCreate(id){
+ const p=id?PRED.predictions.find(p=>p.id===id):null;
+ if(p&&(p.outcome||p.author!==SESSION_USER?.member)||PRED.seasonStatus)return;
+ const parts=Object.fromEntries(new Intl.DateTimeFormat('en-US',{timeZone:'America/Chicago',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(p?p.deadline:Date.now()+86400000).map(p=>[p.type,p.value]));const date=`${parts.year}-${parts.month}-${parts.day}`;
+ $('#prediction-edit-title').textContent=p?'Edit prediction':'Add prediction';
+ $('#prediction-edit-error').hidden=true;
+ $('#prediction-edit-content').innerHTML=`<form class="pred-form" id="prediction-form">${p?'<p class="pred-small">Saving clears all acceptances and declines. Everyone must respond again to the revised prediction.</p>':''}<label>Prediction<input name="title" maxlength="160" required value="${esc(p?.title||'')}" placeholder="I win more leagues than JP this week"></label><label>What counts as winning?<textarea name="criteria" maxlength="1000" required placeholder="Compare Week 5 league wins. A tie means void.">${esc(p?.criteria||'')}</textarea></label><label>Wager per opponent ($)<input name="amount" id="pd-create-amount" type="number" min="0.01" max="100000" step="0.01" value="${p?p.amount/100:10}" required></label><div id="pd-exposure" class="panel pred-small"></div><label>Accept by<input name="deadline" type="date" required value="${date}"></label><small>Acceptance ends at 11:59 p.m. Central on this date. Accepted wagers cannot be withdrawn. The commissioner settles predictions manually.</small><div class="pred-flex"><button type="submit" class="pred-btn pred-primary">${p?'Save prediction':'Post prediction'}</button><button type="button" class="pred-btn" id="prediction-cancel">Cancel</button></div></form>`;
+ show('prediction-edit-screen');$('#prediction-cancel').onclick=()=>show('predictions-screen');
+ const update=()=>{const amount=Number($('#pd-create-amount').value)||0;$('#pd-exposure').textContent=`${pdMoney(amount*100)} per opponent. Maximum possible loss: ${pdMoney(amount*300)} if all three accept.`;};$('#pd-create-amount').oninput=update;update();
+ $('#prediction-form').onsubmit=async e=>{e.preventDefault();const form=e.target,btn=form.querySelector('[type=submit]');btn.disabled=true;try{const b=Object.fromEntries(new FormData(form));await pdRequest(p?{action:'edit',id:p.id,version:p.version,...b}:{action:'create',...b,season:Number(PRED_YEAR),test:PRED_TEST});show('predictions-screen');}catch(error){$('#prediction-edit-error').textContent=error.message;$('#prediction-edit-error').hidden=false;}finally{btn.disabled=false;}};
+}
+async function pdRespond(id,decision){const prediction=PRED.predictions.find(p=>p.id===id);if(decision==='accept'&&!confirm(`Take the opposing side of “${prediction.title}” for ${pdMoney(prediction.amount)}? Your commitment cannot be withdrawn.`))return;const buttons=$$(`[data-pd-respond="${id}"]`);buttons.forEach(b=>b.disabled=true);try{await pdRequest({action:'respond',id,decision,version:prediction.version});await loadPredictions();}catch(error){pdError(error.message);}finally{buttons.forEach(b=>b.disabled=false);}}
+function pdSettle(id){const p=PRED.predictions.find(p=>p.id===id);pdDialog(p.outcome?'Edit ruling':'Settle prediction',`<form class="pred-form"><strong>${esc(p.title)}</strong><small>${p.outcome?'Changing the ruling recalculates winnings. Reopening reverses the prior payouts, restores open risk, and keeps accepted wagers and the existing acceptance deadline.':'This closes acceptance immediately and calculates the results for accepted wagers.'}</small><label>Outcome<select name="outcome">${p.outcome?'<option value="active">Active — reopen prediction</option>':''}<option value="happened" ${p.outcome==='happened'?'selected':''}>Happened</option><option value="didnt" ${p.outcome==='didnt'?'selected':''}>Didn’t happen</option><option value="void" ${p.outcome==='void'?'selected':''}>Void — no winnings or losses</option></select></label><label>Reason / source<textarea name="note" required maxlength="1000" placeholder="Explain your ruling">${esc(p.note)}</textarea></label><button type="submit" class="pred-btn pred-primary">${p.outcome?'Save changes':'Settle prediction'}</button></form>`,b=>pdRequest({action:'settle',id,version:p.version,...b}));}
+
 async function boot(){
  try{
-   DATA=await (await fetch("4mans_app_data.json",{cache:"no-store"})).json();
+   DATA=await (await fourmansFetch("4mans_app_data.json",{cache:"no-store"})).json();
+   const nflPromise=loadNFLState();
+   updateDataStatus();
    initYearSelector(false);
    initSelectors();
    populateTeamFilters();
@@ -1054,12 +1291,20 @@ async function boot(){
      updatePositionFilter("own");
    };
    $$("[data-go]").forEach(b=>b.onclick=()=>show(b.dataset.go));
-   $("#league-manager").onchange=renderLeagues;
+   wireLeagueControls();
+   $('#league-view-week').onclick=()=>setLeagueMode('week');$('#league-view-season').onclick=()=>setLeagueMode('season');$('#league-sort').onchange=()=>{LEAGUE_SORT=$('#league-sort').value;renderLeagues();};$('#league-detail-back').onclick=closeLeagueDetail;
+   $('#pred-filter-all').onclick=()=>{PRED_FILTER='all';renderPredictions();};$('#pred-filter-response').onclick=()=>{PRED_FILTER='response';renderPredictions();};
+   $('#data-check').onclick=async()=>{const b=$('#data-check');b.disabled=true;await Promise.all([refreshDataSilently(true),loadNFLState()]);b.disabled=false;};
+   $$('[data-analysis-full]').forEach(b=>b.onclick=()=>toggleAnalysisFull(b.dataset.analysisFull,true));$$('[data-analysis-close]').forEach(b=>b.onclick=()=>toggleAnalysisFull(b.dataset.analysisClose,false));
 
+
+
+   $$('[data-analysis-side]').forEach(b=>b.onclick=()=>setAnalysisSide(b.dataset.analysisSide,b.dataset.side));
+   window.addEventListener?.('resize',()=>{if($('.screen.active')?.id==='leagues-screen')renderLeagues();});
    $("#stats-manager").onchange=renderStats;
    $("#stats-team").onchange=()=>{updatePositionFilter("stats");renderStats()};
    $("#stats-side").onchange=()=>{statSort={key:"fpts",dir:-1};updatePositionFilter("stats");renderStats()};
-   $("#stats-position").onchange=renderStats;
+   $('#stats-position').onchange=()=>{statSort={key:'fpts',dir:-1};renderStats();};
    $("#stats-search").oninput=renderStats;
 
    $("#own-manager").onchange=renderOwnership;
@@ -1074,9 +1319,17 @@ async function boot(){
    $("#week-detail-back").onclick=closeWeekDetail;
    $("#player-detail-back").onclick=closePlayerDetail;
    $("#mvp-detail-back").onclick=closeMvpDetail;
-   setInterval(refreshDataSilently,60000);
+   setInterval(()=>{if(!document.hidden)refreshDataSilently();},60000);
+   setInterval(()=>{if(!document.hidden&&SESSION_USER)loadNFLState();},300000);
+   document.addEventListener('keydown',e=>{if(e.key!=='Escape')return;if($('.table-shell.table-fullscreen')){const kind=$('#stats-table').closest('.table-shell').classList.contains('table-fullscreen')?'stats':'own';toggleAnalysisFull(kind,false);}else if($('#player-detail-screen').classList.contains('active'))closePlayerDetail();else if($('#week-detail-screen').classList.contains('active'))closeWeekDetail();else if($('#mvp-detail-screen').classList.contains('active'))closeMvpDetail();else if($('#league-detail-screen').classList.contains('active'))closeLeagueDetail();else if($('#league-history-screen').classList.contains('active'))closeLeagueHistory();});
+   $$('.session-logout').forEach(button=>button.onclick=memberLogout);
+   $('#session-invites').onclick=()=>{INVITES_RETURN=$('.screen.active')?.id||'year-screen';show('invites-screen');};
+   $('#invites-back').onclick=()=>show(INVITES_RETURN);
+   await Promise.all([loadAuth(),nflPromise]);
+   updateDataStatus();
+   setInterval(()=>{if(["predictions-screen","prediction-history-screen"].includes($(".screen.active")?.id)&&!$("#pred-dialog").open)loadPredictions()},30000);
   }catch(err){
-   document.body.innerHTML=`<div style="font-family:system-ui;padding:24px"><h2>4MANS data load error</h2><p>${esc(err.message)}</p><p>Run this through a local web server or GitHub Pages so the JSON file can be loaded.</p></div>`;
+   document.body.innerHTML=`<div style="font-family:system-ui;padding:24px"><h2>4MANS data load error</h2><p>${esc(err.message)}</p><p>Please reload to try again.</p></div>`;
  }
 }
 boot();

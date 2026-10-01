@@ -25,5 +25,3 @@ jobs:
           python-version: '3.12'
       - run: npm ci
       - run: npm test
-        env:
-          FOURMANS_HTML: preview/index.html
