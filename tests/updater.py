@@ -13,7 +13,11 @@ u.discover_leagues=lambda *a:[{'league_id':'test','name':'Test League'}]
 u.fetch_rosters=lambda *a:[{'roster_id':i+1,'owner_id':m['user_id'],'players':['p1']} for i,m in enumerate(u.MANAGERS)]
 u.fetch_members=lambda *a:{}
 u.get_matchup_week=lambda lid,week:[{'roster_id':i+1,'matchup_id':i//2,'points':100-i*10 if week==1 else 0,'players':['p1'],'starters':['p1'],'players_points':{'p1':100-i*10 if week==1 else 0}} for i in range(4)] if week in (1,4) else []
-u.fetch_stats_feed=lambda *a:{'p1':{'rec':1}};u.fetch_schedule_feed=lambda *a:[];u.fetch_week_stats_feed=lambda *a:{}
+u.fetch_stats_feed=lambda *a:{'p1':{'rec':1}};u.fetch_schedule_feed=lambda *a:[{'week':4,'home':'TEN','away':'HOU'}];u.fetch_week_stats_feed=lambda *a:{}
+assert not u.has_recorded_week_stats({'p1':{'opp':'HOU','home':True,'away':False,'team':'TEN','game_id':'scheduled','gp':0}})
+assert u.has_recorded_week_stats({'p1':{'rec':0}})
+assert u.has_recorded_week_stats({'p1':{'gp':1}})
+assert u.has_recorded_week_stats({'p1':{'pass_yd':250}})
 original=os.getcwd()
 try:
  with tempfile.TemporaryDirectory() as directory:
@@ -26,6 +30,8 @@ try:
   pending=next(w for w in league['weeks'] if w['week']==4);assert pending['awaiting_scores'] is True;assert len(pending['rosters'])==4;assert all(r['pf']==0 for r in pending['rosters'])
   assert len(league['weeks'])==2;assert season['poll_history'][-1]['week']==1
   assert [r['pf'] for r in league['totals']]==[100,90,80,70]
+  assert season['weekly_stats']['4']['p1']['opp']=='HOU'
+  assert not u.has_recorded_week_stats(season['weekly_stats']['4'])
   # A second incremental run reuses old week 1 and preserves PF, PA and player points.
   old_week=next(w for w in league['weeks'] if w['week']==1)
   old_scores=[(r['pf'],r['pa']) for r in old_week['rosters']]
@@ -37,5 +43,17 @@ try:
   second=json.load(open('4mans_app_data.json'));league2=second['seasons']['2026']['leagues'][0]
   assert [(r['pf'],r['pa']) for r in next(w for w in league2['weeks'] if w['week']==1)['rosters']]==old_scores
   assert [r['pf'] for r in league2['totals']]==[100,90,80,70]
+  assert second['seasons']['2026']['weekly_stats']['4']['p1']['opp']=='HOU'
+  # A missing feed must still block publication once real stats were recorded.
+  second['seasons']['2026']['weekly_stats']['4']['p1']['rec']=0
+  pathlib.Path('4mans_app_data.json').write_text(json.dumps(second))
+  before=pathlib.Path('4mans_app_data.json').read_bytes()
+  try:
+   with contextlib.redirect_stdout(io.StringIO()):u.build()
+   raise AssertionError('Missing recorded weekly stats must fail safely')
+  except RuntimeError as error:
+   assert 'Weekly stats feed unavailable for week 4' in str(error)
+  assert pathlib.Path('4mans_app_data.json').read_bytes()==before
 finally:os.chdir(original)
+print('PASS: schedule-only upcoming weeks refresh twice; missing recorded stats retain the saved file, including legitimate zero stats.')
 print('PASS: matching Python/browser tie rule, competition ranks, actual display week, pending-week rosters, current ownership snapshot and unchanged cumulative totals.')

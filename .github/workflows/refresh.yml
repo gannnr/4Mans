@@ -3,6 +3,12 @@ on:
   schedule:
     - cron: '7,17,27,37,47,57 * * * *'
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'update_4mans.py'
+      - 'scripts/refresh_gate.py'
+      - '.github/workflows/refresh.yml'
 permissions:
   contents: write
 concurrency:
