@@ -12,8 +12,8 @@ def bestball_lineup(matchup,roster_positions,player_map):
     slots=[str(s).upper() for s in roster_positions if str(s).upper() not in IGNORED]
     players=list(dict.fromkeys(str(p) for p in matchup.get("players") or [] if p))
     raw=matchup.get("players_points") or {}
-    if not slots or not players or len(slots)>30 or any(p not in raw or not isinstance(player_map.get(p),dict) for p in players):return None
-    try: points={p:float(raw[p]) for p in players}
+    if not slots or not players or len(slots)>30 or any(not isinstance(player_map.get(p),dict) for p in players):return None
+    try: points={p:float(raw.get(p,0)) for p in players}
     except (ValueError,TypeError):return None
     if not all(isfinite(v) for v in points.values()):return None
     original={str(p) for p in matchup.get("starters") or [] if p}
