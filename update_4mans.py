@@ -26,6 +26,7 @@ import urllib.request
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
+from live_bestball import bestball_lineup
 
 USERNAME = "Nactasty"
 START_YEAR = 2025
@@ -248,6 +249,9 @@ def build_week_rows(raw_rows, roster_to_manager, cumulative_pf, cumulative_pa):
             "players": [str(x) for x in (r.get("players") or [])],
             "starters": [str(x) for x in (r.get("starters") or [])],
             "players_points": {str(k): safe_num(v) for k, v in (r.get("players_points") or {}).items()},
+            "sleeper_points": r.get("_sleeper_points"),
+            "sleeper_starters": r.get("_sleeper_starters"),
+            "live_bestball": bool(r.get("_live_bestball")),
         })
     return output
 
@@ -590,6 +594,22 @@ def build():
                     continue
 
                 any_scored_week = any_scored_week or scored
+                # Optimize provisional current-week scores for explicit Sleeper best-ball leagues.
+                # Archived weeks retain Sleeper's official settled scores.
+                if is_current and scored and int((league.get("settings") or {}).get("best_ball") or 0) == 1:
+                    positions = league.get("roster_positions") or []
+                    optimized_raw = []
+                    for matchup in raw:
+                        corrected = dict(matchup)
+                        solution = bestball_lineup(matchup, positions, player_map)
+                        corrected["_sleeper_points"] = safe_num(matchup.get("points"))
+                        corrected["_sleeper_starters"] = [str(p) for p in (matchup.get("starters") or [])]
+                        corrected["_live_bestball"] = solution is not None
+                        if solution is not None:
+                            corrected["points"] = solution["points"]
+                            corrected["starters"] = solution["starters"]
+                        optimized_raw.append(corrected)
+                    raw = optimized_raw
                 rows = build_week_rows(raw, roster_to_manager, cumulative_pf, cumulative_pa)
                 if saved_pa:
                     for row in rows:
@@ -624,6 +644,9 @@ def build():
                         "starters": starters,
                         "bench": bench,
                         "players_points": {str(k): round(safe_num(v), 2) for k, v in (row.get("players_points") or {}).items()},
+                        "sleeper_points": row.get("sleeper_points"),
+                        "sleeper_starters": row.get("sleeper_starters"),
+                        "live_bestball": bool(row.get("live_bestball")),
                     })
 
                 display_rows = []
