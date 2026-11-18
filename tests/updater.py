@@ -1,6 +1,9 @@
 import importlib.util,pathlib,tempfile,os,contextlib,io,sys
 sys.dont_write_bytecode=True
 root=pathlib.Path(__file__).resolve().parents[1]
+# importlib does not automatically add the repo root to sys.path.
+# The updater imports its sibling live_bestball.py from that root.
+sys.path.insert(0,str(root))
 spec=importlib.util.spec_from_file_location('updater',root/'update_4mans.py');u=importlib.util.module_from_spec(spec);spec.loader.exec_module(u)
 rows=[{'manager':m['key'],'pf':100 if i<2 else 90-i} for i,m in enumerate(u.MANAGERS)]
 u.add_places(rows);assert [r['place'] for r in rows]==[1,1,3,4]
