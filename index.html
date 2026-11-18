@@ -1191,6 +1191,7 @@ async function loadAuth(){
   const response=await fourmansFetch('/api/predictions?season='+encodeURIComponent(YEAR),{cache:'no-store'});
   const data=await response.json();if(!response.ok)throw new Error(data.error||'Login is temporarily unavailable.');
   AUTH_STATE=data;SESSION_USER=data.user;syncSession();
+  if(location.hash.startsWith('#reset=')){show('login-screen');renderLogin('reset');return;}
   if(SESSION_USER){show('year-screen');return;}
   show('login-screen');renderLogin(location.hash.startsWith('#invite=')?'join':'login');
  }catch(e){authError(e.message);$('#auth-content').innerHTML='<button class="pred-btn" id="auth-retry">Try again</button>';$('#auth-retry').onclick=loadAuth;}
@@ -1198,6 +1199,14 @@ async function loadAuth(){
 function renderLogin(mode='login'){
  const state=AUTH_STATE||PRED;if(!state)return loadAuth();
  if(mode==='setup'&&!state.canSetup)mode='login';
+ if(mode==='reset'){
+  const params=new URLSearchParams(location.hash.slice(1)),member=params.get('member')||'',code=params.get('reset')||'';
+  $('#auth-title').textContent='Set a new password';authError('');
+  if(!['TheChavenator','jpagonis','bingbongtinydong'].includes(member)||!/^[a-f0-9]{64}$/.test(code)){$('#auth-content').innerHTML='<p class="pred-small">This reset link is invalid. Request a new one from your commissioner.</p><button class="pred-btn" id="auth-back">Back to login</button>';$('#auth-back').onclick=()=>{history.replaceState(null,'',location.pathname);renderLogin('login')};return;}
+  $('#auth-content').innerHTML=`<form id="password-reset-form" class="pred-form"><p class="pred-small">${esc(pdName(member))} · Password reset</p><label>New password<input name="password" type="password" required minlength="8" maxlength="128" autocomplete="new-password"></label><label>Confirm new password<input name="confirm" type="password" required minlength="8" maxlength="128" autocomplete="new-password"></label><button type="submit" class="pred-btn pred-primary">Save new password</button></form><p class="pred-small">This private link expires 30 minutes after it was created and works only once.</p>`;
+  $('#password-reset-form').onsubmit=async e=>{e.preventDefault();const form=e.target,button=form.querySelector('[type=submit]');const pass=form.elements.namedItem('password').value,confirm=form.elements.namedItem('confirm').value;if(pass!==confirm){authError('Passwords do not match.');return;}button.disabled=true;authError('');try{await pdRequest({action:'reset_password',member,code,password:pass});history.replaceState(null,'',location.pathname);renderLogin('login');authError('Password updated. Log in with your username and new password.');}catch(err){authError(err.message)}finally{button.disabled=false;}};
+  return;
+ }
  const setup=mode==='setup',join=mode==='join',invite=new URLSearchParams(location.hash.slice(1));
  $('#auth-title').textContent=setup?'Your commissioner account':join?'Create your member account':'Member login';authError('');
  const members=state.members.filter(m=>m!=='nactasty');
@@ -1226,8 +1235,9 @@ let INVITES_RETURN='year-screen';
 async function loadInvites(){
  if(!(SESSION_USER?.member==='nactasty'&&SESSION_USER.role==='commissioner'))return;
  try{const response=await fourmansFetch('/api/predictions?season='+encodeURIComponent(YEAR),{cache:'no-store'});const data=await response.json();if(!response.ok)throw new Error(data.error);if(data.user?.member!=='nactasty'||data.user.role!=='commissioner'){show('login-screen');return;}
- $('#invites-content').innerHTML=data.members.filter(m=>m!=='nactasty').map(m=>`<div class="panel pred-flex" style="justify-content:space-between">${pdPerson(m)}${data.accounts.some(a=>a.member===m)?'<span class="pred-small">Account ready</span>':`<button class="pred-btn pred-primary" data-pd-invite="${esc(m)}">Create invitation</button>`}</div>`).join('');
- $$('[data-pd-invite]').forEach(button=>button.onclick=async()=>{button.disabled=true;pdError('');try{const result=await pdRequest({action:'invite',member:button.dataset.pdInvite});const link=location.origin+location.pathname+'#invite='+result.code+'&member='+encodeURIComponent(result.member);$('#pred-invite-output').innerHTML=`<p class="pred-small">Send privately to ${esc(pdName(result.member))}:</p><code class="pred-invite">${esc(link)}</code><button class="pred-btn" id="pred-copy-invite">Copy link</button>`;$('#pred-copy-invite').onclick=async e=>{try{await navigator.clipboard.writeText(link);e.target.textContent='Copied';}catch(_){e.target.textContent='Select and copy the link above';}};}catch(error){pdError(error.message);}finally{button.disabled=false;}});
+ $('#invites-content').innerHTML=data.members.filter(m=>m!=='nactasty').map(m=>`<div class="panel pred-flex" style="justify-content:space-between">${pdPerson(m)}${data.accounts.some(a=>a.member===m)?`<button class="pred-btn" data-pd-reset="${esc(m)}">Reset Password</button>`:`<button class="pred-btn pred-primary" data-pd-invite="${esc(m)}">Create invitation</button>`}</div>`).join('');
+ $('[data-pd-reset]').forEach(button=>button.onclick=async()=>{button.disabled=true;pdError('');try{const result=await pdRequest({action:'create_password_reset',member:button.dataset.pdReset});const link=location.origin+location.pathname+'#reset='+encodeURIComponent(result.code)+'&member='+encodeURIComponent(result.member);$('#pred-invite-output').innerHTML=`<p class="pred-small">Private reset link for ${esc(pdName(result.member))} (expires in 30 minutes):</p><code class="pred-invite">${esc(link)}</code><button class="pred-btn" id="pred-copy-invite">Copy reset link</button>`;$('#pred-copy-invite').onclick=async e=>{try{await navigator.clipboard.writeText(link);e.target.textContent='Copied';}catch(_){e.target.textContent='Select and copy the link above';}};}catch(error){pdError(error.message);}finally{button.disabled=false;}});
+ $('[data-pd-invite]').forEach(button=>button.onclick=async()=>{button.disabled=true;pdError('');try{const result=await pdRequest({action:'invite',member:button.dataset.pdInvite});const link=location.origin+location.pathname+'#invite='+result.code+'&member='+encodeURIComponent(result.member);$('#pred-invite-output').innerHTML=`<p class="pred-small">Send privately to ${esc(pdName(result.member))}:</p><code class="pred-invite">${esc(link)}</code><button class="pred-btn" id="pred-copy-invite">Copy link</button>`;$('#pred-copy-invite').onclick=async e=>{try{await navigator.clipboard.writeText(link);e.target.textContent='Copied';}catch(_){e.target.textContent='Select and copy the link above';}};}catch(error){pdError(error.message);}finally{button.disabled=false;}});
  }catch(error){pdError(error.message);}
 }
 function renderPredictions(){
